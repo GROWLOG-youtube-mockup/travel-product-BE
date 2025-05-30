@@ -1,0 +1,6 @@
+# 기본 구조 틀만 작성
+spring:
+  datasource:
+    url:
+    username:
+    password:
