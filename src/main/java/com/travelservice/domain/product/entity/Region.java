@@ -3,7 +3,7 @@ package com.travelservice.domain.product.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.travelservice.config.BaseEntity;
+import com.travelservice.global.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

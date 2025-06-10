@@ -1,4 +1,4 @@
-package com.travelservice.config;
+package com.travelservice.global;
 
 import java.time.LocalDateTime;
 

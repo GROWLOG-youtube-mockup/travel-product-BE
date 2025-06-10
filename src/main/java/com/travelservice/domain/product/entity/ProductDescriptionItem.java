@@ -1,6 +1,6 @@
 package com.travelservice.domain.product.entity;
 
-import com.travelservice.config.BaseEntity;
+import com.travelservice.global.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
