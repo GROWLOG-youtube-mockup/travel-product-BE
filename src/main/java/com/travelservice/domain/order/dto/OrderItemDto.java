@@ -12,7 +12,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemDto {
-    private Long productId;
+    private ProductInfo product;
     private int peopleCount;
     private LocalDate startDate;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProductInfo {
+        private Long id;
+    }
 }
