@@ -17,7 +17,6 @@ import com.travelservice.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @RequiredArgsConstructor
 public class OrderService {
