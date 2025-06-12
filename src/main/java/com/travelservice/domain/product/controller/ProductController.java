@@ -18,7 +18,6 @@ import com.travelservice.domain.product.dto.ProductDetailResponse;
 import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.dto.UpdateProductRequest;
 import com.travelservice.domain.product.entity.Product;
-import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.service.ProductServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class ProductController {
 
 	private final ProductServiceImpl productServiceImpl;
-	private final ProductRepository productRepository;
 
 	@Operation(summary = "상품 추가")
 	@PostMapping

@@ -1,6 +1,7 @@
 package com.travelservice.domain.product.dto;
 
 import com.travelservice.domain.product.entity.Product;
+import com.travelservice.domain.product.entity.Region;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +20,9 @@ public class AddProductRequest {
 	private Integer saleStatus;
 	private Integer type;
 	private Integer duration;
+	private Integer regionId;
 
-	public Product toEntity() {
+	public Product toEntity(Region region) {
 		return Product.builder()
 			.name(name)
 			.price(price)
@@ -30,6 +32,7 @@ public class AddProductRequest {
 			.saleStatus(saleStatus)
 			.type(type)
 			.duration(duration)
+			.region(region)
 			.build();
 	}
 }
