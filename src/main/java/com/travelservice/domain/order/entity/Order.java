@@ -26,7 +26,7 @@ public class Order {
 
     private LocalDateTime orderDate;
     private LocalDateTime cancelDate;
-    private int totlaQuentity;
+    private int totalQuantity;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
