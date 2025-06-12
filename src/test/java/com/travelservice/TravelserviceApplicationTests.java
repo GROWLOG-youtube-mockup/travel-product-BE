@@ -1,4 +1,4 @@
-package com.growlog.travelservice.travelservice;
+package com.travelservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
