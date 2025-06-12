@@ -21,6 +21,7 @@ public class UserLoginHistory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Builder.Default
     private LocalDateTime loginTime = LocalDateTime.now();
 
     private String ipAddress;

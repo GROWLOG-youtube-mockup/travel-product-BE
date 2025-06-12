@@ -23,6 +23,7 @@ public class PasswordResetRequest {
     @Column(name = "temp_password", nullable = false)
     private String tempPassword;
 
+    @Builder.Default
     private LocalDateTime issuedAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)

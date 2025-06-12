@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user")
+@Table(name = "`user`")
 public class User {
 
     @Id
@@ -31,6 +31,7 @@ public class User {
 
     @Column(name = "role_code", nullable = false)
     private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
+
 
     private LocalDateTime deletedAt;
 
