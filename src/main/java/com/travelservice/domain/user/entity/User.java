@@ -11,19 +11,19 @@ import jakarta.persistence.*;
 @Builder
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long userId;
 
-    private String name;
+	private String name;
 
-    @Column(unique = true)
-    private String email;
+	@Column(unique = true)
+	private String email;
 
-    private String password;
+	private String password;
 
-    @Column(unique = true)
-    private String phoneNumber;
+	@Column(unique = true)
+	private String phoneNumber;
 
-    private int roleCode;
+	private int roleCode;
 }

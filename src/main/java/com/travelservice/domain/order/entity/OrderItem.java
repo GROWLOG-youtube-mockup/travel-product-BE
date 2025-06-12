@@ -13,18 +13,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class OrderItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderItemId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long orderItemId;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+	@ManyToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	private Product product;
 
-    private int peopleCount;
-    private LocalDate startDate;
+	private int peopleCount;
+	private LocalDate startDate;
 }

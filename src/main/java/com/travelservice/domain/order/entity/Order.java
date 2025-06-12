@@ -16,18 +16,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-    private LocalDateTime orderDate;
-    private LocalDateTime cancelDate;
-    private int totalQuantity;
+	private LocalDateTime orderDate;
+	private LocalDateTime cancelDate;
+	private int totalQuantity;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> items = new ArrayList<>();
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<OrderItem> items = new ArrayList<>();
 }

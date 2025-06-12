@@ -12,14 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
-    private List<OrderItemDto> items;
-    private PaymentInfo payment;
+	private List<OrderItemDto> items;
+	private PaymentInfo payment;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PaymentInfo{
-        private String cardNumber;
-    }
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class PaymentInfo {
+		private String cardNumber;
+	}
 }

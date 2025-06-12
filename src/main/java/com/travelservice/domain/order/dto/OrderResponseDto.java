@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResponseDto {
-    private Long orderId;
-    private LocalDateTime orderDate;
-    private int totalQuantity;
+	private Long orderId;
+	private LocalDateTime orderDate;
+	private int totalQuantity;
 
-    public OrderResponseDto(Order order) {
-        this.orderId = order.getOrderId();
-        this.orderDate = order.getOrderDate();
-        this.totalQuantity = order.getTotalQuantity();
-    }
+	public OrderResponseDto(Order order) {
+		this.orderId = order.getOrderId();
+		this.orderDate = order.getOrderDate();
+		this.totalQuantity = order.getTotalQuantity();
+	}
 }

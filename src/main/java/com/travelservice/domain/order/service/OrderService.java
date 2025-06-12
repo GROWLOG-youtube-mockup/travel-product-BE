@@ -16,20 +16,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepo;
-    private final ProductRepository productRepo;
-    private final UserRepository userRepo;
+	private final OrderRepository orderRepo;
+	private final ProductRepository productRepo;
+	private final UserRepository userRepo;
 
-    @Transactional
-    public Order createOrder(String email, List<OrderItemDto> itemDtos) {
-        User user = userRepo.findByEmail(email);
-        if (user == null) throw new RunTimeException("유저 없음");
+	@Transactional
+	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
+		User user = userRepo.findByEmail(email);
+		if (user == null) throw new RunTimeException("유저 없음");
 
-        Order order = new Order();
-        order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());
+		Order order = new Order();
+		order.setUser(user);
+		order.setOrderDate(LocalDateTime.now());
 
-        int totalQty = 0;
+		int totalQty = 0;
 
-    }
+	}
 }

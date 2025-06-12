@@ -10,22 +10,22 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long productId;
 
-    private String name;
+	private String name;
 
-    private String thumbnailImageUrl;
+	private String thumbnailImageUrl;
 
-    private int price;
+	private int price;
 
-    private int totalQuantity;
+	private int totalQuantity;
 
-    private int stockQuantity;
+	private int stockQuantity;
 
-    @Lob
-    private String description;
+	@Lob
+	private String description;
 
-    private int saleStatus;
+	private int saleStatus;
 }
