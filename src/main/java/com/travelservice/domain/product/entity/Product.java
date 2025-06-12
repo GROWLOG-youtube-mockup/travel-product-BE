@@ -1,7 +1,8 @@
 package com.travelservice.domain.product.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import jakarta.persistence.*;
 
 @Entity
 @Getter

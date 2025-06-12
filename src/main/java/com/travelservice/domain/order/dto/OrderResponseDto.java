@@ -1,12 +1,13 @@
 package com.travelservice.domain.order.dto;
 
+import java.time.LocalDateTime;
+
 import com.travelservice.domain.order.entity.Order;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
