@@ -1,39 +1,33 @@
 package com.travelservice.domain.product.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.travelservice.global.BaseEntity;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "product")
-public class Product extends BaseEntity {
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
 
 	@Id  // 이 필드가 기본 키(PK)임을 명시
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // 데이터베이스에서 기본 키를 자동 증가 방식으로 생성함
 	@Column(name = "product_id")
 	private Integer productId;
 
-	@Column(nullable = false)
+	@Column(name = "name", nullable = false)
 	private String name;
 
+	@Column(name = "price")
 	private Integer price;
 
 	@Column(name = "total_quantity")
@@ -42,25 +36,40 @@ public class Product extends BaseEntity {
 	@Column(name = "stock_quantity")
 	private Integer stockQuantity;
 
-	@Lob
+	@Column(name = "description")
 	private String description;
 
-	@Column(columnDefinition = "TINYINT")
+	@Column(name = "sale_status")
+	private Integer saleStatus;
+
+	@Column(name = "type")
 	private Integer type;        // 0: FREE, 1: PACKAGE, 2: SUMMER_VAC, 3: HISTORY, 4: ACTIVITY
 
-	@Column(columnDefinition = "TINYINT", nullable = false)
-	private Integer saleStatus;  // 0: UPCOMING, 1: ON_SALE, 2: SOLD_OUT
-
+	@Column(name = "duration")
 	private Integer duration;
 
-	@ManyToOne(fetch = FetchType.LAZY) // 다대일(N:1) 관계를 나타내며, 지연 로딩 전략 지정.
-	@JoinColumn(name = "region_region_id")
-	private Region region;
+	@Builder // 빌더 패턴으로 객체 생성
+	public Product(String name, Integer price, Integer totalQuantity, Integer stockQuantity,
+		String description, Integer type, Integer saleStatus, Integer duration) {
+		this.name = name;
+		this.price = price;
+		this.totalQuantity = totalQuantity;
+		this.stockQuantity = stockQuantity;
+		this.description = description;
+		this.type = type;
+		this.saleStatus = saleStatus;
+		this.duration = duration;
+	}
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductDescriptionGroup> descriptionGroups = new ArrayList<>();
-
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("id ASC")
-	private List<ProductImage> productImages = new ArrayList<>();
+	public void update(String name, Integer price, Integer totalQuantity, Integer stockQuantity,
+		String description, Integer type, Integer saleStatus, Integer duration) {
+		this.name = name;
+		this.price = price;
+		this.totalQuantity = totalQuantity;
+		this.stockQuantity = stockQuantity;
+		this.description = description;
+		this.type = type;
+		this.saleStatus = saleStatus;
+		this.duration = duration;
+	}
 }
