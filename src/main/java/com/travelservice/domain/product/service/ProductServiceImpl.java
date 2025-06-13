@@ -1,5 +1,6 @@
 package com.travelservice.domain.product.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -21,11 +22,12 @@ public class ProductServiceImpl implements ProductService {
 
 	private final ProductRepository productRepository;
 	private final RegionRepository regionRepository;
+	private final S3Uploader s3Uploader;
 
 	@Override
-	public Product createProduct(AddProductRequest request) {
+	public Product createProduct(AddProductRequest request) throws IOException {
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new IllegalArgumentException("not found region: " + request.getRegionId()));
+			.orElseThrow(() -> new IllegalArgumentException("지역을 찾을 수 없습니다" + request.getRegionId()));
 
 		Product product = request.toEntity(region);
 		return productRepository.save(product);
@@ -39,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product getProductDetail(Integer productId) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("해당 상품을 찾을 수 없습니다"));
+			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다: " + productId));
 
 		return product;
 	}
@@ -48,13 +50,11 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public Product updateProduct(Integer productId, UpdateProductRequest request) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new IllegalArgumentException("not found: " + productId));
+			.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
 
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new RuntimeException("not found: region " + request.getRegionId()));
+			.orElseThrow(() -> new RuntimeException("지역을 찾을 수 없습니다 " + request.getRegionId()));
 
-		// product.update(request.getName(), request.getPrice(), request.getTotalQuantity(), request.getStockQuantity(),
-		// 	request.getDescription(), request.getSaleStatus(), request.getType(), request.getDuration(), region);
 		request.applyTo(product, region);
 
 		return product;
@@ -63,8 +63,9 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	@Transactional
 	public void deleteProduct(Integer productId) {
-		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다"));
+		if (!productRepository.existsById(productId)) {
+			throw new IllegalArgumentException("존재하지 않는 상품입니다");
+		}
 		productRepository.deleteById(productId);
 	}
 }

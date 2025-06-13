@@ -1,7 +1,11 @@
 package com.travelservice.domain.product.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.travelservice.global.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,6 +62,9 @@ public class Product extends BaseEntity {
 	@JoinColumn(name = "region_id")
 	private Region region;
 
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductImage> images = new ArrayList<>();
+
 	@Builder // 빌더 패턴으로 객체 생성
 	public Product(String name, Integer price, Integer totalQuantity, Integer stockQuantity,
 		String description, Integer type, Integer saleStatus, Integer duration, Region region) {
@@ -95,5 +103,19 @@ public class Product extends BaseEntity {
 		if (region != null && !region.getProducts().contains(this)) {
 			region.getProducts().add(this);
 		}
+	}
+
+	public void addImage(ProductImage image) {
+		image.setProduct(this);
+		this.images.add(image);
+	}
+
+	public void removeImage(ProductImage image) {
+		images.remove(image);
+		image.setProduct(null);
+	}
+
+	public void clearImages() {
+		this.images.clear();
 	}
 }

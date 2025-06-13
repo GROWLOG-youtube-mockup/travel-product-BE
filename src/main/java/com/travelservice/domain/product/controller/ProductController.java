@@ -1,5 +1,6 @@
 package com.travelservice.domain.product.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,8 @@ public class ProductController {
 
 	@Operation(summary = "상품 추가")
 	@PostMapping
-	public ResponseEntity<Product> createProduct(@RequestBody AddProductRequest request) {
+	public ResponseEntity<Product> createProduct(@RequestBody AddProductRequest request) throws IOException {
+
 		Product createdProduct = productServiceImpl.createProduct(request);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(createdProduct);
@@ -73,9 +75,11 @@ public class ProductController {
 	@Operation(summary = "상품 삭제")
 	@DeleteMapping("/{productId}")
 	public ResponseEntity<Void> deleteProduct(@PathVariable Integer productId) {
-		productServiceImpl.deleteProduct(productId);
-
-		return ResponseEntity.ok()
-			.build();
+		try {
+			productServiceImpl.deleteProduct(productId);
+			return ResponseEntity.ok().build();
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 }
