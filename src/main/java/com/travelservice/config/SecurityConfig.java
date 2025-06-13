@@ -7,19 +7,28 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+	// Swagger 관련 경로를 정리한 화이트리스트
+	private static final String[] SWAGGER_WHITELIST = {
+		"/swagger-ui.html",
+		"/swagger-ui/**",
+		"/v3/api-docs/**",
+		"/api-docs",  // application.yml에서 path: /api-docs 로 설정했기 때문에 필요
+		"/swagger-resources/**",
+		"/webjars/**"
+	};
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
-			// Swagger 관련 경로 허용
-			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
-				"/webjars/**", "/api-docs/**").permitAll()
-
-			// 공개 API 허용 (회원가입, 로그인 등)
-			.requestMatchers("/users/signup",  // 회원가입
-				"/users/login").permitAll()
-
-			// 그 외는 인증 필요
-			.anyRequest().authenticated());
+		http
+			.csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(SWAGGER_WHITELIST).permitAll()
+				.requestMatchers("/users/signup", "/users/login").permitAll()
+				.anyRequest().permitAll()
+			)
+			// 로그인/기본 인증 비활성화
+			.formLogin(form -> form.disable())
+			.httpBasic(basic -> basic.disable());
 
 		return http.build();
 	}
