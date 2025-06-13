@@ -36,5 +36,6 @@ public class ProductImage {
 	@Builder
 	public ProductImage(String imageUrl, Product product) {
 		this.imageUrl = imageUrl;
+		this.product = product;
 	}
 }
