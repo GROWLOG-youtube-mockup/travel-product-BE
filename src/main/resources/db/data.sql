@@ -24,3 +24,10 @@ VALUES
 ('서울 2박 3일 자유여행', 199000, 100, 99, '서울의 명소를 자유롭게 즐길 수 있는 여행 상품입니다.', 1, 1, 3, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('부산 야경 & 해산물 투어', 299000, 80, 70, '부산의 아름다운 야경과 신선한 해산물을 만끽할 수 있는 투어.', 0, 1, 4, 6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('제주도 한라산 트레킹 패키지', 359000, 60, 50, '한라산 등반과 힐링 숙소가 포함된 액티비티 중심의 여행입니다.', 1,2, 5, 7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO product_images (product_id, image_url, created_at) VALUES
+--(1, 'https://growlog-travel-service.s3.ap-northeast-2.amazonaws.com/product-images/0e18e0bb-a6bf-4bf0-9ea8-7de103f5e57c-%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5+1.jpg', CURRENT_TIMESTAMP),
+(1, 'https://example-bucket.s3.amazonaws.com/product-images/1_sub.jpg', CURRENT_TIMESTAMP),
+(2, 'https://example-bucket.s3.amazonaws.com/product-images/2_main.jpg', CURRENT_TIMESTAMP),
+(3, 'https://example-bucket.s3.amazonaws.com/product-images/3_main.jpg', CURRENT_TIMESTAMP),
+(3, 'https://example-bucket.s3.amazonaws.com/product-images/3_sub.jpg', CURRENT_TIMESTAMP);

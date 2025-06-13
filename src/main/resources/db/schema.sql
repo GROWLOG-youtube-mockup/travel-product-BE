@@ -9,6 +9,7 @@ SET REFERENTIAL_INTEGRITY FALSE;
 -- 테이블 삭제
 DROP TABLE IF EXISTS
     region,
+    product_images,
   products;
 -- 외래키 체크 켬
 SET REFERENTIAL_INTEGRITY TRUE;
@@ -44,4 +45,15 @@ CREATE TABLE products (
     CONSTRAINT fk_product_region
         FOREIGN KEY (region_id) REFERENCES region(region_id)
         ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- 9. 상품 이미지
+CREATE TABLE product_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_url VARCHAR(300) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_product_image_product
+        FOREIGN KEY (product_id) REFERENCES products(product_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
