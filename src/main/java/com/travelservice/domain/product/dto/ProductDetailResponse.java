@@ -34,10 +34,9 @@ public class ProductDetailResponse {
 		this.type = product.getType();
 		this.duration = product.getDuration();
 		this.region = product.getProductId() != null ? new RegionResponse(product.getRegion()) : null;
-		this.imageUrls = product.getImages() != null ?
-			product.getImages().stream()
-				.map(ProductImage::getImageUrl)
-				.collect(Collectors.toList())
+		this.imageUrls = product.getImages() != null ? product.getImages().stream()
+			.map(ProductImage::getImageUrl)
+			.collect(Collectors.toList())
 			: List.of();
 	}
 }
