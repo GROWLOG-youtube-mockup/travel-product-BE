@@ -2,25 +2,28 @@ package com.travelservice.domain.admin.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.travelservice.domain.user.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AdminActionLog {
+
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long logId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	// private User user;
+	private User user;
 
-	private int actionType; // Enum도 가능
-	private int targetType;
+	private int actionType;  // ex: 0=PRODUCT_ADD, 1=ORDER_STATUS_CHANGE, 2=USER_MANAGE
+	private int targetType;  // ex: 0=PRODUCT, 1=ORDER, 2=USER
 	private Long targetId;
 
 	private LocalDateTime timestamp;
