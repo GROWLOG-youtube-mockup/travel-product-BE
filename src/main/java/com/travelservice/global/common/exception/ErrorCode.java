@@ -1,0 +1,28 @@
+package com.travelservice.global.common.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum ErrorCode {
+	// 공통 에러
+	BAD_REQUEST("BAD_REQUEST", "잘못된 요청입니다."),
+	INVALID_ACCESSTOKEN("INVALID_ACCESSTOKEN", "유효하지 않은 접근입니다."),
+	INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다."),
+
+	// Region 관련
+	REGION_NOT_FOUND("REGION_NOT_FOUND", "요청하신 지역 정보를 찾을 수 없습니다."),
+	// Product 관련
+	OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다."),
+	PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND", "상품을 찾을 수 없습니다"),
+	// Sign in, Log in 관련
+	LOGIN_FAILED("LOGIN_FAILED", "아이디 혹은 비밀번호가 올바르지 않습니다."),
+	EMAIL_CONFLICT("EMAIL_CONFLICT", "이 이메일로 가입된 계정이 있습니다."),
+	// User 관련
+	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다.");
+
+	private final String code;
+	private final String message;
+
+}
