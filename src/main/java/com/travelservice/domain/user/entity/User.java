@@ -54,8 +54,8 @@ public class User {
 		this.updatedAt = LocalDateTime.now();
 	}
 
-	@PreUpdate
-	public void preUpdate() {
-		this.updatedAt = LocalDateTime.now();
-	}
+//	@PreUpdate
+//	public void preUpdate() {
+//		this.updatedAt = LocalDateTime.now();
+//	}
 }
