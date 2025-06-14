@@ -32,7 +32,7 @@ public class EmailVerificationService {
 	}
 
 	private String generateVerificationCode() {
-		return String.valueOf((int)(Math.random() * 900000) + 1000); //6자리 랜덤 숫자 생성
+		return String.valueOf((int)(Math.random() * 900000) + 100000); //6자리 랜덤 숫자 생성
 	}
 
 	//이메일 인증숫자 매치 확인
