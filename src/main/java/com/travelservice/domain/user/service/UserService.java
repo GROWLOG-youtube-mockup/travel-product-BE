@@ -43,11 +43,11 @@ public class UserService {
 		}
 
 		//인증 확인
-		if (!emailVerificationRepository.existsByEmailAndIsVerifiedTrue(requestDto.getEmail())) {
+		if (!emailVerificationRepository.existsByEmailAndVerifiedTrue(requestDto.getEmail())) {
 			throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
 		}
 
-		if (!phoneVerificationRepository.existsByPhoneNumberAndIsVerifiedTrue(requestDto.getPhoneNumber())) {
+		if (!phoneVerificationRepository.existsByPhoneNumberAndVerifiedTrue(requestDto.getPhoneNumber())) {
 			throw new CustomException(ErrorCode.PHONE_NUMBER_NOT_FOUND);
 		}
 
