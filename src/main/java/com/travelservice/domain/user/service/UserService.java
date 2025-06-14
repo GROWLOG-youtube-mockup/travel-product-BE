@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.travelservice.domain.auth.repository.EmailVerificationRepository;
+import com.travelservice.domain.auth.repository.PhoneVerificationRepository;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
@@ -20,6 +22,12 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private EmailVerificationRepository emailVerificationRepository;
+
+	@Autowired
+	private PhoneVerificationRepository phoneVerificationRepository;
+
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	public User registerMember(UserRegistrationRequestDto requestDto) {
@@ -32,6 +40,15 @@ public class UserService {
 		//전화번호 중복 체크
 		if (userRepository.existsByPhoneNumber(requestDto.getPhoneNumber())) {
 			throw new CustomException(ErrorCode.PHONE_NUMBER_CONFLICT);
+		}
+
+		//인증 확인
+		if (!emailVerificationRepository.existsByEmailAndIsVerifiedTrue(requestDto.getEmail())) {
+			throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
+		}
+
+		if (!phoneVerificationRepository.existsByPhoneNumberAndIsVerifiedTrue(requestDto.getPhoneNumber())) {
+			throw new CustomException(ErrorCode.PHONE_NUMBER_NOT_FOUND);
 		}
 
 		User user = User.builder()

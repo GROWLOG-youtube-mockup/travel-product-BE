@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.travelservice.domain.auth.entity.PhoneVerification;
 
-public interface PhoneVerificationRepository extends JpaRepository<PhoneVerification, String> {
-	boolean existsByPhoneNumberAndVerifiedTrue(String phoneNumber);
+public interface PhoneVerificationRepository extends JpaRepository<PhoneVerification, Long> {
+	boolean existsByPhoneNumberAndIsVerifiedTrue(String phoneNumber);
 
 	Optional<PhoneVerification> findByPhoneNumber(String phoneNumber);
 }
