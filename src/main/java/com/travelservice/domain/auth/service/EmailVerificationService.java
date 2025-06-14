@@ -18,17 +18,17 @@ public class EmailVerificationService {
 	private final EmailVerificationRepository emailVerificationRepository;
 
 	public void sendVerificationEmail(String email) {
-		String verificationCode = generateVerificationCode();
+		String code = generateVerificationCode();
 
 		EmailVerification verification = EmailVerification.builder()
 			.email(email)
-			.code(verificationCode)
+			.code(code)
 			.verified(false)
 			.build();
 
 		emailVerificationRepository.save(verification);
 
-		log.info("Verification email sent to {} with code: {}", email, verificationCode);
+		log.info("Verification email sent to {} with code: {}", email, code);
 	}
 
 	private String generateVerificationCode() {
