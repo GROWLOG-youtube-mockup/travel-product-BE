@@ -1,0 +1,24 @@
+package com.travelservice.domain.admin.dto;
+
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserResponseDto {
+	private Integer userId;
+	private String name;
+	private String email;
+	private Integer phoneNumber;
+	private Integer roleCode;
+	private LocalDateTime createAt;
+	private LocalDateTime deleteAt;
+
+}
