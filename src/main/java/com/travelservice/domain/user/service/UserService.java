@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,10 +25,14 @@ public class UserService {
 	public User registerMember(UserRegistrationRequestDto requestDto) {
 
 		//email 중복 체크
-
-		/*if (userRepository.existsByEmail(requestDto.getEmail())) {
+		if (userRepository.existsByEmail(requestDto.getEmail())) {
 			throw new CustomException(ErrorCode.EMAIL_CONFLICT);
-		}*/
+		}
+
+		//전화번호 중복 체크
+		if (userRepository.existsByPhoneNumber(requestDto.getPhoneNumber())) {
+			throw new CustomException(ErrorCode.PHONE_NUMBER_CONFLICT);
+		}
 
 		User user = User.builder()
 			.name(requestDto.getUsername())

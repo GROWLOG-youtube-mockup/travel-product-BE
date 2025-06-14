@@ -1,4 +1,4 @@
-package com.travelservice.global.common.Exception;
+package com.travelservice.global.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +19,10 @@ public enum ErrorCode {
 	// Sign in, Log in 관련
 	LOGIN_FAILED("LOGIN_FAILED", "아이디 혹은 비밀번호가 올바르지 않습니다."),
 	EMAIL_CONFLICT("EMAIL_CONFLICT", "이 이메일로 가입된 계정이 있습니다."),
+	EMAIL_NOT_FOUND("EMAIL_NOT_FOUND", "이메일을 찾을 수 없습니다."),
+	PHONE_NUMBER_CONFLICT("PHONE_NUMBER_CONFLICT", "이 전화번호로 가입된 계정이 있습니다."),
+	PHONE_NUMBER_NOT_FOUND("PHONE_NUMBER_NOT_FOUND", "전화번호를 찾을 수 없습니다."),
+
 	// User 관련
 	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다.");
 
