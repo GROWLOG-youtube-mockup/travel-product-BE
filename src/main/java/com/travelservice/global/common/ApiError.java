@@ -1,4 +1,4 @@
-package com.travelservice.global.response;
+package com.travelservice.global.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

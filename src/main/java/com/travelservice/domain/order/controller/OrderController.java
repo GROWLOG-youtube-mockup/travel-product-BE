@@ -12,7 +12,7 @@ import com.travelservice.domain.order.dto.OrderRequestDto;
 import com.travelservice.domain.order.dto.OrderResponseDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
-import com.travelservice.global.response.ApiResponse;
+import com.travelservice.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +28,6 @@ public class OrderController {
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.success(new OrderResponseDto(order)));
+				.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 }
