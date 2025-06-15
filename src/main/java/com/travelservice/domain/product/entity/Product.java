@@ -65,6 +65,9 @@ public class Product extends BaseEntity {
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductImage> images = new ArrayList<>();
 
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ProductDescriptionGroup> descriptionGroups = new ArrayList<>();
+
 	@Builder // 빌더 패턴으로 객체 생성
 	public Product(String name, Integer price, Integer totalQuantity, Integer stockQuantity,
 		String description, Integer type, Integer saleStatus, Integer duration, Region region) {
@@ -117,5 +120,17 @@ public class Product extends BaseEntity {
 
 	public void clearImages() {
 		this.images.clear();
+	}
+
+	public void addDescriptionGroup(ProductDescriptionGroup group) {
+		if (this.descriptionGroups == null) {
+			this.descriptionGroups = new ArrayList<>();
+		}
+		this.descriptionGroups.add(group);
+		group.setProduct(this); // 양방향 관계 설정
+	}
+
+	public void clearDescriptionGroups() {
+		this.descriptionGroups.clear();
 	}
 }

@@ -3,8 +3,10 @@ package com.travelservice.domain.product.dto;
 import com.travelservice.domain.product.entity.Product;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ProductListResponse {
 
 	private Long productId;
