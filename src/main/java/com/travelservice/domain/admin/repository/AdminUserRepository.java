@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.travelservice.domain.user.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface AdminUserRepository extends JpaRepository<User, Long> {
 
 	// 전체 사용자 조회
 	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL ORDER BY u.createdAt DESC")

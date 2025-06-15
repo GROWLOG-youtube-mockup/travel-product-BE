@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.UserResponseDto;
-import com.travelservice.domain.admin.repository.UserRepository;
+import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class AdminUserService {
 
-	private final UserRepository userRepository;
+	private final AdminUserRepository userRepository;
 
 	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());

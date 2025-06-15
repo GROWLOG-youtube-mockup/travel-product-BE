@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
-import com.travelservice.domain.admin.service.UserService;
+import com.travelservice.domain.admin.service.AdminUserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @Tag(name = "사용자 관리")
 public class UserController {
-	private final UserService userService;
+	private final AdminUserService userService;
 
 	/**
 	 * 사용자 목록 조회

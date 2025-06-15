@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
-import com.travelservice.domain.admin.repository.UserRepository;
+import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
 
 @SpringBootTest
@@ -21,10 +21,10 @@ import com.travelservice.domain.user.entity.User;
 class UserServiceTest {
 
 	@Autowired
-	private UserRepository userRepository;
+	private AdminUserRepository userRepository;
 
 	@Autowired
-	private UserService userService;
+	private AdminUserService userService;
 
 	@BeforeEach
 	void setUp() {
