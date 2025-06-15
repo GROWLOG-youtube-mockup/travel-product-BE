@@ -2,11 +2,11 @@ package com.travelservice.domain.auth.service;
 
 import org.springframework.stereotype.Service;
 
-import com.travelservice.domain.auth.EmailService;
 import com.travelservice.domain.auth.entity.EmailVerification;
 import com.travelservice.domain.auth.repository.EmailVerificationRepository;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
+import com.travelservice.global.util.VerificationCodeGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 public class EmailVerificationService {
 
 	private final EmailVerificationRepository emailVerificationRepository;
-	private final EmailService emailService;
+	private final MailSender mailSender;
 
 	public void sendVerificationEmail(String email) {
-		String code = generateVerificationCode();
+		String code = VerificationCodeGenerator.generateCode(); //6자리 랜덤 숫자 생성
 
 		EmailVerification verification = EmailVerification.builder()
 			.email(email)
@@ -28,15 +28,12 @@ public class EmailVerificationService {
 			.verified(false)
 			.build();
 
+		verification.updateCode(code); //코드 업데이트
 		emailVerificationRepository.save(verification);
 
-		emailService.sendVerificationEmail(email, code);
+		mailSender.send(email, code); //이메일 전송
 
 		log.info("Verification email sent to {} with code: {}", email, code);
-	}
-
-	private String generateVerificationCode() {
-		return String.valueOf((int)(Math.random() * 900000) + 100000); //6자리 랜덤 숫자 생성
 	}
 
 	//이메일 인증숫자 매치 확인

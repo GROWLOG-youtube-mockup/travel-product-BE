@@ -6,6 +6,7 @@ import com.travelservice.domain.auth.entity.PhoneVerification;
 import com.travelservice.domain.auth.repository.PhoneVerificationRepository;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
+import com.travelservice.global.util.VerificationCodeGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PhoneVerificationService {
 	private final PhoneVerificationRepository phoneVerificationRepository;
+	private final SmsSender smsSender;
 
 	// 전화번호 인증 코드 전송
 	public void sendVerificationCode(String phoneNumber) {
-		String code = generateVerificationCode();
+		String code = VerificationCodeGenerator.generateCode(); // 6자리 랜덤 숫자 생성
 
 		PhoneVerification phoneVerification = PhoneVerification.builder()
 			.phoneNumber(phoneNumber)
@@ -26,14 +28,11 @@ public class PhoneVerificationService {
 			.verified(false)
 			.build();
 
+		phoneVerification.updateCode(code);
 		phoneVerificationRepository.save(phoneVerification);
 
-		log.info("Verification code sent to {}: {}", phoneNumber, code);
-	}
+		smsSender.send(phoneNumber, code);  // SMS 전송
 
-	// 전화번호 인증 코드 생성
-	private String generateVerificationCode() {
-		return String.valueOf((int)(Math.random() * 900000) + 100000); // 6자리 랜덤 숫자 생성
 	}
 
 	// 전화번호 인증 코드 확인
