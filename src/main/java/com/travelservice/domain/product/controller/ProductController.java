@@ -35,51 +35,40 @@ public class ProductController {
 
 	@Operation(summary = "상품 추가")
 	@PostMapping
-	public ResponseEntity<Product> createProduct(@RequestBody AddProductRequest request) throws IOException {
+	public ResponseEntity<ProductDetailResponse> createProduct(@RequestBody AddProductRequest request) throws
+		IOException {
 
-		Product createdProduct = productServiceImpl.createProduct(request);
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(createdProduct);
+		ProductDetailResponse response = productServiceImpl.createProduct(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@Operation(summary = "상품 목록 조회", description = "전체 상품을 조회합니다")
 	@GetMapping
 	public ResponseEntity<List<ProductListResponse>> getAllProducts() {
-		List<ProductListResponse> products = productServiceImpl.getAllProducts()
-			.stream()
-			.map(ProductListResponse::new)
-			.toList();
-
-		return ResponseEntity.ok()
-			.body(products);
+		List<ProductListResponse> products = productServiceImpl.getAllProducts();
+		return ResponseEntity.ok(products);
 	}
 
 	@Operation(summary = "상품 상세 조회")
 	@GetMapping("/{productId}")
 	public ResponseEntity<ProductDetailResponse> getProductById(@PathVariable Long productId) {
-		Product product = productServiceImpl.getProductDetail(productId);
-		return ResponseEntity.ok()
-			.body(new ProductDetailResponse(product));
+		ProductDetailResponse response = productServiceImpl.getProductDetail(productId);
+		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "상품 정보 수정")
 	@PutMapping("/{productId}")
-	public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
+	public ResponseEntity<ProductDetailResponse> updateProduct(@PathVariable Long productId,
 		@RequestBody UpdateProductRequest request) {
 		Product updatedProduct = productServiceImpl.updateProduct(productId, request);
 
-		return ResponseEntity.ok()
-			.body(updatedProduct);
+		return ResponseEntity.ok(ProductDetailResponse.from(updatedProduct));
 	}
 
 	@Operation(summary = "상품 삭제")
 	@DeleteMapping("/{productId}")
 	public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
-		try {
-			productServiceImpl.deleteProduct(productId);
-			return ResponseEntity.ok().build();
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.notFound().build();
-		}
+		productServiceImpl.deleteProduct(productId);
+		return ResponseEntity.noContent().build();
 	}
 }
