@@ -46,7 +46,7 @@ public class PhoneVerificationService {
 		}
 
 		// 인증 성공 시 verified 상태 업데이트
-		verification.setVerified(true);
+		verification.markAsVerified();
 		phoneVerificationRepository.save(verification);
 		return true; // 인증 성공
 	}

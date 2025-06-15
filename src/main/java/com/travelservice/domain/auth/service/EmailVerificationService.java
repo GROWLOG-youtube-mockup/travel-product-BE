@@ -52,7 +52,7 @@ public class EmailVerificationService {
 		}
 
 		//일치 시 verified = true 상태로 업데이트 후 저장
-		verification.setVerified(true);
+		verification.markAsVerified();
 		emailVerificationRepository.save(verification);
 		return true;
 

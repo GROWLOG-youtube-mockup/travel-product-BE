@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -26,11 +25,15 @@ public class EmailVerification {
 	private String code;
 
 	// 0: 미인증(false), 1: 인증됨(true)
-	@Setter
 	@Column(nullable = false)
 	private boolean verified;
 
 	public void updateCode(String code) {
 		this.code = code;
+		this.verified = false; // 인증번호가 갱신되면 인증 상태 초기화
+	}
+
+	public void markAsVerified() {
+		this.verified = true;
 	}
 }
