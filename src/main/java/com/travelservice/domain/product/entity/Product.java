@@ -109,8 +109,11 @@ public class Product extends BaseEntity {
 	}
 
 	public void addImage(ProductImage image) {
-		image.setProduct(this);
+		if (this.images == null) {
+			this.images = new ArrayList<>();
+		}
 		this.images.add(image);
+		image.setProduct(this); // 양방향 관계 설정
 	}
 
 	public void removeImage(ProductImage image) {

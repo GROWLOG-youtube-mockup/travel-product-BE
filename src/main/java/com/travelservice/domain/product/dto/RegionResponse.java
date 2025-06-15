@@ -2,9 +2,13 @@ package com.travelservice.domain.product.dto;
 
 import com.travelservice.domain.product.entity.Region;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegionResponse {
 
 	private Long regionId;
