@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserResponseDto {
-	private Integer userId;
+	private Long userId;
 	private String name;
 	private String email;
-	private Integer phoneNumber;
+	private String phoneNumber;
 	private Integer roleCode;
 	private LocalDateTime createAt;
 	private LocalDateTime deleteAt;

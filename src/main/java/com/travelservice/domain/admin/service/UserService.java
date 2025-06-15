@@ -1,5 +1,7 @@
 package com.travelservice.domain.admin.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,15 +23,25 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
-	public PagedUserResponseDto getAllUsers(int page, int size, Integer roleCode) {
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createAt").descending());
+	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
 
 		Page<User> userPage;
-		userPage = userRepository.findAllActiveUsers(pageable);
+
+		// roleCode가 null이면 전체 조회, 있으면 해당 role만 조회
+		if (roleCode == null) {
+			userPage = userRepository.findActiveUsers(pageable);
+		} else {
+			userPage = userRepository.findActiveUsersByRoleCode(roleCode, pageable);
+		}
+
+		List<UserResponseDto> content = userPage.getContent().stream()
+			.map(this::convertToDto)
+			.toList();
 
 		return PagedUserResponseDto.builder()
-			.content(userPage.getContent().stream().map(this::convertToDto).toList())
-			.totalElements((int)userPage.getTotalElements())
+			.content(content)
+			.totalElements(userPage.getTotalElements())
 			.totalPages(userPage.getTotalPages())
 			.currentPage(page)
 			.build();
@@ -37,10 +49,10 @@ public class UserService {
 
 	private UserResponseDto convertToDto(User user) {
 		return UserResponseDto.builder()
-			.userId(Math.toIntExact(user.getUserId()))
+			.userId(user.getUserId())
 			.name(user.getName())
 			.email(user.getEmail())
-			.phoneNumber(Integer.valueOf(user.getPhoneNumber()))
+			.phoneNumber(user.getPhoneNumber())
 			.roleCode(user.getRoleCode())
 			.createAt(user.getCreatedAt())
 			.deleteAt(user.getDeletedAt())

@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository;
 import com.travelservice.domain.user.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
 	// 전체 사용자 조회
-	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL")
-	Page<User> findAllActiveUsers(Pageable pageable);
+	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL ORDER BY u.createdAt DESC")
+	Page<User> findActiveUsers(Pageable pageable);
 
 	// 역할 코드별 사용자 조회 (필요하지 않다면 빼도 됨)
-	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL AND u.roleCode = :roleCode")
+	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL AND u.roleCode = :roleCode ORDER BY u.createdAt DESC")
 	Page<User> findActiveUsersByRoleCode(@Param("roleCode") Integer roleCode, Pageable pageable);
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PagedUserResponseDto {
 	private List<UserResponseDto> content;
-	private Integer totalElements;
+	private Long totalElements;
 	private Integer totalPages;
 	private Integer currentPage;
 }

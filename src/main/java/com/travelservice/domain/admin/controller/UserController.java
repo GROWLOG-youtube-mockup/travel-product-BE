@@ -1,6 +1,7 @@
 package com.travelservice.domain.admin.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,21 +10,36 @@ import org.springframework.web.bind.annotation.RestController;
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.service.UserService;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 	private final UserService userService;
 
-	@GetMapping("/users")
-	public ResponseEntity<PagedUserResponseDto> getAllUsers(
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size,
-		@RequestParam(required = false) Integer roleCode) {
+	/**
+	 * 사용자 목록 조회
+	 * @param page 페이지 번호
+	 * @param size 페이지 크기
+	 * @param roleCode 역할 코드
+	 * @return 페이징된 사용자 목록
+	 */
+	@GetMapping
+	public ResponseEntity<PagedUserResponseDto> getUsers(
+		@RequestParam(defaultValue = "1") @Min(1) Integer page,
+		@RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size,
+		@RequestParam(name = "role_code", required = false) Integer roleCode) {
 
-		PagedUserResponseDto response = userService.getAllUsers(page, size, roleCode);
+		// roleCode 유효성 검증 (0, 1, 2 중 하나여야 함)
+		if (roleCode != null && (roleCode < 0 || roleCode > 2)) {
+			throw new IllegalArgumentException("유효하지 않은 role_code입니다. (0: USER, 1: ADMIN, 2: SUPER_ADMIN)");
+		}
+
+		PagedUserResponseDto response = userService.getUsers(page, size, roleCode);
 		return ResponseEntity.ok(response);
 	}
 }
