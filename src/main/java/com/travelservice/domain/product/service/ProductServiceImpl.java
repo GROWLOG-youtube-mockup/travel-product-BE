@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product getProductDetail(Integer productId) {
+	public Product getProductDetail(Long productId) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다: " + productId));
 
@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public Product updateProduct(Integer productId, UpdateProductRequest request) {
+	public Product updateProduct(Long productId, UpdateProductRequest request) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
 
@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public void deleteProduct(Integer productId) {
+	public void deleteProduct(Long productId) {
 		if (!productRepository.existsById(productId)) {
 			throw new IllegalArgumentException("존재하지 않는 상품입니다");
 		}

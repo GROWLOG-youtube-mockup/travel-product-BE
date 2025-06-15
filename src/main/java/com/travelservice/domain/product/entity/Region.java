@@ -31,7 +31,7 @@ public class Region extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "region_id", nullable = false)
-	private Integer regionId;
+	private Long regionId;
 
 	@Column(name = "name", nullable = false)
 	private String name;

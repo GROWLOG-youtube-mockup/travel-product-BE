@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.travelservice.domain.product.entity.Region;
 
 @Repository
-public interface RegionRepository extends JpaRepository<Region, Integer> {
+public interface RegionRepository extends JpaRepository<Region, Long> {
 
 	// 이름으로 조회
 	Optional<Region> findByName(String name);

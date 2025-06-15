@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class ProductListResponse {
 
-	private final Integer productId;
-	private final String name;
-	private final Integer price;
-	private final String thumbnailImage;
+	private Long productId;
+	private String name;
+	private Integer price;
+	private String thumbnailImage;
 
 	public ProductListResponse(Product product) {
 		this.productId = product.getProductId();

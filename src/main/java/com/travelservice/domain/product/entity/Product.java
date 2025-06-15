@@ -32,7 +32,7 @@ public class Product extends BaseEntity {
 	@Id  // 이 필드가 기본 키(PK)임을 명시
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // 데이터베이스에서 기본 키를 자동 증가 방식으로 생성함
 	@Column(name = "product_id")
-	private Integer productId;
+	private Long productId;
 
 	@Column(name = "name", nullable = false)
 	private String name;

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class RegionResponse {
 
-	private Integer regionId;
+	private Long regionId;
 	private String parentName;
 	private String name;
 

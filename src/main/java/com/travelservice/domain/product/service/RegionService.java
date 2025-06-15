@@ -23,13 +23,13 @@ public class RegionService {
 	}
 
 	// 아이디로 지역 조회
-	public Region getRegionById(Integer regionId) {
+	public Region getRegionById(Long regionId) {
 		return regionRepository.findById(regionId)
 			.orElseThrow(() -> new RuntimeException("Region not found"));
 	}
 
 	// 부모 지역(광역시/도) 기준으로 자식 지역 목록 조회
-	public List<Region> getChildrenByParentId(Integer parentId) {
+	public List<Region> getChildrenByParentId(Long parentId) {
 		Region parent = getRegionById(parentId);
 		return regionRepository.findByParent(parent);
 	}

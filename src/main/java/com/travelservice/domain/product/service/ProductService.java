@@ -13,10 +13,10 @@ public interface ProductService {
 
 	List<Product> getAllProducts();
 
-	Product getProductDetail(Integer productId);
+	Product getProductDetail(Long productId);
 
-	Product updateProduct(Integer productId, UpdateProductRequest request) throws
+	Product updateProduct(Long productId, UpdateProductRequest request) throws
 		IOException;
 
-	void deleteProduct(Integer productId);
+	void deleteProduct(Long productId);
 }

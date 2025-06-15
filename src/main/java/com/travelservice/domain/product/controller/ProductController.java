@@ -56,7 +56,7 @@ public class ProductController {
 
 	@Operation(summary = "상품 상세 조회")
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductDetailResponse> getProductById(@PathVariable Integer productId) {
+	public ResponseEntity<ProductDetailResponse> getProductById(@PathVariable Long productId) {
 		Product product = productServiceImpl.getProductDetail(productId);
 		return ResponseEntity.ok()
 			.body(new ProductDetailResponse(product));
@@ -64,7 +64,7 @@ public class ProductController {
 
 	@Operation(summary = "상품 정보 수정")
 	@PutMapping("/{productId}")
-	public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+	public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
 		@RequestBody UpdateProductRequest request) {
 		Product updatedProduct = productServiceImpl.updateProduct(productId, request);
 
@@ -74,7 +74,7 @@ public class ProductController {
 
 	@Operation(summary = "상품 삭제")
 	@DeleteMapping("/{productId}")
-	public ResponseEntity<Void> deleteProduct(@PathVariable Integer productId) {
+	public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
 		try {
 			productServiceImpl.deleteProduct(productId);
 			return ResponseEntity.ok().build();

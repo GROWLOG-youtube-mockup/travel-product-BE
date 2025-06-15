@@ -25,7 +25,7 @@ public class AddProductRequest {
 	private Integer saleStatus;
 	private Integer type;
 	private Integer duration;
-	private Integer regionId;
+	private Long regionId;
 	private List<String> imageUrls;
 
 	public Product toEntity(Region region) {
