@@ -19,7 +19,7 @@ public class EmailService {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(to);
 		message.setFrom(emailProperties.getFrom());  // 설정된 이메일 주소(발신할 이메일 주소)
-		message.setSubject("[여행 서비스] 이메일 인증번호 안내");
+		message.setSubject("[GrowLog - 여행 서비스] 이메일 인증번호 안내");
 		message.setText("인증번호: " + code + "\n\n이 번호를 인증 페이지에 입력해주세요.");
 		mailSender.send(message);
 	}
@@ -30,7 +30,7 @@ public class EmailService {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(to);
 		message.setFrom(emailProperties.getFrom());
-		message.setSubject("[여행 서비스] 임시 비밀번호 발급");
+		message.setSubject("[GrowLog - 여행 서비스] 임시 비밀번호 발급");
 		message.setText("임시 비밀번호: " + tempPassword + "\n\n로그인 후 반드시 비밀번호를 변경해주세요.");
 		mailSender.send(message);
 	}*/
