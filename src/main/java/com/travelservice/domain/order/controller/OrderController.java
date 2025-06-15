@@ -30,4 +30,11 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
+
+	@PostMapping("/from-cart")
+	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(@RequestParam String email) {
+		Order order = orderService.createOrderFromCart(email);
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(ApiResponse.ok(new OrderResponseDto(order)));
+	}
 }
