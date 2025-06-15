@@ -10,14 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "사용자 관리")
 public class UserController {
 	private final UserService userService;
 
@@ -29,6 +32,7 @@ public class UserController {
 	 * @return 페이징된 사용자 목록
 	 */
 	@GetMapping
+	@Operation(summary = "사용자 목록 조회")
 	public ResponseEntity<PagedUserResponseDto> getUsers(
 		@RequestParam(defaultValue = "1") @Min(1) Integer page,
 		@RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size,
