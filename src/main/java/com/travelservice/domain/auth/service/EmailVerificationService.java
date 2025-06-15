@@ -2,6 +2,7 @@ package com.travelservice.domain.auth.service;
 
 import org.springframework.stereotype.Service;
 
+import com.travelservice.domain.auth.EmailService;
 import com.travelservice.domain.auth.entity.EmailVerification;
 import com.travelservice.domain.auth.repository.EmailVerificationRepository;
 import com.travelservice.global.common.exception.CustomException;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EmailVerificationService {
 
 	private final EmailVerificationRepository emailVerificationRepository;
+	private final EmailService emailService;
 
 	public void sendVerificationEmail(String email) {
 		String code = generateVerificationCode();
@@ -27,6 +29,8 @@ public class EmailVerificationService {
 			.build();
 
 		emailVerificationRepository.save(verification);
+
+		emailService.sendVerificationEmail(email, code);
 
 		log.info("Verification email sent to {} with code: {}", email, code);
 	}
