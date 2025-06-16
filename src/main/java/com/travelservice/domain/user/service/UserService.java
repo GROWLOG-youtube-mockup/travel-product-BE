@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.travelservice.domain.auth.repository.EmailVerificationRepository;
 import com.travelservice.domain.auth.repository.PhoneVerificationRepository;
+import com.travelservice.domain.user.dto.LoginRequestDto;
+import com.travelservice.domain.user.dto.LoginResponseDto;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
+import com.travelservice.global.common.jwt.JwtTokenProvider;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +32,8 @@ public class UserService {
 	private PhoneVerificationRepository phoneVerificationRepository;
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
 	public User registerMember(UserRegistrationRequestDto requestDto) {
 
@@ -60,5 +65,25 @@ public class UserService {
 			.createdAt(LocalDateTime.now())
 			.build();
 		return userRepository.save(user);
+	}
+
+	//로그인
+	public LoginResponseDto login(LoginRequestDto requestDto) {
+		User user = userRepository.findByEmail(requestDto.getEmail())
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+		if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+			throw new CustomException(ErrorCode.LOGIN_FAILED);
+		}
+
+		String accessToken = jwtTokenProvider.creteToken(user.getUserId(), user.getRoleCode());
+
+		return new LoginResponseDto(user.getUserId(), user.getName(), accessToken);
+	}
+
+	// 로그인한 사용자 정보 조회용
+	public User getUserById(Long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
 }

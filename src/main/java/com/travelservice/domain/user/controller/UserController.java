@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.travelservice.domain.user.dto.LoginRequestDto;
+import com.travelservice.domain.user.dto.LoginResponseDto;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.service.UserService;
@@ -22,6 +24,13 @@ public class UserController {
 	public ResponseEntity<User> registerMember(@RequestBody UserRegistrationRequestDto requestDto) {
 		User user = userService.registerMember(requestDto);
 		return ResponseEntity.ok(user);
+	}
+
+	//로그인
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+		LoginResponseDto response = userService.login(requestDto);
+		return ResponseEntity.ok(response);
 	}
 
 }
