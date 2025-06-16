@@ -1,7 +1,10 @@
 package com.travelservice.domain.order.controller;
 
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +39,20 @@ public class OrderController {
 		Order order = orderService.createOrderFromCart(email);
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(ApiResponse.ok(new OrderResponseDto(order)));
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
+		Order order = orderService.findById(id);
+		return ResponseEntity.ok(ApiResponse.ok(new OrderResponseDto(order)));
+	}
+
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(@RequestParam String email) {
+		List<Order> orders = orderService.findOrdersByEmail(email);
+		List<OrderResponseDto> dtos = orders.stream()
+				.map(OrderResponseDto::new)
+				.toList();
+		return ResponseEntity.ok(ApiResponse.ok(dtos));
 	}
 }

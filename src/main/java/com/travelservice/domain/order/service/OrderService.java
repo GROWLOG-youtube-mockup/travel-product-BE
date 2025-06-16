@@ -107,4 +107,17 @@ public class OrderService {
 
 		return savedOrder;
 	}
+
+	public Order findById(Long orderId) {
+		return orderRepo.findById(orderId)
+				.orElseThrow(() -> new RuntimeException("주문 없음"));
+	}
+
+	public List<Order> findOrdersByEmail(String email) {
+		User user = userRepo.findByEmail(email);
+		if (user == null) {
+			throw new RuntimeException("유저 없음");
+		}
+		return orderRepo.fineByUser(user);
+	}
 }
