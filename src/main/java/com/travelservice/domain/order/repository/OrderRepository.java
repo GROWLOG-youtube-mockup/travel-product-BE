@@ -8,5 +8,5 @@ import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.user.entity.User;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-	List<Order> fineByUser(User user);
+	List<Order> findByUser(User user);
 }

@@ -118,6 +118,6 @@ public class OrderService {
 		if (user == null) {
 			throw new RuntimeException("유저 없음");
 		}
-		return orderRepo.fineByUser(user);
+		return orderRepo.findByUser(user);
 	}
 }
