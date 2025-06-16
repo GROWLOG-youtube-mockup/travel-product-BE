@@ -50,14 +50,24 @@ public class AdminUserService {
 
 	@Transactional
 	public boolean updateUser(Long userId, UserUpdateRequestDto requestDto) {
-		int updatedCount = userRepository.updateUser(
-			userId,
-			requestDto.getName(),
-			requestDto.getEmail(),
-			requestDto.getPhoneNumber(),
-			requestDto.getRoleCode()
-		);
-		return updatedCount > 0;
+		// 1. 엔티티 조회
+		User user = userRepository.findById(userId)
+			.orElse(null);
+		if (user == null)
+			return false;
+
+		// 2. 바꿀 값만 set (null 아닌 값만 반영)
+		if (requestDto.getName() != null)
+			user.setName(requestDto.getName());
+		if (requestDto.getEmail() != null)
+			user.setEmail(requestDto.getEmail());
+		if (requestDto.getPhoneNumber() != null)
+			user.setPhoneNumber(requestDto.getPhoneNumber());
+		if (requestDto.getRoleCode() != null)
+			user.setRoleCode(requestDto.getRoleCode());
+
+		// 3. (JPA가 트랜잭션 종료 시 자동 update)
+		return true;
 	}
 
 	private UserResponseDto convertToDto(User user) {

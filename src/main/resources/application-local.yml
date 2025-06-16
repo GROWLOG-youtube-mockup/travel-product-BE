@@ -12,16 +12,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
-    defer-datasource-initialization: true
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-
-  sql:
-    init:
-      mode: always
-
 server:
   port: 8080
