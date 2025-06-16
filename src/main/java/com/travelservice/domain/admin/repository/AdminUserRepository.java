@@ -31,4 +31,9 @@ public interface AdminUserRepository extends JpaRepository<User, Long> {
 		@Param("phoneNumber") String phoneNumber,
 		@Param("roleCode") Integer roleCode
 	);
+
+	// 사용자 삭제
+	@Modifying
+	@Query("UPDATE User u SET u.deletedAt = CURRENT_TIMESTAMP WHERE u.userId = :userId")
+	int softDeleteById(@Param("userId") Long userId);
 }

@@ -1,7 +1,10 @@
 package com.travelservice.domain.admin.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +64,18 @@ public class AdminUserController {
 		boolean updated = userService.updateUser(userId, requestDto);
 		if (updated) {
 			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@DeleteMapping("/{userId}")
+	@Operation(summary = "회원 삭제")
+	public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+		boolean deleted = userService.deleteUser(userId);
+
+		if (deleted) {
+			return ResponseEntity.ok().body(Map.of("message", "User deleted (soft delete) successfully"));
 		} else {
 			return ResponseEntity.notFound().build();
 		}

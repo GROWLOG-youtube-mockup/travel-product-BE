@@ -50,13 +50,13 @@ public class AdminUserService {
 
 	@Transactional
 	public boolean updateUser(Long userId, UserUpdateRequestDto requestDto) {
-		// 1. 엔티티 조회
+
 		User user = userRepository.findById(userId)
 			.orElse(null);
 		if (user == null)
 			return false;
 
-		// 2. 바꿀 값만 set (null 아닌 값만 반영)
+		// 바꿀 값만 set (null 아닌 값만 반영)
 		if (requestDto.getName() != null)
 			user.setName(requestDto.getName());
 		if (requestDto.getEmail() != null)
@@ -66,8 +66,13 @@ public class AdminUserService {
 		if (requestDto.getRoleCode() != null)
 			user.setRoleCode(requestDto.getRoleCode());
 
-		// 3. (JPA가 트랜잭션 종료 시 자동 update)
 		return true;
+	}
+
+	@Transactional
+	public boolean deleteUser(Long userId) {
+		int updated = userRepository.softDeleteById(userId);
+		return updated > 0;
 	}
 
 	private UserResponseDto convertToDto(User user) {
