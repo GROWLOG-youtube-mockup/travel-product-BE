@@ -1,5 +1,8 @@
 package com.travelservice.domain.product.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +19,7 @@ public class ProductDescriptionGroupResponse {
 	private String title;
 	private Integer type;
 	private Integer sortOrder;
-	// private List<ProductDescriptionItemResponse> items;
+	private List<ProductDescriptionItemResponse> items;
 
 	public static ProductDescriptionGroupResponse from(ProductDescriptionGroup group) {
 		return ProductDescriptionGroupResponse.builder()
@@ -24,6 +27,9 @@ public class ProductDescriptionGroupResponse {
 			.title(group.getTitle())
 			.type(group.getType())
 			.sortOrder(group.getSortOrder())
+			.items(group.getDescriptionItems().stream()
+				.map(ProductDescriptionItemResponse::from)
+				.collect(Collectors.toList()))
 			.build();
 	}
 }

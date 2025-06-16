@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
+import com.travelservice.domain.product.entity.ProductDescriptionItem;
 import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 
@@ -62,6 +63,15 @@ public class AddProductRequest {
 					.type(groupReq.getType())
 					.sortOrder(groupReq.getSortOrder())
 					.build();
+
+				if (groupReq.getItems() != null) {
+					groupReq.getItems().forEach(itemReq -> {
+						group.addItem(ProductDescriptionItem.builder()
+							.content(itemReq.getContent())
+							.sortOrder(itemReq.getSortOrder())
+							.build());
+					});
+				}
 
 				product.addDescriptionGroup(group);
 			});

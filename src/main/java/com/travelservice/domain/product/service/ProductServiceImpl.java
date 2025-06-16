@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.product.dto.AddProductRequest;
-import com.travelservice.domain.product.dto.ProductDescriptionGroupRequest;
 import com.travelservice.domain.product.dto.ProductDetailResponse;
 import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.dto.UpdateProductRequest;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
+import com.travelservice.domain.product.entity.ProductDescriptionItem;
 import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
@@ -104,15 +104,32 @@ public class ProductServiceImpl implements ProductService {
 		// 설명 그룹 갱신
 		product.clearDescriptionGroups();
 		if (request.getDescriptionGroups() != null) {
-			for (ProductDescriptionGroupRequest groupReq : request.getDescriptionGroups()) {
-				product.addDescriptionGroup(ProductDescriptionGroup.builder()
+			// for (ProductDescriptionGroupRequest groupReq : request.getDescriptionGroups()) {
+			// 	product.addDescriptionGroup(ProductDescriptionGroup.builder()
+			// 		.title(groupReq.getTitle())
+			// 		.type(groupReq.getType())
+			// 		.sortOrder(groupReq.getSortOrder())
+			// 		.build());
+			// }
+			request.getDescriptionGroups().forEach(groupReq -> {
+				ProductDescriptionGroup group = ProductDescriptionGroup.builder()
 					.title(groupReq.getTitle())
 					.type(groupReq.getType())
 					.sortOrder(groupReq.getSortOrder())
-					.build());
-			}
-		}
+					.build();
 
+				groupReq.getItems().forEach(itemReq -> {
+					ProductDescriptionItem item = ProductDescriptionItem.builder()
+						.content(itemReq.getContent())
+						.sortOrder(itemReq.getSortOrder())
+						.build();
+
+					group.addItem(item);
+				});
+
+				product.addDescriptionGroup(group);
+			});
+		}
 		return productRepository.save(product);
 	}
 

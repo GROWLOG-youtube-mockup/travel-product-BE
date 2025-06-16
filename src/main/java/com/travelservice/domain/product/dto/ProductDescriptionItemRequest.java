@@ -1,7 +1,5 @@
 package com.travelservice.domain.product.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductDescriptionGroupRequest {
-	private String title;
-	private Integer type;
+public class ProductDescriptionItemRequest {
+	private String content;
 	private Integer sortOrder;
-	private List<ProductDescriptionItemRequest> items;
 }
