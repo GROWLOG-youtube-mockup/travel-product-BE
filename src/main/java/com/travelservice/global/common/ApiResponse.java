@@ -1,6 +1,6 @@
 package com.travelservice.global.common;
 
-import com.travelservice.global.common.Exception.ErrorCode;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,8 @@ import lombok.Getter;
 public class ApiResponse<T> {
 	private final boolean success;
 	private final T data;
-	private Error error;
-	
+	private final Error error;
+
 	public static <T> ApiResponse<T> ok(T data) {
 		return new ApiResponse<>(true, data, null);
 	}
@@ -20,9 +20,11 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(false, null, new Error(errorCode));
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public static class Error {
-		private String code;
-		private String message;
+		private final String code;
+		private final String message;
 
 		public Error(ErrorCode errorCode) {
 			this.code = errorCode.getCode();

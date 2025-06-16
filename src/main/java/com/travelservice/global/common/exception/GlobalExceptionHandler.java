@@ -1,4 +1,4 @@
-package com.travelservice.global.common.Exception;
+package com.travelservice.global.common.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

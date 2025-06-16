@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.UserResponseDto;
+import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
 
@@ -45,6 +46,18 @@ public class AdminUserService {
 			.totalPages(userPage.getTotalPages())
 			.currentPage(page)
 			.build();
+	}
+
+	@Transactional
+	public boolean updateUser(Long userId, UserUpdateRequestDto requestDto) {
+		int updatedCount = userRepository.updateUser(
+			userId,
+			requestDto.getName(),
+			requestDto.getEmail(),
+			requestDto.getPhoneNumber(),
+			requestDto.getRoleCode()
+		);
+		return updatedCount > 0;
 	}
 
 	private UserResponseDto convertToDto(User user) {

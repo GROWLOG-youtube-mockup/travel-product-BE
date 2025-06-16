@@ -3,15 +3,20 @@ package com.travelservice.domain.admin.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
+import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
 import com.travelservice.domain.admin.service.AdminUserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "사용자 관리")
-public class UserController {
+public class AdminUserController {
 	private final AdminUserService userService;
 
 	/**
@@ -45,5 +50,19 @@ public class UserController {
 
 		PagedUserResponseDto response = userService.getUsers(page, size, roleCode);
 		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/{userId}")
+	@Operation(summary = "사용자 정보 수정")
+	public ResponseEntity<Void> updateUser(
+		@PathVariable Long userId,
+		@RequestBody @Valid UserUpdateRequestDto requestDto
+	) {
+		boolean updated = userService.updateUser(userId, requestDto);
+		if (updated) {
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 }

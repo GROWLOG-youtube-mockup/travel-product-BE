@@ -19,5 +19,4 @@ public class UserResponseDto {
 	private Integer roleCode;
 	private LocalDateTime createAt;
 	private LocalDateTime deleteAt;
-
 }
