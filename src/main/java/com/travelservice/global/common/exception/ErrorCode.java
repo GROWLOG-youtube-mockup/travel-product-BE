@@ -23,6 +23,14 @@ public enum ErrorCode {
 	PHONE_NUMBER_CONFLICT("PHONE_NUMBER_CONFLICT", "이 전화번호로 가입된 계정이 있습니다."),
 	PHONE_NUMBER_NOT_FOUND("PHONE_NUMBER_NOT_FOUND", "전화번호를 찾을 수 없습니다."),
 
+	// 인증 관련
+	PHONE_VERIFICATION_FAILED("PHONE_VERIFICATION_FAILED", "전화번호 인증에 실패했습니다."),
+	EMAIL_VERIFICATION_FAILED("EMAIL_VERIFICATION_FAILED", "이메일 인증에 실패했습니다."),
+	PHONE_NUMBER_NOT_VERIFIED("PHONE_NUMBER_NOT_VERIFIED", "전화번호가 인증되지 않았습니다."),
+	EMAIL_NOT_VERIFIED("EMAIL_NOT_VERIFIED", "이메일이 인증되지 않았습니다."),
+	AUTH_CODE_NOT_FOUND("AUTH_404", "인증번호를 먼저 요청해주세요."),
+	INVALID_AUTH_CODE("AUTH_401", "인증번호가 일치하지 않습니다."),
+
 	// User 관련
 	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다.");
 

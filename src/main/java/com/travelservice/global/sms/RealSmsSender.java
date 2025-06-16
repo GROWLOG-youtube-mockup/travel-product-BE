@@ -17,6 +17,6 @@ public class RealSmsSender implements SmsSender {
 		// CoolSMS, Twilio 등 SMS API를 사용하여 구현할 수 있습니다.
 		// 예시로는 CoolSMS의 Java SDK를 사용할 수 있습니다.
 
-		log.info("Sending SMS to {} with code: {}", to, code);
+		log.info("[GrowLog - 여행서비스] To: {}, code: {}", to, code);
 	}
 }
