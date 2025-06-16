@@ -1,6 +1,6 @@
 package com.travelservice;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.travelservice.domain.cart.entity.CartItem;
+import com.travelservice.domain.cart.repository.CartItemRepository;
 import com.travelservice.domain.order.dto.OrderItemDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
@@ -26,6 +28,12 @@ public class OrderServiceTest {
 	ProductRepository productRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	CartItemRepository cartRepo;
+	@Autowired
+	ProductRepository productRepo;
+	@Autowired
+	UserRepository userRepo;
 
 	@Test
 	void order_success() {
@@ -60,5 +68,38 @@ public class OrderServiceTest {
 
 		// then
 		assertThat(order.getOrderId()).isNotNull();
+	}
+
+	@Test
+	void cart_order_success() {
+		User user = userRepo.save(User.builder()
+				.name("카트유저")
+				.email("cart@test.com")
+				.password("pw")
+				.phoneNumber("01000000000")
+				.roleCode(0)
+				.build());
+
+		Product product = productRepo.save(Product.builder()
+				.name("카트상품")
+				.price(50000)
+				.stockQuantity(10)
+				.totalQuantity(10)
+				.description("설명")
+				.saleStatus(1)
+				.build());
+
+		cartRepo.save(CartItem.builder()
+				.user(user)
+				.product(product)
+				.quantity(2)
+				.startDate(LocalDate.now().plusDays(3))
+				.build());
+
+		Order order = orderService.createOrderFromCart(user.getEmail());
+
+		assertThat(order.getOrderId()).isNotNull();
+		assertThat(order.getItems()).hasSize(1);
+		assertThat(order.getTotalQuantity()).isEqualTo(2);
 	}
 }
