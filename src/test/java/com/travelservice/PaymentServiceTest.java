@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ import com.travelservice.domain.payment.dto.PaymentResponseDto;
 import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.payment.respository.PaymentRepository;
 import com.travelservice.domain.payment.service.PaymentService;
+import com.travelservice.enums.OrderStatus;
+import com.travelservice.enums.PaymentStatus;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -53,11 +56,18 @@ public class PaymentServiceTest {
 	@Test
 	void approve_success() {
 		try {
+			// given
 			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
-			Order mockOrder = Order.builder().orderId(1L).build();
+
+			Order mockOrder = Order.builder()
+				.orderId(1L)
+				.status(OrderStatus.PENDING)
+				.orderDate(LocalDateTime.now())
+				.totalQuantity(1)
+				.build();
 
 			JsonNode jsonNode = new ObjectMapper().readTree("""
-				{
+                {
                     "method": "카드",
                     "card": { "number": "1234-****" }
                 }
@@ -66,16 +76,18 @@ public class PaymentServiceTest {
 			when(redisTemplate.hasKey("1")).thenReturn(true);
 			when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
 			when(restTemplate.postForEntity(anyString(), any(), eq(JsonNode.class)))
-					.thenReturn(ResponseEntity.ok(jsonNode));
+				.thenReturn(ResponseEntity.ok(jsonNode));
 			when(paymentRepository.save(any())).thenAnswer(invocation -> {
 				Payment payment = invocation.getArgument(0);
 				payment.setPaymentId(999L);
 				return payment;
 			});
 
+			// when
 			PaymentResponseDto result = paymentService.approve(dto);
 
-			assertEquals("PAID", result.getStatus());
+			// then
+			assertEquals(PaymentStatus.PAID.name(), result.getStatus());
 			assertEquals("카드", result.getMethod());
 			assertNotNull(result.getPaidAt());
 			verify(redisTemplate).delete("1");
@@ -87,20 +99,26 @@ public class PaymentServiceTest {
 
 	@Test
 	void approve_fail_redis_missing() {
+		// given
 		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
 		when(redisTemplate.hasKey("1")).thenReturn(false);
 
+		// when & then
 		assertThrows(IllegalArgumentException.class, () -> paymentService.approve(dto));
 	}
 
 	@Test
 	void approve_fail_toss_error() {
 		try {
+			// given
 			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
-			Order mockOrder = Order.builder().orderId(1L).build();
+			Order mockOrder = Order.builder()
+				.orderId(1L)
+				.status(OrderStatus.PENDING)
+				.build();
 
 			String errorJson = """
-                    {
+                {
                     "code": "NOT_FOUND_PAYMENT_SESSION",
                     "message": "결제 세션 없음"
                 }
@@ -110,19 +128,20 @@ public class PaymentServiceTest {
 			when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
 
 			HttpClientErrorException exception = HttpClientErrorException.create(
-					HttpStatus.BAD_REQUEST,
-					"400",
-					HttpHeaders.EMPTY,
-					errorJson.getBytes(StandardCharsets.UTF_8),
-					StandardCharsets.UTF_8
+				HttpStatus.BAD_REQUEST,
+				"400",
+				HttpHeaders.EMPTY,
+				errorJson.getBytes(StandardCharsets.UTF_8),
+				StandardCharsets.UTF_8
 			);
 
 			when(restTemplate.postForEntity(anyString(), any(), eq(JsonNode.class)))
-					.thenThrow(exception);
+				.thenThrow(exception);
 
+			// when & then
 			RuntimeException ex = assertThrows(
-					RuntimeException.class,
-					() -> paymentService.approve(dto)
+				RuntimeException.class,
+				() -> paymentService.approve(dto)
 			);
 			assertTrue(ex.getMessage().contains("결제 승인 실패"));
 		} catch (Exception e) {
@@ -132,10 +151,13 @@ public class PaymentServiceTest {
 
 	@Test
 	void approve_fail_order_not_found() {
+		// given
 		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "999", 10000);
 		when(redisTemplate.hasKey("999")).thenReturn(true);
 		when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
-		assertThrows(RuntimeException.class, () -> paymentService.approve(dto));
+		// when & then
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> paymentService.approve(dto));
+		System.out.println("실제 예외 메시지: " + exception.getMessage());
 	}
 }

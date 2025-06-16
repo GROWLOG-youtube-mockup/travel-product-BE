@@ -79,7 +79,7 @@ public class PaymentService {
 		}
 
 		Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
-				.orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+				.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
 
 		Payment payment = Payment.builder()
 				.order(order)
