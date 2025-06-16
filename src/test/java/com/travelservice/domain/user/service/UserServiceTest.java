@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.travelservice.domain.auth.repository.EmailVerificationRepository;
+import com.travelservice.domain.auth.repository.PhoneVerificationRepository;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
@@ -21,6 +23,12 @@ class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private EmailVerificationRepository emailVerificationRepository;
+
+	@Mock
+	private PhoneVerificationRepository phoneVerificationRepository;
 
 	@InjectMocks
 	private UserService userService;
@@ -42,6 +50,11 @@ class UserServiceTest {
 			.email("test@example.com")
 			.password("password1")
 			.build();
+
+		when(userRepository.existsByEmail(anyString())).thenReturn(false);
+		when(userRepository.existsByPhoneNumber(anyString())).thenReturn(false);
+		when(emailVerificationRepository.existsByEmailAndVerifiedTrue(anyString())).thenReturn(true);
+		when(phoneVerificationRepository.existsByPhoneNumberAndVerifiedTrue(anyString())).thenReturn(true);
 
 		User mockUser = User.builder()
 			.name(requestDto.getUsername())
@@ -65,3 +78,4 @@ class UserServiceTest {
 		verify(userRepository, times(1)).save(any(User.class));
 	}
 }
+

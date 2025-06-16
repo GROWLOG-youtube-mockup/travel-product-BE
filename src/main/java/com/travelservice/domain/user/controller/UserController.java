@@ -23,4 +23,5 @@ public class UserController {
 		User user = userService.registerMember(requestDto);
 		return ResponseEntity.ok(user);
 	}
+
 }
