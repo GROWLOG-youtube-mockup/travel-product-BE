@@ -26,9 +26,6 @@ public class SmtpMailSender implements MailSender { // SMTP를 이용한 이메�
 		mailSender.send(message);
 	}
 
-
-
-	/*
 	// 임시 비밀번호 발급 메소드
 	public void sendTemporaryPassword(String to, String tempPassword) {
 		SimpleMailMessage message = new SimpleMailMessage();
@@ -37,5 +34,5 @@ public class SmtpMailSender implements MailSender { // SMTP를 이용한 이메�
 		message.setSubject("[GrowLog - 여행 서비스] 임시 비밀번호 발급");
 		message.setText("임시 비밀번호: " + tempPassword + "\n\n로그인 후 반드시 비밀번호를 변경해주세요.");
 		mailSender.send(message);
-	}*/
+	}
 }
