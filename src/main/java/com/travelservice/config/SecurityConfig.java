@@ -10,24 +10,25 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(
-								"/h2-console/**",
-								"/swagger-ui/**",
-								"/v3/api-docs/**"
-						).permitAll()
-						.anyRequest().permitAll() // 개발 중 전체 허용
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+					"/h2-console/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**"
+				).permitAll()
+				.anyRequest().permitAll() // 개발 중 전체 허용
+			)
+			.csrf(csrf -> csrf
+				.ignoringRequestMatchers(
+					"/h2-console/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**"
 				)
-				.csrf(csrf -> csrf
-						.ignoringRequestMatchers(
-								"/h2-console/**",
-								"/swagger-ui/**",
-								"/v3/api-docs/**"
-						)
-				)
-				.headers(headers -> headers
-						.frameOptions().disable() // H2 콘솔 iframe 허용
-				);
+			)
+			.headers(headers -> headers
+				.frameOptions()
+				.disable() // H2 콘솔 iframe 허용
+			);
 
 		return http.build();
 	}

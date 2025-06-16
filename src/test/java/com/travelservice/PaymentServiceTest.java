@@ -1,14 +1,8 @@
 package com.travelservice;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -17,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -64,7 +57,7 @@ public class PaymentServiceTest {
 			Order mockOrder = Order.builder().orderId(1L).build();
 
 			JsonNode jsonNode = new ObjectMapper().readTree("""
-                {
+				{
                     "method": "카드",
                     "card": { "number": "1234-****" }
                 }
@@ -107,7 +100,7 @@ public class PaymentServiceTest {
 			Order mockOrder = Order.builder().orderId(1L).build();
 
 			String errorJson = """
-                {
+                    {
                     "code": "NOT_FOUND_PAYMENT_SESSION",
                     "message": "결제 세션 없음"
                 }
