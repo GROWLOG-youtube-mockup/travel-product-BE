@@ -8,5 +8,7 @@ import lombok.Setter;
 public class FindEmailRequestDto {
 	private String name;
 	private String phoneNumber;
-	private String code;
+
+	// sms 인증 방식 도입 시 주석 해제(현재 사용하지 않음)
+	//private String code;
 }

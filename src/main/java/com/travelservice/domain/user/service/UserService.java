@@ -47,9 +47,10 @@ public class UserService {
 			throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
 		}
 
-		if (!phoneVerificationRepository.existsByPhoneNumberAndVerifiedTrue(requestDto.getPhoneNumber())) {
+		// 전화번호 인증 확인 - 조건 변경으로 휴대폰 인증 기능은 현재 사용하지 않음
+		/*if (!phoneVerificationRepository.existsByPhoneNumberAndVerifiedTrue(requestDto.getPhoneNumber())) {
 			throw new CustomException(ErrorCode.PHONE_NUMBER_NOT_FOUND);
-		}
+		}*/
 
 		User user = User.builder()
 			.name(requestDto.getUsername())

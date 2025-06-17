@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.travelservice.domain.auth.dto.EmailSendRequest;
 import com.travelservice.domain.auth.dto.EmailVerifyRequest;
-import com.travelservice.domain.auth.dto.PhoneSendRequest;
-import com.travelservice.domain.auth.dto.PhoneVerifyRequest;
 import com.travelservice.domain.auth.service.EmailVerificationService;
 import com.travelservice.domain.auth.service.PhoneVerificationService;
 
@@ -36,6 +34,8 @@ public class AuthVerificationController {
 		return ResponseEntity.ok(Map.of("verified", isVerified));
 	}
 
+	// 전화번호 인증 관련 API - 조건 변경으로 휴대폰 인증 기능 주석처리(현재 사용하지 않음)
+	/*
 	@PostMapping("/phone/send")
 	public ResponseEntity<Map<String, String>> sendPhoneVerificationCode(@RequestBody PhoneSendRequest request) {
 		phoneVerificationService.sendVerificationCode(request.getPhoneNumber());
@@ -46,5 +46,5 @@ public class AuthVerificationController {
 	public ResponseEntity<Map<String, Boolean>> verifyPhoneNumber(@RequestBody PhoneVerifyRequest request) {
 		boolean isVerified = phoneVerificationService.verifyPhoneNumber(request.getPhoneNumber(), request.getCode());
 		return ResponseEntity.ok(Map.of("verified", isVerified));
-	}
+	}*/
 }
