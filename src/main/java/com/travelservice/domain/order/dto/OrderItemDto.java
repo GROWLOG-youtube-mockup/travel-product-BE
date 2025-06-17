@@ -12,15 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemDto {
-	private ProductInfo product;
-	private int peopleCount;
+	private Long productId;
+	private int quantity;
 	private LocalDate startDate;
-
-	@Getter
-	@Setter
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class ProductInfo {
-		private Long id;
-	}
 }

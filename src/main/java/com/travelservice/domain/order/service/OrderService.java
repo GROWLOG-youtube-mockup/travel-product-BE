@@ -41,21 +41,24 @@ public class OrderService {
 
 		int totalQty = 0;
 		for (OrderItemDto dto : itemDtos) {
-			Product product = productRepo.findById(dto.getProduct().getId())
-					.orElseThrow(() -> new RuntimeException("상품 없음"));
-			if (product.getStockQuantity() < dto.getPeopleCount()) {
+			Product product = productRepo.findById(dto.getProductId())
+				.orElseThrow(() -> new RuntimeException("상품 없음"));
+
+			if (product.getStockQuantity() < dto.getQuantity()) {
 				throw new RuntimeException("재고 부족");
 			}
-			product.setStockQuantity(product.getStockQuantity() - dto.getPeopleCount());
+
+			product.setStockQuantity(product.getStockQuantity() - dto.getQuantity());
 
 			OrderItem item = OrderItem.builder()
-					.order(order)
-					.product(product)
-					.peopleCount(dto.getPeopleCount())
-					.startDate(dto.getStartDate())
-					.build();
+				.order(order)
+				.product(product)
+				.peopleCount(dto.getQuantity())
+				.startDate(dto.getStartDate())
+				.build();
+
 			order.getItems().add(item);
-			totalQty += dto.getPeopleCount();
+			totalQty += dto.getQuantity();
 		}
 		order.setTotalQuantity(totalQty);
 		return orderRepo.save(order);

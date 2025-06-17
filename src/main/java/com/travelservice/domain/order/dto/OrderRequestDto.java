@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderRequestDto {
 	private List<OrderItemDto> items;
+	private String paymentMethod;
 	private PaymentInfo payment;
 
 	@Getter

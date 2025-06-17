@@ -49,7 +49,7 @@ public class PaymentService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		Map<String, Object> body = new HashMap<>();
-		body.put("paymentKey", requestDto.getPaymentKey());
+		body.put("paymentKey", requestDto.getTransactionId());
 		body.put("orderId", requestDto.getOrderId());
 		body.put("amount", requestDto.getAmount());
 
@@ -103,5 +103,17 @@ public class PaymentService {
 				.method(saved.getMethod())
 				.paidAt(saved.getPaidAt().toString())
 				.build();
+	}
+
+	public PaymentResponseDto getPaymentStatusByOrderId(Long orderId) {
+		Payment payment = paymentRepository.findByOrder_OrderId(orderId)
+			.orElseThrow(() -> new RuntimeException("해당 주문에 대한 결제 정보가 없습니다."));
+
+		return PaymentResponseDto.builder()
+			.paymentId(payment.getPaymentId())
+			.status(payment.getStatus().name())
+			.method(payment.getMethod())
+			.paidAt(payment.getPaidAt().toString())
+			.build();
 	}
 }

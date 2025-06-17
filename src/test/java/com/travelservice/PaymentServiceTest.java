@@ -57,7 +57,7 @@ public class PaymentServiceTest {
 	void approve_success() {
 		try {
 			// given
-			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
+			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000, "toss", "tx123");
 
 			Order mockOrder = Order.builder()
 				.orderId(1L)
@@ -100,7 +100,7 @@ public class PaymentServiceTest {
 	@Test
 	void approve_fail_redis_missing() {
 		// given
-		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
+		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000, "toss", "tx123");
 		when(redisTemplate.hasKey("1")).thenReturn(false);
 
 		// when & then
@@ -111,7 +111,7 @@ public class PaymentServiceTest {
 	void approve_fail_toss_error() {
 		try {
 			// given
-			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000);
+			PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000, "toss", "tx123");
 			Order mockOrder = Order.builder()
 				.orderId(1L)
 				.status(OrderStatus.PENDING)
@@ -152,7 +152,7 @@ public class PaymentServiceTest {
 	@Test
 	void approve_fail_order_not_found() {
 		// given
-		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "999", 10000);
+		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "999", 10000, "toss", "tx123");
 		when(redisTemplate.hasKey("999")).thenReturn(true);
 		when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 

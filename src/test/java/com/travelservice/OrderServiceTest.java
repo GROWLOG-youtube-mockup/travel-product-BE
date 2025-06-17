@@ -1,6 +1,6 @@
 package com.travelservice;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,37 +30,33 @@ public class OrderServiceTest {
 	UserRepository userRepository;
 	@Autowired
 	CartItemRepository cartRepo;
-	@Autowired
-	ProductRepository productRepo;
-	@Autowired
-	UserRepository userRepo;
 
 	@Test
 	void order_success() {
 		// given
 		User user = userRepository.save(User.builder()
-				.name("Test User")
-				.email("test@example.com")
-				.password("test1234")
-				.phoneNumber("01012345678")
-				.roleCode(0)
-				.build());
+			.name("Test User")
+			.email("test@example.com")
+			.password("test1234")
+			.phoneNumber("01012345678")
+			.roleCode(0)
+			.build());
 
 		Product product = productRepository.save(Product.builder()
-				.name("테스트 상품")
-				.price(100000)
-				.stockQuantity(10)
-				.totalQuantity(10)
-				.description("설명")
-				.saleStatus(1)
-				.build());
+			.name("테스트 상품")
+			.price(100000)
+			.stockQuantity(10)
+			.totalQuantity(10)
+			.description("설명")
+			.saleStatus(1)
+			.build());
 
 		List<OrderItemDto> items = List.of(
-				new OrderItemDto(
-						new OrderItemDto.ProductInfo(product.getProductId()),
-						2,
-						LocalDate.now().plusDays(3)
-				)
+			new OrderItemDto(
+				product.getProductId(),
+				2,
+				LocalDate.now().plusDays(3)
+			)
 		);
 
 		// when
@@ -72,29 +68,29 @@ public class OrderServiceTest {
 
 	@Test
 	void cart_order_success() {
-		User user = userRepo.save(User.builder()
-				.name("카트유저")
-				.email("cart@test.com")
-				.password("pw")
-				.phoneNumber("01000000000")
-				.roleCode(0)
-				.build());
+		User user = userRepository.save(User.builder()
+			.name("카트유저")
+			.email("cart@test.com")
+			.password("pw")
+			.phoneNumber("01000000000")
+			.roleCode(0)
+			.build());
 
-		Product product = productRepo.save(Product.builder()
-				.name("카트상품")
-				.price(50000)
-				.stockQuantity(10)
-				.totalQuantity(10)
-				.description("설명")
-				.saleStatus(1)
-				.build());
+		Product product = productRepository.save(Product.builder()
+			.name("카트상품")
+			.price(50000)
+			.stockQuantity(10)
+			.totalQuantity(10)
+			.description("설명")
+			.saleStatus(1)
+			.build());
 
 		cartRepo.save(CartItem.builder()
-				.user(user)
-				.product(product)
-				.quantity(2)
-				.startDate(LocalDate.now().plusDays(3))
-				.build());
+			.user(user)
+			.product(product)
+			.quantity(2)
+			.startDate(LocalDate.now().plusDays(3))
+			.build());
 
 		Order order = orderService.createOrderFromCart(user.getEmail());
 
