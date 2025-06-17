@@ -2,6 +2,7 @@ package com.travelservice.domain.order.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.travelservice.domain.order.entity.Order;
 
 import lombok.AllArgsConstructor;
@@ -14,9 +15,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResponseDto {
+	@JsonProperty("order_id")
 	private Long orderId;
+	@JsonProperty("order_date")
 	private LocalDateTime orderDate;
+	@JsonProperty("total_quantity")
 	private int totalQuantity;
+	@JsonProperty("total_price")
 	private int totalPrice;
 
 	public OrderResponseDto(Order order) {

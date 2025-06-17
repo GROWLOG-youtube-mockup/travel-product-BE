@@ -1,5 +1,7 @@
 package com.travelservice.domain.payment.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentApproveRequestDto {
+	@JsonProperty("payment_key")
 	private String paymentKey;
+	@JsonProperty("order_id")
 	private String orderId;
 	private int amount;
+	@JsonProperty("payment_gateway")
 	private String paymentGateway;
+	@JsonProperty("transaction_id")
 	private String transactionId;
 }
