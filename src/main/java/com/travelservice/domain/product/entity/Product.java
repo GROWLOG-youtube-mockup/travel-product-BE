@@ -32,7 +32,7 @@ public class Product {
 	@Column(name = "total_quantity")
 	private int totalQuantity;
 
-	@Column(name = "stock_qantity")
+	@Column(name = "stock_quantity")
 	private int stockQuantity;
 
 	@Lob
