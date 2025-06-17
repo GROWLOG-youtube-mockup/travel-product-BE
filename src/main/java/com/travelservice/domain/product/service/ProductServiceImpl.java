@@ -1,12 +1,8 @@
 package com.travelservice.domain.product.service;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +17,9 @@ import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,21 +32,14 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public ProductDetailResponse createProduct(AddProductRequest request) throws IOException {
+	public ProductDetailResponse createProduct(AddProductRequest request) {
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new IllegalArgumentException("지역을 찾을 수 없습니다" + request.getRegionId()));
+			.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
 
-		try {
-			Product product = request.toEntity(region);
-			Product savedProduct = productRepository.save(product);
-			return ProductDetailResponse.from(savedProduct);
-		} catch (DataIntegrityViolationException e) {
-			throw new IllegalStateException("데이터 무결성 제약 조건 위반: " + e.getMessage(), e);
-		} catch (DataAccessException e) {
-			throw new RuntimeException("데이터베이스 접근 오류가 발생했습니다", e);
-		} catch (Exception e) {
-			throw new RuntimeException("상품 생성 중 예상치 못한 오류가 발생했습니다", e);
-		}
+		Product product = request.toEntity(region);
+		Product savedProduct = productRepository.save(product);
+
+		return ProductDetailResponse.from(savedProduct);
 	}
 
 	@Override
@@ -66,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public ProductDetailResponse getProductDetail(Long productId) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다: " + productId));
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
 		return ProductDetailResponse.from(product);
 	}
@@ -75,10 +65,10 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public Product updateProduct(Long productId, UpdateProductRequest request) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new RuntimeException("지역을 찾을 수 없습니다 " + request.getRegionId()));
+			.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
 
 		// 필드 업데이트
 		product.update(
@@ -104,13 +94,7 @@ public class ProductServiceImpl implements ProductService {
 		// 설명 그룹 갱신
 		product.clearDescriptionGroups();
 		if (request.getDescriptionGroups() != null) {
-			// for (ProductDescriptionGroupRequest groupReq : request.getDescriptionGroups()) {
-			// 	product.addDescriptionGroup(ProductDescriptionGroup.builder()
-			// 		.title(groupReq.getTitle())
-			// 		.type(groupReq.getType())
-			// 		.sortOrder(groupReq.getSortOrder())
-			// 		.build());
-			// }
+
 			request.getDescriptionGroups().forEach(groupReq -> {
 				ProductDescriptionGroup group = ProductDescriptionGroup.builder()
 					.title(groupReq.getTitle())
@@ -137,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public void deleteProduct(Long productId) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
 		productRepository.delete(product);
 	}

@@ -1,4 +1,4 @@
-package com.travelservice.global.common.Exception;
+package com.travelservice.global.common.exception;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ public class CustomException extends RuntimeException {
 
 	private final ErrorCode errorCode;
 
-	public CustomException(ErrorCode errorCode) {
+	public CustomException(com.travelservice.global.common.exception.ErrorCode errorCode) {
 		super(errorCode.getMessage());
 		this.errorCode = errorCode;
 	}

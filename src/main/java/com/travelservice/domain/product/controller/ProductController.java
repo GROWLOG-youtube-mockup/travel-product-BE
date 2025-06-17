@@ -1,6 +1,5 @@
 package com.travelservice.domain.product.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.dto.UpdateProductRequest;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.service.ProductServiceImpl;
+import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,40 +35,40 @@ public class ProductController {
 
 	@Operation(summary = "상품 추가")
 	@PostMapping
-	public ResponseEntity<ProductDetailResponse> createProduct(@RequestBody AddProductRequest request) throws
-		IOException {
+	public ResponseEntity<ApiResponse<ProductDetailResponse>> createProduct(
+		@RequestBody AddProductRequest request) {
 
 		ProductDetailResponse response = productServiceImpl.createProduct(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
 	}
 
 	@Operation(summary = "상품 목록 조회", description = "전체 상품을 조회합니다")
 	@GetMapping
-	public ResponseEntity<List<ProductListResponse>> getAllProducts() {
+	public ResponseEntity<ApiResponse<List<ProductListResponse>>> getAllProducts() {
 		List<ProductListResponse> products = productServiceImpl.getAllProducts();
-		return ResponseEntity.ok(products);
+		return ResponseEntity.ok(ApiResponse.ok(products));
 	}
 
 	@Operation(summary = "상품 상세 조회")
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductDetailResponse> getProductById(@PathVariable Long productId) {
+	public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductById(@PathVariable Long productId) {
 		ProductDetailResponse response = productServiceImpl.getProductDetail(productId);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
 	@Operation(summary = "상품 정보 수정")
 	@PutMapping("/{productId}")
-	public ResponseEntity<ProductDetailResponse> updateProduct(@PathVariable Long productId,
+	public ResponseEntity<ApiResponse<ProductDetailResponse>> updateProduct(@PathVariable Long productId,
 		@RequestBody UpdateProductRequest request) {
 		Product updatedProduct = productServiceImpl.updateProduct(productId, request);
 
-		return ResponseEntity.ok(ProductDetailResponse.from(updatedProduct));
+		return ResponseEntity.ok(ApiResponse.ok(ProductDetailResponse.from(updatedProduct)));
 	}
 
 	@Operation(summary = "상품 삭제")
 	@DeleteMapping("/{productId}")
-	public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
 		productServiceImpl.deleteProduct(productId);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 }
