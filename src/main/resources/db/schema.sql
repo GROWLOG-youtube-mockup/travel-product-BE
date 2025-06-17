@@ -82,3 +82,21 @@ CREATE TABLE product_description_item (
     REFERENCES product_description_group(group_id)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- 12. 장바구니 아이템Add commentMore actions
+CREATE TABLE cart_item (
+  cart_item_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  product_id BIGINT NOT NULL,
+  quantity INT NOT NULL,
+  start_date DATE NOT NULL COMMENT '선택한 여행 시작일',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE (user_id, product_id, start_date),
+  CONSTRAINT fk_cart_item_user FOREIGN KEY (user_id)
+    REFERENCES user(user_id)Add commentMore actions
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_cart_item_product FOREIGN KEY (product_id)
+    REFERENCES products(product_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
