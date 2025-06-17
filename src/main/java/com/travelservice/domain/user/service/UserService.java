@@ -3,6 +3,7 @@ package com.travelservice.domain.user.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -61,5 +62,45 @@ public class UserService {
 			.createdAt(LocalDateTime.now())
 			.build();
 		return userRepository.save(user);
+	}
+
+	public void updateName(String newName, Authentication auth) {
+		User user = getUserFromAuth(auth);
+		user.updateName(newName);
+		userRepository.save(user);
+	}
+
+	public void updatePhoneNumber(String phoneNumber, Authentication auth) {
+		User user = getUserFromAuth(auth);
+		user.updatePhoneNumber(phoneNumber);
+		userRepository.save(user);
+	}
+
+	public void updatePassword(String currentPassword, String newPassword, Authentication auth) {
+		User user = getUserFromAuth(auth);
+		if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+			throw new CustomException(ErrorCode.INVALID_PASSWORD);
+		}
+		user.updatePassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+	}
+
+	public boolean verifyPassword(String password, Authentication auth) {
+		User user = getUserFromAuth(auth);
+		return passwordEncoder.matches(password, user.getPassword());
+	}
+
+	public void deleteAccount(String password, Authentication auth) {
+		User user = getUserFromAuth(auth);
+		if (!passwordEncoder.matches(password, user.getPassword())) {
+			throw new CustomException(ErrorCode.INVALID_PASSWORD);
+		}
+	}
+
+	private User getUserFromAuth(Authentication auth) {
+		String email = auth.getName();
+		return userRepository.findByEmail(email)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
 	}
 }

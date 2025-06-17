@@ -32,7 +32,9 @@ public enum ErrorCode {
 	INVALID_AUTH_CODE("AUTH_401", "인증번호가 일치하지 않습니다."),
 
 	// User 관련
-	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다.");
+	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다."),
+	// 회원 탈퇴 관련
+	INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 일치하지 않습니다.");
 
 	private final String code;
 	private final String message;
