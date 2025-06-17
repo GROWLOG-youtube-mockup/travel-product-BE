@@ -1,27 +1,15 @@
 package com.travelservice.domain.user.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.travelservice.domain.user.dto.DeleteRequestDto;
-import com.travelservice.domain.user.dto.NameUpdateRequestDto;
-import com.travelservice.domain.user.dto.PasswordUpdateRequestDto;
-import com.travelservice.domain.user.dto.PasswordVerifyRequestDto;
-import com.travelservice.domain.user.dto.PhoneUpdateRequestDto;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.service.UserService;
-import com.travelservice.global.common.ApiResponse;
 
 @RestController
 @RequestMapping("/users")
@@ -34,38 +22,6 @@ public class UserController {
 	public ResponseEntity<User> registerMember(@RequestBody UserRegistrationRequestDto requestDto) {
 		User user = userService.registerMember(requestDto);
 		return ResponseEntity.ok(user);
-	}
-
-	@PatchMapping("/me/name")
-	public ApiResponse<String> updateName(@RequestBody NameUpdateRequestDto requestDto, Authentication authentication) {
-		userService.updateName(requestDto.getName(), authentication);
-		return ApiResponse.ok("이름이 변경되었습니다.");
-	}
-
-	@PatchMapping("/me/phone")
-	public ApiResponse<String> updatePhoneNumber(@RequestBody PhoneUpdateRequestDto requestDto,
-		Authentication authentication) {
-		userService.updatePhoneNumber(requestDto.getPhoneNumber(), authentication);
-		return ApiResponse.ok("전화번호가 변경되었습니다.");
-	}
-
-	@PutMapping("/me/password")
-	public ApiResponse<String> updatePassword(@RequestBody PasswordUpdateRequestDto dto, Authentication auth) {
-		userService.updatePassword(dto.getCurrentPassword(), dto.getNewPassword(), auth);
-		return ApiResponse.ok("비밀번호가 변경되었습니다.");
-	}
-
-	@PostMapping("/verify-password")
-	public ApiResponse<Map<String, Boolean>> verifyPassword(@RequestBody PasswordVerifyRequestDto requestDto,
-		Authentication authentication) {
-		boolean verified = userService.verifyPassword(requestDto.getPassword(), authentication);
-		return ApiResponse.ok(Map.of("verified", verified));
-	}
-
-	@DeleteMapping("/me")
-	public ApiResponse<String> deleteAccount(@RequestBody DeleteRequestDto requestDto, Authentication auth) {
-		userService.deleteAccount(requestDto.getPassword(), auth);
-		return ApiResponse.ok("회원 탈퇴가 완료되었습니다.");
 	}
 
 }
