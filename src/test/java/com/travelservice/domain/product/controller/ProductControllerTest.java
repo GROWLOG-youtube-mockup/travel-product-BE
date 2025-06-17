@@ -19,24 +19,28 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelservice.domain.product.dto.AddProductRequest;
 import com.travelservice.domain.product.dto.ProductDescriptionGroupRequest;
-import com.travelservice.domain.product.dto.ProductDetailResponse;
+import com.travelservice.domain.product.dto.ProductDescriptionItemRequest;
 import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.dto.UpdateProductRequest;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
+import com.travelservice.domain.product.entity.ProductDescriptionItem;
 import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
+import com.travelservice.global.common.ApiResponse;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -103,14 +107,18 @@ class ProductControllerTest {
 			.type(0)
 			.sortOrder(1)
 			.build();
+		group1.addItem(ProductDescriptionItem.builder().content("대한항공 직항").sortOrder(1).build());
+		group1.addItem(ProductDescriptionItem.builder().content("시그니엘 숙박").sortOrder(2).build());
 		ProductDescriptionGroup group2 = ProductDescriptionGroup.builder()
 			.title("미포함 사항")
 			.type(1)
 			.sortOrder(2)
 			.build();
+		group2.addItem(ProductDescriptionItem.builder().content("식비").sortOrder(1).build());
 
 		savedProduct.addDescriptionGroup(group1);
 		savedProduct.addDescriptionGroup(group2);
+
 		productRepository.save(savedProduct);
 
 		return savedProduct;
@@ -137,8 +145,13 @@ class ProductControllerTest {
 				"https://s3.amazonaws.com/.../img2.jpg"
 			))
 			.descriptionGroups(List.of(
-				new ProductDescriptionGroupRequest("포함 사항", 0, 1),
-				new ProductDescriptionGroupRequest("미포함 사항", 1, 2)
+				new ProductDescriptionGroupRequest("포함 사항", 0, 1, List.of(
+					ProductDescriptionItemRequest.builder().content("대한항공 직항").sortOrder(1).build(),
+					ProductDescriptionItemRequest.builder().content("호텔 숙박").sortOrder(2).build()
+				)),
+				new ProductDescriptionGroupRequest("미포함 사항", 1, 2, List.of(
+					ProductDescriptionItemRequest.builder().content("식비").sortOrder(1).build()
+				))
 			))
 			.build();
 
@@ -148,10 +161,21 @@ class ProductControllerTest {
 
 		// when
 
-		mockMvc.perform(post(url)
+		MvcResult result = mockMvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isCreated());
+				.content(requestBody))
+			.andExpect(status().isCreated())
+			.andReturn();
+
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		JsonNode root = objectMapper.readTree(response);
+
+		// 공통 응답 검증
+		assertThat(root.get("success").asBoolean()).isTrue();
+		JsonNode data = root.get("data");
+		assertThat(data.get("name").asText()).isEqualTo(request.getName());
+		assertThat(data.get("descriptionGroups").size()).isEqualTo(2);
+		assertThat(data.get("descriptionGroups").get(0).get("title").asText()).isEqualTo("포함 사항");
 	}
 
 	@DisplayName("getAllProducts: 상품 목록 조회에 성공한다")
@@ -174,14 +198,18 @@ class ProductControllerTest {
 		System.out.println("Response JSON:\n" + responseBody);
 
 		// JSON 배열 → DTO
-		List<ProductListResponse> products = objectMapper.readValue(
+		ApiResponse<List<ProductListResponse>> response = objectMapper.readValue(
 			responseBody,
-			new TypeReference<List<ProductListResponse>>() {
+			new TypeReference<ApiResponse<List<ProductListResponse>>>() {
 			}
 		);
 
+		// then: 성공 여부 확인
+		assertThat(response.isSuccess()).isTrue();
+
 		// then: 개수 일치
-		assertThat(products.size()).isEqualTo(expectedSize);
+		List<ProductListResponse> products = response.getData();
+		assertThat(products).hasSize(expectedSize);
 
 		// then: 저장한 상품이 포함되어 있는지 확인
 		boolean found = products.stream().anyMatch(p ->
@@ -196,19 +224,33 @@ class ProductControllerTest {
 	@Test
 	public void getProductById() throws Exception {
 		// given
-		final String url = "/products/{productId}";
 		Product savedProduct = productSetUp();
+		Long productId = savedProduct.getProductId();
 
 		// when
-		final ResultActions resultActions = mockMvc.perform(get(url, savedProduct.getProductId()));
+		MvcResult result = mockMvc.perform(get("/products/{productId}", productId)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
 
 		// then
-		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.name").value(savedProduct.getName()))
-			.andExpect(jsonPath("$.price").value(savedProduct.getPrice()))
-			.andExpect(jsonPath("$.region.regionId").value(savedProduct.getRegion().getRegionId()))
-			.andExpect(jsonPath("$.region.name").value(savedProduct.getRegion().getName()));
+		String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		JsonNode root = objectMapper.readTree(json);
+
+		assertThat(root.get("success").asBoolean()).isTrue();
+
+		JsonNode dataNode = root.get("data");
+		assertThat(dataNode.get("productId").asLong()).isEqualTo(productId);
+		assertThat(dataNode.get("name").asText()).isEqualTo(savedProduct.getName());
+
+		JsonNode descriptionGroups = dataNode.get("descriptionGroups");
+		assertThat(descriptionGroups).isNotNull();
+		assertThat(descriptionGroups.size()).isGreaterThan(0);
+
+		JsonNode firstGroup = descriptionGroups.get(0);
+		assertThat(firstGroup.get("title").asText()).isEqualTo("포함 사항");
+		JsonNode items = firstGroup.get("items");
+		assertThat(items.get(0).get("content").asText()).isEqualTo("대한항공 직항");
 	}
 
 	@DisplayName("deleteProduct: 상품 삭제에 성공한다")
@@ -224,7 +266,10 @@ class ProductControllerTest {
 		ResultActions resultActions = mockMvc.perform(delete(url, productId));
 
 		// then
-		resultActions.andExpect(status().isNoContent());
+		resultActions
+			.andExpect(status().isOk()) // ✅ 204 → 200 OK
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data").doesNotExist()); // 또는 isEmpty(true)
 
 		// DB에 존재하지 않는지 확인
 		Optional<Product> deleted = productRepository.findById(productId);
@@ -245,8 +290,13 @@ class ProductControllerTest {
 			"https://s3.amazonaws.com/.../newImg2.jpg"
 		);
 		List<ProductDescriptionGroupRequest> newDescriptionGroups = List.of(
-			new ProductDescriptionGroupRequest("포함 사항", 0, 1),
-			new ProductDescriptionGroupRequest("미포함 사항", 1, 2)
+			new ProductDescriptionGroupRequest("포함 사항", 0, 1, List.of(
+				ProductDescriptionItemRequest.builder().content("대한항공 직항").sortOrder(1).build(),
+				ProductDescriptionItemRequest.builder().content("호텔 숙박").sortOrder(2).build()
+			)),
+			new ProductDescriptionGroupRequest("미포함 사항", 1, 2, List.of(
+				ProductDescriptionItemRequest.builder().content("식비").sortOrder(1).build()
+			))
 		);
 
 		UpdateProductRequest request = UpdateProductRequest.builder()
@@ -264,15 +314,21 @@ class ProductControllerTest {
 			.build();
 
 		// when
-		ResultActions result = mockMvc.perform(put(url, savedProduct.getProductId())
-			.contentType(APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(request)));
+		MvcResult result = mockMvc.perform(put(url, savedProduct.getProductId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andReturn();
 
 		// then
-		result.andExpect(status().isOk());
-		String response = result.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-		ProductDetailResponse responseDto = objectMapper.readValue(response, ProductDetailResponse.class);
-		assertThat(responseDto.getName()).isEqualTo(newName);
-		assertThat(responseDto.getDescriptionGroups().getFirst().getTitle()).isEqualTo("포함 사항");
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		JsonNode root = objectMapper.readTree(response);
+		JsonNode data = root.get("data");
+
+		assertThat(root.get("success").asBoolean()).isTrue();
+		assertThat(data.get("name").asText()).isEqualTo(newName);
+		assertThat(data.get("descriptionGroups").get(0).get("title").asText()).isEqualTo("포함 사항");
+		assertThat(data.get("descriptionGroups").get(0).get("items").get(0).get("content").asText()).isEqualTo(
+			"대한항공 직항");
 	}
 }

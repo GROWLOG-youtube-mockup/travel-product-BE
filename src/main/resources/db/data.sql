@@ -1,4 +1,3 @@
-
 ---- region
 ---- 국가
 INSERT INTO region (name, level, parent_id) VALUES ('대한민국', 0, NULL);
@@ -31,3 +30,16 @@ INSERT INTO product_images (product_id, image_url, created_at) VALUES
 (2, 'https://example-bucket.s3.amazonaws.com/product-images/2_main.jpg', CURRENT_TIMESTAMP),
 (3, 'https://example-bucket.s3.amazonaws.com/product-images/3_main.jpg', CURRENT_TIMESTAMP),
 (3, 'https://example-bucket.s3.amazonaws.com/product-images/3_sub.jpg', CURRENT_TIMESTAMP);
+
+INSERT INTO product_description_group (title, type, sort_order, product_id) VALUES
+('포함 사항', 0, 1, 1),
+('불포함 사항', 1, 2, 1),
+('코스 안내', 2, 1, 2),
+('준비물 안내', 2, 1, 3);
+
+INSERT INTO product_description_item (group_id, content, sort_order) VALUES
+(1, '서울 시내 호텔 2박 숙박', 1),
+(1, '1일차 관광지 입장권', 2),
+(2, '개별 식사 및 교통비', 1),
+(3, '광안리 해변 → 자갈치 시장 → 해운대 야경', 1),
+(4, '등산화, 바람막이, 개인 간식', 1);
