@@ -1,4 +1,4 @@
-package com.travelservice.domain.user.dto;
+package com.travelservice.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
