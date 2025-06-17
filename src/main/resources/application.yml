@@ -1,6 +1,8 @@
 spring:
   profiles:
-    active: test  # ??? ??: local ?? prod
+    active: local  # ??? ??: local ?? prod
+    include:
+      - s3
 
 
 springdoc:
