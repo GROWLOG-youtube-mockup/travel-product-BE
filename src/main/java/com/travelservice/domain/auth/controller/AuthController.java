@@ -12,6 +12,7 @@ import com.travelservice.domain.auth.dto.LoginResponseDto;
 import com.travelservice.domain.auth.service.AuthService;
 import com.travelservice.global.common.ApiResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,8 +26,8 @@ public class AuthController {
 
 	//로그인
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
-		LoginResponseDto response = authService.login(requestDto);
+	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletRequest request) {
+		LoginResponseDto response = authService.login(requestDto, request);
 		return ResponseEntity.ok(response);
 	}
 
