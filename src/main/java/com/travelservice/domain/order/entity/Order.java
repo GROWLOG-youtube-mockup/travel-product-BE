@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,6 +50,7 @@ public class Order {
 	private List<OrderItem> items = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
+	@Setter(AccessLevel.NONE)
 	private OrderStatus status;
 
 	public void setStatus(OrderStatus status) {
