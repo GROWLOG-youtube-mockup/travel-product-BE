@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.service.UserService;
+import com.travelservice.global.common.ApiResponse;
 
 @RestController
 @RequestMapping("/users")
@@ -19,8 +20,8 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<User> registerMember(@RequestBody UserRegistrationRequestDto requestDto) {
+	public ResponseEntity<ApiResponse<User>> registerMember(@RequestBody UserRegistrationRequestDto requestDto) {
 		User user = userService.registerMember(requestDto);
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok(ApiResponse.ok(user));
 	}
 }
