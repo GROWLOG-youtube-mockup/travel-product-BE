@@ -125,20 +125,6 @@ class AdminUserServiceTest {
 		assertThat(updatedUser.getRoleCode()).isEqualTo(newRoleCode);
 	}
 
-	// @Test
-	// void 유저_삭제_성공_테스트() {
-	// 	//given
-	// 	boolean deleted = userService.deleteUser(userId2);
-	//
-	// 	//when
-	// 	assertThat(deleted).isTrue();
-	//
-	// 	//then
-	// 	User deletedUser = userRepository.findById(userId2).orElse(null);
-	// 	assertThat(deletedUser).isNotNull();
-	// 	assertThat(deletedUser.getDeletedAt()).isNotNull();
-	// }
-
 	@Test
 	void shouldRetrieveAdminUsersSuccessfully() {
 		// given
