@@ -39,7 +39,7 @@ class CartServiceTest {
 	private CartService cartService;
 
 	@Test
-	public void addToCart_성공() {
+	public void addToCart_success() {
 		// given
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
@@ -62,7 +62,7 @@ class CartServiceTest {
 	}
 
 	@Test
-	public void addToCart_실패() {
+	public void addToCart_fail() {
 		//gien
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
@@ -82,39 +82,7 @@ class CartServiceTest {
 	}
 
 	@Test
-	public void getCartItems_성공() {
-		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
-			.password("123").phoneNumber("000").roleCode(0).build();
-		Product product = Product.builder().name("테스트 상품").price(1000)
-			.totalQuantity(100).stockQuantity(90).description(" ").type(1)
-			.saleStatus(1).duration(3).region(new Region("광주", 1, null)).build();
-		product.setProductId(99L);
-
-		Cart cart = Cart.builder()
-			.user(user)
-			.product(product)
-			.quantity(2)
-			.startDate(LocalDate.of(2025, 01, 01)).build();
-
-		given(cartRepository.findByUser_UserId(user.getUserId())).willReturn(List.of(cart));
-
-		// when
-		List<GetCartItemResponse> result = cartService.getCartItems(user.getUserId());
-
-		// then
-		assertThat(result).hasSize(1);
-		GetCartItemResponse response = result.get(0);
-		assertThat(response.getCartItemId()).isEqualTo(cart.getId());
-		assertThat(response.getProductId()).isEqualTo(product.getProductId());
-		assertThat(response.getProductName()).isEqualTo(product.getName());
-		assertThat(response.getQuantity()).isEqualTo(cart.getQuantity());
-		assertThat(response.getStartDate()).isEqualTo(cart.getStartDate());
-		assertThat(response.getPrice()).isEqualTo(product.getPrice());
-		assertThat(response.getTotalPrice()).isEqualTo(product.getPrice() * cart.getQuantity());
-	}
-
-	@Test
-	void getCartItems_여러개아이템_성공() {
+	void getCartItems_success() {
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
 		Product product1 = Product.builder().name("테스트 상품1").price(1000)
@@ -155,17 +123,17 @@ class CartServiceTest {
 	}
 
 	@Test
-	void getCartItems_장바구니없음() {
+	void getCartItems_empty() {
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
 		given(cartRepository.findByUser_UserId(user.getUserId())).willReturn(Collections.emptyList());
 
-		List<GetCartItemResponse> result = cartService.getCartItems(user.getUserId());
-		assertThat(result).isEmpty();
+		assertThatThrownBy(() -> cartService.getCartItems(user.getUserId()))
+			.isInstanceOf(CustomException.class).hasMessage("장바구니에 상품이 없습니다.");
 	}
 
 	@Test
-	void deleteCartItem_성공() {
+	void deleteCartItem_success() {
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
 		Product product = Product.builder().name("테스트 상품").price(1000)
