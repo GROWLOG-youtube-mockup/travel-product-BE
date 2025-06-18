@@ -22,4 +22,4 @@ server:
   port: 8080
 
 toss:
-  secret-key: test_sk_ORzdMaqN3wOQmkYdQllm35AkYXQG
+  secret-key: dummy
