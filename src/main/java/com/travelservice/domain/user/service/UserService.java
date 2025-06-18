@@ -72,6 +72,13 @@ public class UserService {
 
 	public void updatePhoneNumber(String phoneNumber, Authentication auth) {
 		User user = getUserFromAuth(auth);
+
+		// 전화번호 중복 체크(단순히 전화번호가 DB에 존재하는지 확인)
+		if (!user.getPhoneNumber().equals(phoneNumber) &&
+			userRepository.existsByPhoneNumber(phoneNumber)) {
+			throw new CustomException(ErrorCode.PHONE_NUMBER_CONFLICT);
+		}
+
 		user.updatePhoneNumber(phoneNumber);
 		userRepository.save(user);
 	}
@@ -95,6 +102,10 @@ public class UserService {
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new CustomException(ErrorCode.INVALID_PASSWORD);
 		}
+
+		// 사용자 삭제 처리
+		user.updateDeletedAt(LocalDateTime.now());
+		userRepository.save(user);
 	}
 
 	private User getUserFromAuth(Authentication auth) {

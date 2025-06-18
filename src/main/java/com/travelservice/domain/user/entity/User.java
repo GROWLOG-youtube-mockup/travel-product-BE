@@ -69,4 +69,8 @@ public class User {
 	public void updatePhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+	public void updateDeletedAt(LocalDateTime deletedAt) {
+		this.deletedAt = deletedAt;
+	}
 }

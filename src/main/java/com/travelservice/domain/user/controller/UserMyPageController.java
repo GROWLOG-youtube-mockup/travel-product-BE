@@ -59,6 +59,7 @@ public class UserMyPageController {
 	@DeleteMapping("/me")
 	public ApiResponse<String> deleteAccount(@RequestBody DeleteRequestDto requestDto, Authentication auth) {
 		userService.deleteAccount(requestDto.getPassword(), auth);
+		
 		return ApiResponse.ok("회원 탈퇴가 완료되었습니다.");
 	}
 }
