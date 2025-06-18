@@ -17,6 +17,8 @@ import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 @SpringBootTest
 @Transactional
@@ -54,11 +56,13 @@ class ProductServiceImplTest {
 
 	@Test
 	void getAllProducts_성공() {
-		List<ProductListResponse> products = productService.getAllProducts();
+		Region region = regionRepository.findByName("광주")
+			.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
+		List<ProductListResponse> products = productService.getAllProducts(region.getRegionId());
 
 		assertThat(products).isNotEmpty();
 		assertThat(products.get(0).getName()).isEqualTo("테스트 상품");
-		assertThat(products.get(0).getThumbnailImage()).isEqualTo("https://image.com/test.jpg");
+		assertThat(products.get(0).getImageUrls().getFirst()).isEqualTo("https://image.com/test.jpg");
 	}
 
 }

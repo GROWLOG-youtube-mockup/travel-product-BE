@@ -13,7 +13,7 @@ public interface ProductService {
 
 	ProductDetailResponse createProduct(AddProductRequest request) throws IOException;
 
-	List<ProductListResponse> getAllProducts();
+	List<ProductListResponse> getAllProducts(Long regionId);
 
 	ProductDetailResponse getProductDetail(Long productId);
 

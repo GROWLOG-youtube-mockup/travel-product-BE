@@ -44,11 +44,17 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public List<ProductListResponse> getAllProducts() {
-		List<Product> products = productRepository.findAll();
+	public List<ProductListResponse> getAllProducts(Long regionId) {
+		List<Product> products;
+
+		if (regionId != null) {
+			products = productRepository.findByRegion_RegionId(regionId);
+		} else {
+			products = productRepository.findAll();
+		}
 
 		return products.stream()
-			.map(ProductListResponse::new)
+			.map(ProductListResponse::from)
 			.collect(Collectors.toList());
 	}
 

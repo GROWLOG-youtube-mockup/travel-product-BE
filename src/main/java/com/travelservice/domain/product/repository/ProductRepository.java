@@ -11,4 +11,6 @@ import com.travelservice.domain.product.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findAll();
+
+	List<Product> findByRegion_RegionId(Long regionId);
 }
