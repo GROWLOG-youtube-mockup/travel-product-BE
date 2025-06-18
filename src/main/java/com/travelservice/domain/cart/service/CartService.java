@@ -41,6 +41,10 @@ public class CartService {
 	public List<GetCartItemResponse> getCartItems(Long userId) {
 		List<Cart> carts = cartRepository.findByUser_UserId(userId);
 
+		if (carts.isEmpty()) {
+			throw new CustomException(ErrorCode.CART_EMPTY);
+		}
+
 		return carts.stream()
 			.map(cart -> GetCartItemResponse.builder()
 				.cartItemId(cart.getId())
