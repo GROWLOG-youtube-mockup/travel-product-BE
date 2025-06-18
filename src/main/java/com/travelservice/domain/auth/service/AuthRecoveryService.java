@@ -44,6 +44,8 @@ public class AuthRecoveryService {
 	public void resetPassword(ResetPasswordRequestDto requestDto) {
 		// 1. 사용자 조회
 		User user = userRepository.findByEmail(requestDto.getEmail())
+			.filter(
+				u -> u.getName().equals(requestDto.getName()) && u.getPhoneNumber().equals(requestDto.getPhoneNumber()))
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		// 2. 임시 비밀번호 생성
