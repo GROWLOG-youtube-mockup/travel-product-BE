@@ -40,7 +40,7 @@ public class ProductDetailResponse {
 			.saleStatus(product.getSaleStatus())
 			.type(product.getType())
 			.duration(product.getDuration())
-			.region(new RegionResponse(product.getRegion()))
+			.region(RegionResponse.from(product.getRegion()))
 			.imageUrls(product.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList()))
 			.descriptionGroups(product.getDescriptionGroups().stream().map(ProductDescriptionGroupResponse::from)
 				.collect(Collectors.toList()))

@@ -1,16 +1,24 @@
 package com.travelservice.domain.product.service;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
 import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 @SpringBootTest
 @Transactional
@@ -48,11 +56,12 @@ class ProductServiceImplTest {
 
 	// @Test
 	// void getAllProducts_성공() {
-	// 	List<ProductListResponse> products = productService.getAllProducts();
+	// 	Region region = regionRepository.findByName("광주")
+	// 		.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
+	// 	List<ProductListResponse> products = productService.getAllProducts(region.getRegionId());
 	//
 	// 	assertThat(products).isNotEmpty();
 	// 	assertThat(products.get(0).getName()).isEqualTo("테스트 상품");
-	// 	assertThat(products.get(0).getThumbnailImage()).isEqualTo("https://image.com/test.jpg");
+	// 	assertThat(products.get(0).getImageUrls().getFirst()).isEqualTo("https://image.com/test.jpg");
 	// }
-
 }

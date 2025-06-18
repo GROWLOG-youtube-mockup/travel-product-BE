@@ -35,13 +35,19 @@ INSERT INTO product_description_group (title, type, sort_order, product_id) VALU
 ('포함 사항', 0, 1, 1),
 ('불포함 사항', 1, 2, 1),
 ('코스 안내', 2, 1, 2),
-('준비물 안내', 2, 1, 3);
+('준비물 안내', 2, 1, 3),
+('tags', 2, 99, 1),
+('tags', 2, 99, 3);
 
 INSERT INTO product_description_item (group_id, content, sort_order) VALUES
 (1, '서울 시내 호텔 2박 숙박', 1),
 (1, '1일차 관광지 입장권', 2),
 (2, '개별 식사 및 교통비', 1),
 (3, '광안리 해변 → 자갈치 시장 → 해운대 야경', 1),
-(4, '등산화, 바람막이, 개인 간식', 1);
+(4, '등산화, 바람막이, 개인 간식', 1),
+(5, 'Best 추천 👍', 1),
+(5, '예약폭주 🎉', 1),
+(5, '좋아요 😘', 1),
+(6, 'Best 추천 👍', 1);
 
 --INSERT INTO user (name, email, password, phone_number, role_code, deleted_at, created_at, updated_at);

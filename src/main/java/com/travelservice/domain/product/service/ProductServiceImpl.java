@@ -1,5 +1,6 @@
 package com.travelservice.domain.product.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +45,41 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public List<ProductListResponse> getAllProducts() {
-		List<Product> products = productRepository.findAll();
+	public List<ProductListResponse> getAllProducts(Long regionId, Long parentRegionId, String tags) {
+		List<Product> products;
+
+		if (regionId != null) {
+			products = productRepository.findByRegion_RegionId(regionId);
+		} else if (parentRegionId != null) {
+			List<Region> childRegions = regionRepository.findByParent_RegionId(parentRegionId);
+			products = productRepository.findByRegionIn(childRegions);
+		} else {
+			products = productRepository.findAll();
+		}
+
+		// 태그로 필터링
+		if (tags != null && !tags.isBlank()) {
+			List<String> tagList = Arrays.stream(tags.split(","))
+				.map(String::trim).toList();
+
+			products = products.stream()
+				.filter(product -> product.getDescriptionGroups().stream()
+					.anyMatch(group -> group.getTitle().equalsIgnoreCase("tags") &&
+						group.getDescriptionItems().stream()
+							.anyMatch(item -> tagList.contains(item.getContent()))))
+				.collect(Collectors.toList());
+		}
 
 		return products.stream()
-			.map(ProductListResponse::new)
+			.map(ProductListResponse::from)
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional
+	public List<ProductListResponse> getProductsByParentRegion(Long parentRegionId) {
+		List<Product> products = productRepository.findByRegion_Parent_RegionId(parentRegionId);
+		return products.stream().map(ProductListResponse::from).collect(Collectors.toList());
 	}
 
 	@Override
