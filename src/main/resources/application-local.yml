@@ -20,3 +20,6 @@ spring:
 
 server:
   port: 8080
+
+toss:
+  secret-key: test_sk_actual_key

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,7 @@ import com.travelservice.domain.payment.respository.PaymentRepository;
 import com.travelservice.enums.OrderStatus;
 import com.travelservice.enums.PaymentStatus;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,9 @@ public class PaymentService {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final RestTemplate restTemplate;
 
+	@Value("${toss.secret-key}")
+	private String tossSecretKey;
+
 	@Transactional
 	public PaymentResponseDto approve(PaymentApproveRequestDto requestDto) throws IOException {
 		// Redis에 저장된 결제 요청 정보 확인
@@ -45,11 +50,11 @@ public class PaymentService {
 
 		// Toss API 호출
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBasicAuth("test_sk_xxx", ""); // Base64 인코딩 자동 처리
+		headers.setBasicAuth(tossSecretKey, ""); // Base64 인코딩 자동 처리
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		Map<String, Object> body = new HashMap<>();
-		body.put("paymentKey", requestDto.getTransactionId());
+		body.put("paymentKey", requestDto.getPaymentKey()); //Toss에서 받은 값을 넣어야함
 		body.put("orderId", requestDto.getOrderId());
 		body.put("amount", requestDto.getAmount());
 
@@ -65,17 +70,45 @@ public class PaymentService {
 
 		JsonNode data = response.getBody();
 
-		String method = data.get("method").asText();
+		System.out.println("🧾 Toss 응답 전체: " + data.toPrettyString());
+
+		if (data == null || !data.has("method")) {
+			System.out.println("❗ 결제 응답에 'method'가 없습니다. data = " + data);
+			throw new IllegalStateException("결제 승인 응답에 필수 필드 누락");
+		}
+
+		String method = data.has("method") ? data.get("method").asText() : "";
 		String cardNumber = "";
 		String accountNumber = "";
 		String bank = "";
 		String mobilePhone = "";
 
 		switch (method) {
-			case "카드" -> cardNumber = data.get("card").get("number").asText();
-			case "가상계좌" -> accountNumber = data.get("virtualAccount").get("accountNumber").asText();
-			case "계좌이체" -> bank = data.get("transfer").get("bank").asText();
-			case "휴대폰" -> mobilePhone = data.get("mobilePhone").get("customerMobilePhone").asText();
+			case "카드" -> {
+				JsonNode card = data.get("card");
+				if (card != null && card.has("number")) {
+					cardNumber = card.get("number").asText();
+				}
+			}
+			case "가상계좌" -> {
+				JsonNode virtual = data.get("virtualAccount");
+				if (virtual != null && virtual.has("accountNumber")) {
+					accountNumber = virtual.get("accountNumber").asText();
+				}
+			}
+			case "계좌이체" -> {
+				JsonNode transfer = data.get("transfer");
+				if (transfer != null && transfer.has("bank")) {
+					bank = transfer.get("bank").asText();
+				}
+			}
+			case "휴대폰" -> {
+				JsonNode phone = data.get("mobilePhone");
+				if (phone != null && phone.has("customerMobilePhone")) {
+					mobilePhone = phone.get("customerMobilePhone").asText();
+				}
+			}
+			default -> System.out.println("⚠️ 예상치 못한 결제수단: " + method);
 		}
 
 		Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
@@ -115,5 +148,14 @@ public class PaymentService {
 			.method(payment.getMethod())
 			.paidAt(payment.getPaidAt().toString())
 			.build();
+	}
+
+	@PostConstruct
+	public void init() {
+		try {
+			redisTemplate.opsForValue().set("order_20240618_0001", "dummy");
+		} catch (Exception e) {
+			System.out.println("⚠️ Redis 연결 실패: " + e.getMessage());
+		}
 	}
 }
