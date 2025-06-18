@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.admin.dto.AdminUserResponseDto;
+import com.travelservice.domain.admin.dto.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.UserResponseDto;
 import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
@@ -23,25 +25,20 @@ import lombok.RequiredArgsConstructor;
 public class AdminUserService {
 
 	private final AdminUserRepository userRepository;
+	private static final List<Integer> ADMIN_ROLES = List.of(1, 2);
 
 	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
-
 		Page<User> userPage;
 
-		// roleCode가 null이면 전체 조회, 있으면 해당 role만 조회
-		if (roleCode == null) {
-			userPage = userRepository.findActiveUsers(pageable);
-		} else {
-			userPage = userRepository.findActiveUsersByRoleCode(roleCode, pageable);
-		}
+		userPage = userRepository.findActiveUsers(pageable);
 
-		List<UserResponseDto> content = userPage.getContent().stream()
+		List<UserResponseDto> users = userPage.getContent().stream()
 			.map(this::convertToDto)
 			.toList();
 
 		return PagedUserResponseDto.builder()
-			.content(content)
+			.content(users)
 			.totalElements(userPage.getTotalElements())
 			.totalPages(userPage.getTotalPages())
 			.currentPage(page)
@@ -75,6 +72,23 @@ public class AdminUserService {
 		return updated > 0;
 	}
 
+	public PagedAdminUserResponseDto getAdminUsers(int page, int size) {
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+		List<Integer> adminRoles = List.of(1, 2);
+		Page<User> adminUserPage = userRepository.findActiveUsersByRoleCodes(adminRoles, pageable);
+
+		List<AdminUserResponseDto> adminUsers = adminUserPage.getContent().stream()
+			.map(this::convertToAdminUserDto)
+			.toList();
+
+		return PagedAdminUserResponseDto.builder()
+			.content(adminUsers)
+			.totalElements(adminUserPage.getTotalElements())
+			.totalPages(adminUserPage.getTotalPages())
+			.currentPage(page)
+			.build();
+	}
+
 	private UserResponseDto convertToDto(User user) {
 		return UserResponseDto.builder()
 			.userId(user.getUserId())
@@ -84,6 +98,15 @@ public class AdminUserService {
 			.roleCode(user.getRoleCode())
 			.createAt(user.getCreatedAt())
 			.deleteAt(user.getDeletedAt())
+			.build();
+	}
+
+	private AdminUserResponseDto convertToAdminUserDto(User user) {
+		return AdminUserResponseDto.builder()
+			.userId(user.getUserId())
+			.name(user.getName())
+			.email(user.getEmail())
+			.roleCode(user.getRoleCode())
 			.build();
 	}
 }

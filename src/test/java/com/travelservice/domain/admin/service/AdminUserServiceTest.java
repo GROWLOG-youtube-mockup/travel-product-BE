@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.admin.dto.AdminUserResponseDto;
+import com.travelservice.domain.admin.dto.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
@@ -32,6 +35,7 @@ class AdminUserServiceTest {
 
 	private Long userId1;
 	private Long userId2;
+	private Long userId3;
 
 	@BeforeEach
 	void setUp() {
@@ -41,7 +45,7 @@ class AdminUserServiceTest {
 			.password("pw1")
 			.phoneNumber("010-1111-1111")
 			.roleCode(0)
-			.createdAt(LocalDateTime.now().minusMinutes(1))
+			.createdAt(LocalDateTime.now().minusMinutes(2))
 			.build());
 
 		User user2 = userRepository.save(User.builder()
@@ -50,11 +54,21 @@ class AdminUserServiceTest {
 			.password("pw2")
 			.phoneNumber("010-2222-2222")
 			.roleCode(1)
+			.createdAt(LocalDateTime.now().minusMinutes(1))
+			.build());
+
+		User user3 = userRepository.save(User.builder()
+			.name("superadmin")
+			.email("suadmin@test.com")
+			.password("pw3")
+			.phoneNumber("010-3333-3333")
+			.roleCode(2)
 			.createdAt(LocalDateTime.now())
 			.build());
 
 		userId1 = user1.getUserId();
 		userId2 = user2.getUserId();
+		userId3 = user3.getUserId();
 	}
 
 	@Test
@@ -65,24 +79,11 @@ class AdminUserServiceTest {
 		PagedUserResponseDto result = userService.getUsers(1, 10, null);
 
 		//then
-		assertEquals(2, result.getTotalElements());
+		assertEquals(3, result.getTotalElements());
 		assertEquals(1, result.getTotalPages());
 		assertEquals(1, result.getCurrentPage());
-		assertEquals("김철수", result.getContent().get(0).getName()); // 최신순 정렬이므로 나중에 저장한 게 첫번재
-		assertEquals("kim", result.getContent().get(1).getName());
-	}
-
-	@Test
-	void 역할코드로_사용자_조회_테스트() {
-		//given
-
-		//when
-		PagedUserResponseDto result = userService.getUsers(1, 10, 0);
-
-		//then
-		assertEquals(1, result.getTotalElements());
-		assertEquals(0, result.getContent().get(0).getRoleCode());
-		assertEquals("kim", result.getContent().get(0).getName());
+		assertEquals("superadmin", result.getContent().get(0).getName()); // 최신순 정렬이므로 나중에 저장한 게 첫번재
+		assertEquals("김철수", result.getContent().get(1).getName());
 	}
 
 	@Test
@@ -94,7 +95,7 @@ class AdminUserServiceTest {
 
 		//then
 		assertEquals(0, result.getContent().size());
-		assertEquals(2, result.getTotalElements());
+		assertEquals(3, result.getTotalElements());
 		assertEquals(1, result.getTotalPages());
 	}
 
@@ -136,5 +137,26 @@ class AdminUserServiceTest {
 		User deletedUser = userRepository.findById(userId2).orElse(null);
 		assertThat(deletedUser).isNotNull();
 		assertThat(deletedUser.getDeletedAt()).isNotNull();
+	}
+
+	@Test
+	void 관리자_조회_성공_테스트() {
+		// given
+		int page = 1;
+		int size = 10;
+		List<Integer> roleCodes = List.of(1, 2);
+
+		// when
+		PagedAdminUserResponseDto result = userService.getAdminUsers(page, size);
+
+		// then
+		assertThat(result.getContent().size()).isEqualTo(2);
+		assertThat(result.getTotalElements()).isEqualTo(2);
+		assertThat(result.getTotalPages()).isEqualTo(1);
+		assertThat(result.getCurrentPage()).isEqualTo(1);
+
+		List<AdminUserResponseDto> adminUsers = result.getContent();
+		assertThat(adminUsers.get(0).getName()).isEqualTo("superadmin");
+		assertThat(adminUsers.get(1).getName()).isEqualTo("김철수");
 	}
 }

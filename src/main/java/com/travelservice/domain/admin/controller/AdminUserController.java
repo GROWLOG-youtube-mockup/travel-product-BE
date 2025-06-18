@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.travelservice.domain.admin.dto.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
 import com.travelservice.domain.admin.service.AdminUserService;
@@ -20,8 +21,6 @@ import com.travelservice.domain.admin.service.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,8 +41,8 @@ public class AdminUserController {
 	@GetMapping
 	@Operation(summary = "사용자 목록 조회")
 	public ResponseEntity<PagedUserResponseDto> getUsers(
-		@RequestParam(defaultValue = "1") @Min(1) Integer page,
-		@RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size,
+		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "10") Integer size,
 		@RequestParam(name = "role_code", required = false) Integer roleCode) {
 
 		// roleCode 유효성 검증 (0, 1, 2 중 하나여야 함)
@@ -79,5 +78,15 @@ public class AdminUserController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@GetMapping("/admins")
+	@Operation(summary = "관리자 목록 조회")
+	public ResponseEntity<PagedAdminUserResponseDto> getAdmins(
+		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "10") Integer size
+	) {
+		PagedAdminUserResponseDto adminUsers = userService.getAdminUsers(page, size);
+		return ResponseEntity.ok(adminUsers);
 	}
 }

@@ -1,5 +1,7 @@
 package com.travelservice.domain.admin.repository;
 
+import java.util.Collection;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,9 +19,9 @@ public interface AdminUserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL ORDER BY u.createdAt DESC")
 	Page<User> findActiveUsers(Pageable pageable);
 
-	// 역할 코드별 사용자 조회 (필요하지 않다면 빼도 됨)
-	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL AND u.roleCode = :roleCode ORDER BY u.createdAt DESC")
-	Page<User> findActiveUsersByRoleCode(@Param("roleCode") Integer roleCode, Pageable pageable);
+	// 역할 코드별 사용자 조회 (관리자 조회)
+	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL AND u.roleCode IN :roleCodes ORDER BY u.createdAt DESC")
+	Page<User> findActiveUsersByRoleCodes(@Param("roleCodes") Collection<Integer> roleCodes, Pageable pageable);
 
 	// 사용자 정보 수정
 	@Modifying
@@ -36,4 +38,5 @@ public interface AdminUserRepository extends JpaRepository<User, Long> {
 	@Modifying
 	@Query("UPDATE User u SET u.deletedAt = CURRENT_TIMESTAMP WHERE u.userId = :userId")
 	int softDeleteById(@Param("userId") Long userId);
+
 }
