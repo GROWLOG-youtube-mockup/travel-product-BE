@@ -44,11 +44,14 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public List<ProductListResponse> getAllProducts(Long regionId) {
+	public List<ProductListResponse> getAllProducts(Long regionId, Long parentRegionId) {
 		List<Product> products;
 
 		if (regionId != null) {
 			products = productRepository.findByRegion_RegionId(regionId);
+		} else if (parentRegionId != null) {
+			List<Region> childRegions = regionRepository.findByParent_RegionId(parentRegionId);
+			products = productRepository.findByRegionIn(childRegions);
 		} else {
 			products = productRepository.findAll();
 		}
@@ -56,6 +59,13 @@ public class ProductServiceImpl implements ProductService {
 		return products.stream()
 			.map(ProductListResponse::from)
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional
+	public List<ProductListResponse> getProductsByParentRegion(Long parentRegionId) {
+		List<Product> products = productRepository.findByRegion_Parent_RegionId(parentRegionId);
+		return products.stream().map(ProductListResponse::from).collect(Collectors.toList());
 	}
 
 	@Override

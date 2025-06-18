@@ -13,7 +13,9 @@ public interface ProductService {
 
 	ProductDetailResponse createProduct(AddProductRequest request) throws IOException;
 
-	List<ProductListResponse> getAllProducts(Long regionId);
+	List<ProductListResponse> getAllProducts(Long regionId, Long parentRegionId);
+
+	List<ProductListResponse> getProductsByParentRegion(Long parentRegionId);
 
 	ProductDetailResponse getProductDetail(Long productId);
 

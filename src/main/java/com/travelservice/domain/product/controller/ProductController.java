@@ -46,9 +46,10 @@ public class ProductController {
 	@Operation(summary = "상품 목록 조회", description = "전체 상품을 조회합니다")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ProductListResponse>>> getAllProducts(
-		@RequestParam(value = "regionId", required = false) Long regionId
+		@RequestParam(value = "regionId", required = false) Long regionId,
+		@RequestParam(value = "parentRegionId", required = false) Long parentRegionId
 	) {
-		List<ProductListResponse> products = productServiceImpl.getAllProducts(regionId);
+		List<ProductListResponse> products = productServiceImpl.getAllProducts(regionId, parentRegionId);
 		return ResponseEntity.ok(ApiResponse.ok(products));
 	}
 

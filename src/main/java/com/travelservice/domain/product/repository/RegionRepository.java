@@ -15,7 +15,7 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
 	Optional<Region> findByName(String name);
 
 	// 부모 Region 기준으로 자식 Region 리스트 조회
-	List<Region> findByParent(Region parent);
+	List<Region> findByParent_RegionId(Long parentRegionId);
 
 	// 특정 레벨의 지역만 조회 (예: level=1인 광역시/도만 조회)
 	List<Region> findByLevel(Integer level);

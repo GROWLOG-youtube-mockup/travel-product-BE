@@ -30,8 +30,7 @@ public class RegionService {
 
 	// 부모 지역(광역시/도) 기준으로 자식 지역 목록 조회
 	public List<Region> getChildrenByParentId(Long parentId) {
-		Region parent = getRegionById(parentId);
-		return regionRepository.findByParent(parent);
+		return regionRepository.findByParent_RegionId(parentId);
 	}
 
 	// 특정 레벨 지역만 조회
