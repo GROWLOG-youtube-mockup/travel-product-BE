@@ -35,22 +35,15 @@ public class AdminUserController {
 	 * 사용자 목록 조회
 	 * @param page 페이지 번호
 	 * @param size 페이지 크기
-	 * @param roleCode 역할 코드
 	 * @return 페이징된 사용자 목록
 	 */
 	@GetMapping("/users")
 	@Operation(summary = "사용자 목록 조회")
 	public ResponseEntity<PagedUserResponseDto> getUsers(
 		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(defaultValue = "10") Integer size,
-		@RequestParam(name = "role_code", required = false) Integer roleCode) {
+		@RequestParam(defaultValue = "10") Integer size) {
 
-		// roleCode 유효성 검증 (0, 1, 2 중 하나여야 함)
-		if (roleCode != null && (roleCode < 0 || roleCode > 2)) {
-			throw new IllegalArgumentException("유효하지 않은 role_code입니다. (0: USER, 1: ADMIN, 2: SUPER_ADMIN)");
-		}
-
-		PagedUserResponseDto response = userService.getUsers(page, size, roleCode);
+		PagedUserResponseDto response = userService.getUsers(page, size);
 		return ResponseEntity.ok(response);
 	}
 

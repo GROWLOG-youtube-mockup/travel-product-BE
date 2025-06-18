@@ -72,11 +72,11 @@ class AdminUserServiceTest {
 	}
 
 	@Test
-	void 전체_사용자_조회() {
+	void testGetAllUsers() {
 		//given
 
 		//when
-		PagedUserResponseDto result = userService.getUsers(1, 10, null);
+		PagedUserResponseDto result = userService.getUsers(1, 10);
 
 		//then
 		assertEquals(3, result.getTotalElements());
@@ -87,11 +87,11 @@ class AdminUserServiceTest {
 	}
 
 	@Test
-	void 빈_결과_조회_테스트() {
+	void shouldReturnEmptyResult_whenRequestingNonExistingPage() {
 		//given
 
 		//when
-		PagedUserResponseDto result = userService.getUsers(2, 10, null);
+		PagedUserResponseDto result = userService.getUsers(2, 10);
 
 		//then
 		assertEquals(0, result.getContent().size());
@@ -100,7 +100,7 @@ class AdminUserServiceTest {
 	}
 
 	@Test
-	void 유저_업데이트_성공_테스트() {
+	void shouldUpdateUserSuccessfully() {
 		// given
 		User original = userRepository.findById(userId1).get();
 
@@ -140,7 +140,7 @@ class AdminUserServiceTest {
 	// }
 
 	@Test
-	void 관리자_조회_성공_테스트() {
+	void shouldRetrieveAdminUsersSuccessfully() {
 		// given
 		int page = 1;
 		int size = 10;

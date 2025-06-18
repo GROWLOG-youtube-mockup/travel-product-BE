@@ -25,9 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminUserService {
 
 	private final AdminUserRepository userRepository;
-	private static final List<Integer> ADMIN_ROLES = List.of(1, 2);
 
-	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
+	public PagedUserResponseDto getUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
 		Page<User> userPage;
 
@@ -50,18 +49,23 @@ public class AdminUserService {
 
 		User user = userRepository.findById(userId)
 			.orElse(null);
-		if (user == null)
+		if (user == null) {
 			return false;
+		}
 
 		// 바꿀 값만 set (null 아닌 값만 반영)
-		if (requestDto.getName() != null)
+		if (requestDto.getName() != null) {
 			user.setName(requestDto.getName());
-		if (requestDto.getEmail() != null)
+		}
+		if (requestDto.getEmail() != null) {
 			user.setEmail(requestDto.getEmail());
-		if (requestDto.getPhoneNumber() != null)
+		}
+		if (requestDto.getPhoneNumber() != null) {
 			user.setPhoneNumber(requestDto.getPhoneNumber());
-		if (requestDto.getRoleCode() != null)
+		}
+		if (requestDto.getRoleCode() != null) {
 			user.setRoleCode(requestDto.getRoleCode());
+		}
 
 		return true;
 	}

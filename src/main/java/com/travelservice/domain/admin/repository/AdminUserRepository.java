@@ -23,17 +23,6 @@ public interface AdminUserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT u FROM User u WHERE u.deletedAt IS NULL AND u.roleCode IN :roleCodes ORDER BY u.createdAt DESC")
 	Page<User> findActiveUsersByRoleCodes(@Param("roleCodes") Collection<Integer> roleCodes, Pageable pageable);
 
-	// 사용자 정보 수정
-	@Modifying
-	@Query("UPDATE User u SET u.name = :name, u.email = :email, u.phoneNumber = :phoneNumber, u.roleCode = :roleCode WHERE u.userId = :userId")
-	int updateUser(
-		@Param("userId") Long userId,
-		@Param("name") String name,
-		@Param("email") String email,
-		@Param("phoneNumber") String phoneNumber,
-		@Param("roleCode") Integer roleCode
-	);
-
 	// 사용자 삭제
 	@Modifying
 	@Query("UPDATE User u SET u.deletedAt = CURRENT_TIMESTAMP WHERE u.userId = :userId")
