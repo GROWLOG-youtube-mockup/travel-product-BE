@@ -1,12 +1,18 @@
 package com.travelservice.domain.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.travelservice.domain.cart.entity.Cart;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -40,6 +46,9 @@ public class User {
 
 	@Column(name = "role_code", nullable = false)
 	private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Cart> cartItems = new ArrayList<>();
 
 	private LocalDateTime deletedAt;
 
