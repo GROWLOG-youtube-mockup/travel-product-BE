@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class OrderService {
 	private final ProductRepository productRepo;
 	private final UserRepository userRepo;
 	private final CartItemRepository cartItemRepo;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
@@ -61,6 +63,8 @@ public class OrderService {
 			totalQty += dto.getQuantity();
 		}
 		order.setTotalQuantity(totalQty);
+		Order savedOrder = orderRepo.save(order);
+		redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
 		return orderRepo.save(order);
 	}
 
