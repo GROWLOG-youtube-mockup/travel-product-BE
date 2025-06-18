@@ -66,4 +66,16 @@ public class User {
 	public void preUpdate() {
 		this.updatedAt = LocalDateTime.now();
 	}
+
+	public void updatePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 }

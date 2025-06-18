@@ -20,6 +20,7 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(false, null, new Error(errorCode));
 	}
 
+	@Getter
 	public static class Error {
 		private String code;
 		private String message;
