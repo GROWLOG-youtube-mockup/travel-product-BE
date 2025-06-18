@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,12 +24,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CartItem extends BaseEntity {
+@Table(name = "cart_item")
+public class Cart extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "cart_item_id")
-	private Long cartItemId;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
@@ -46,7 +48,7 @@ public class CartItem extends BaseEntity {
 	private LocalDate startDate;
 
 	@Builder
-	public CartItem(User user, Product product, Integer quantity, LocalDate startDate) {
+	public Cart(User user, Product product, Integer quantity, LocalDate startDate) {
 		this.user = user;
 		this.product = product;
 		this.quantity = quantity;
