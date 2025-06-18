@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "사용자 관리")
@@ -38,7 +38,7 @@ public class AdminUserController {
 	 * @param roleCode 역할 코드
 	 * @return 페이징된 사용자 목록
 	 */
-	@GetMapping
+	@GetMapping("/users")
 	@Operation(summary = "사용자 목록 조회")
 	public ResponseEntity<PagedUserResponseDto> getUsers(
 		@RequestParam(defaultValue = "1") Integer page,
@@ -54,7 +54,7 @@ public class AdminUserController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PatchMapping("/{userId}")
+	@PatchMapping("/users/{userId}")
 	@Operation(summary = "사용자 정보 수정")
 	public ResponseEntity<Void> updateUser(
 		@PathVariable Long userId,
@@ -68,7 +68,7 @@ public class AdminUserController {
 		}
 	}
 
-	@DeleteMapping("/{userId}")
+	@DeleteMapping("/users/{userId}")
 	@Operation(summary = "회원 삭제")
 	public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
 		boolean deleted = userService.deleteUser(userId);

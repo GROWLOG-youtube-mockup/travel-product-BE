@@ -12,10 +12,16 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+  sql:
+    init:
+      mode: always      # 항상 schema.sql, data.sql 실행
+      encoding: UTF-8
+
 server:
   port: 8080

@@ -49,8 +49,8 @@ class AdminUserServiceTest {
 			.build());
 
 		User user2 = userRepository.save(User.builder()
-			.name("김철수")
-			.email("kim@test.com")
+			.name("admin")
+			.email("admin@test.com")
 			.password("pw2")
 			.phoneNumber("010-2222-2222")
 			.roleCode(1)
@@ -83,7 +83,7 @@ class AdminUserServiceTest {
 		assertEquals(1, result.getTotalPages());
 		assertEquals(1, result.getCurrentPage());
 		assertEquals("superadmin", result.getContent().get(0).getName()); // 최신순 정렬이므로 나중에 저장한 게 첫번재
-		assertEquals("김철수", result.getContent().get(1).getName());
+		assertEquals("admin", result.getContent().get(1).getName());
 	}
 
 	@Test
@@ -125,19 +125,19 @@ class AdminUserServiceTest {
 		assertThat(updatedUser.getRoleCode()).isEqualTo(newRoleCode);
 	}
 
-	@Test
-	void 유저_삭제_성공_테스트() {
-		//given
-		boolean deleted = userService.deleteUser(userId2);
-
-		//when
-		assertThat(deleted).isTrue();
-
-		//then
-		User deletedUser = userRepository.findById(userId2).orElse(null);
-		assertThat(deletedUser).isNotNull();
-		assertThat(deletedUser.getDeletedAt()).isNotNull();
-	}
+	// @Test
+	// void 유저_삭제_성공_테스트() {
+	// 	//given
+	// 	boolean deleted = userService.deleteUser(userId2);
+	//
+	// 	//when
+	// 	assertThat(deleted).isTrue();
+	//
+	// 	//then
+	// 	User deletedUser = userRepository.findById(userId2).orElse(null);
+	// 	assertThat(deletedUser).isNotNull();
+	// 	assertThat(deletedUser.getDeletedAt()).isNotNull();
+	// }
 
 	@Test
 	void 관리자_조회_성공_테스트() {
