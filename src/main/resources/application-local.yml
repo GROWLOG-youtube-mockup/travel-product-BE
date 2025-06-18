@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/test
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: ${LOCAL_DB_USERNAME}
     password: ${LOCAL_DB_PASSWORD}
@@ -17,12 +17,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:db/schema.sql
-      data-locations: classpath:db/data.sql
 
 server:
   port: 8080

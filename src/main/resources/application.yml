@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # ??? ??: local ?? prod
+    active: test  # ??? ??: local ?? prod
     include:
       - s3
 

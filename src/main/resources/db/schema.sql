@@ -9,10 +9,12 @@ SET REFERENTIAL_INTEGRITY FALSE;
 -- 테이블 삭제
 DROP TABLE IF EXISTS
     region,
+    cart_item,
     product_description_item,
     product_description_group,
     product_images,
-    products;
+    products,
+    user;
 -- 외래키 체크 켬
 SET REFERENTIAL_INTEGRITY TRUE;
 
@@ -28,6 +30,19 @@ CREATE TABLE region (
         FOREIGN KEY (parent_id)
         REFERENCES region(region_id)
         ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- 2. 사용자 테이블
+CREATE TABLE user (
+  user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL UNIQUE,
+  role_code TINYINT NOT NULL, -- '0: USER, 1: ADMIN, 2: SUPER_ADMIN',
+  deleted_at DATETIME DEFAULT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 8. 상품 테이블
@@ -89,14 +104,14 @@ CREATE TABLE cart_item (
   user_id BIGINT NOT NULL,
   product_id BIGINT NOT NULL,
   quantity INT NOT NULL,
-  start_date DATE NOT NULL COMMENT '선택한 여행 시작일',
+  start_date DATE NOT NULL, -- '선택한 여행 시작일',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE (user_id, product_id, start_date),
   CONSTRAINT fk_cart_item_user FOREIGN KEY (user_id)
-    REFERENCES user(user_id)Add commentMore actions
+    REFERENCES user(user_id)
     ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_cart_item_product FOREIGN KEY (product_id)
     REFERENCES products(product_id)
     ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+);
