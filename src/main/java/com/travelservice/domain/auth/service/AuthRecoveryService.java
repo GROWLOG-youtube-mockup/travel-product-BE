@@ -12,7 +12,9 @@ import com.travelservice.global.common.exception.ErrorCode;
 import com.travelservice.global.util.TemporaryPasswordGenerator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthRecoveryService {
@@ -57,6 +59,7 @@ public class AuthRecoveryService {
 
 		// 4. 이메일 발송
 		mailSender.sendTemporaryPassword(user.getEmail(), tempPassword);
+		log.info("{}의 임시 비밀번호: {}", user.getEmail(), tempPassword);
 
 	}
 }
