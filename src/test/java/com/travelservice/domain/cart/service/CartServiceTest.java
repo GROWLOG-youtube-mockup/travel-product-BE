@@ -159,4 +159,25 @@ class CartServiceTest {
 		assertThat(result).isEmpty();
 	}
 
+	@Test
+	void deleteCartItem_성공() {
+		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
+			.password("123").phoneNumber("000").roleCode(0).build();
+		Product product = Product.builder().name("테스트 상품").price(1000)
+			.totalQuantity(100).stockQuantity(90).description(" ").type(1)
+			.saleStatus(1).duration(3).region(new Region("광주", 1, null)).build();
+		product.setProductId(99L);
+		Cart cart = Cart.builder()
+			.user(user)
+			.product(product)
+			.quantity(2)
+			.startDate(LocalDate.of(2025, 01, 01)).build();
+
+		given(cartRepository.findById(cart.getId())).willReturn(Optional.of(cart));
+
+		cartService.deleteCartItem(user.getUserId(), cart.getId());
+
+		verify(cartRepository).delete(cart);
+	}
+
 }

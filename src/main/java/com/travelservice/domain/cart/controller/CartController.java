@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +43,13 @@ public class CartController {
 	public ResponseEntity<ApiResponse<List<GetCartItemResponse>>> getCartItems(@AuthenticationPrincipal Long userId) {
 		List<GetCartItemResponse> cartItems = cartService.getCartItems(userId);
 		return ResponseEntity.ok(ApiResponse.ok(cartItems));
+	}
+
+	@Operation(summary = "장바구니 상품 삭제")
+	@DeleteMapping
+	public ResponseEntity<ApiResponse<Void>> deleteCartItem(@AuthenticationPrincipal Long userId,
+		@PathVariable Long cartItemId) {
+		cartService.deleteCartItem(userId, cartItemId);
+		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 }

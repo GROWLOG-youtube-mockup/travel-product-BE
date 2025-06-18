@@ -51,4 +51,16 @@ public class CartService {
 				.build())
 			.collect(Collectors.toList());
 	}
+
+	@Transactional
+	public void deleteCartItem(Long userId, Long cartItemId) {
+		Cart cart = cartRepository.findById(cartItemId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+		if (!cart.getUser().getUserId().equals(userId)) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+		}
+
+		cartRepository.delete(cart);
+	}
 }
