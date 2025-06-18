@@ -101,6 +101,5 @@ public class UserService {
 		Long userId = Long.parseLong(auth.getName());
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-		
 	}
 }
