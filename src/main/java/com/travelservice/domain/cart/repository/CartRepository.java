@@ -1,9 +1,15 @@
 package com.travelservice.domain.cart.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.travelservice.domain.cart.entity.CartItem;
+import com.travelservice.domain.cart.entity.Cart;
 
-public interface CartRepository extends JpaRepository<CartItem, Long> {
+@Repository
+public interface CartRepository extends JpaRepository<Cart, Long> {
+
+	List<Cart> findByUser_UserId(Long userId);
 
 }

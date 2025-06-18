@@ -2,7 +2,7 @@ package com.travelservice.domain.cart.dto;
 
 import java.time.LocalDate;
 
-import com.travelservice.domain.cart.entity.CartItem;
+import com.travelservice.domain.cart.entity.Cart;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.user.entity.User;
 
@@ -17,8 +17,8 @@ public class AddToCartRequest {
 	private Integer quantity;
 	private LocalDate startDate;
 
-	public CartItem toEntity(User user, Product product) {
-		return CartItem.builder()
+	public Cart toEntity(User user, Product product) {
+		return Cart.builder()
 			.user(user)
 			.product(product)
 			.quantity(quantity)

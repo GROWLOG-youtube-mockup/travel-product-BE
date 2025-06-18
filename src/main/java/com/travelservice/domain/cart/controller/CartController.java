@@ -1,13 +1,17 @@
 package com.travelservice.domain.cart.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.travelservice.domain.cart.dto.AddToCartRequest;
+import com.travelservice.domain.cart.dto.GetCartItemResponse;
 import com.travelservice.domain.cart.service.CartService;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
@@ -32,4 +36,10 @@ public class CartController {
 		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 
+	@Operation(summary = "장바구니 조회")
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<GetCartItemResponse>>> getCartItems(@AuthenticationPrincipal Long userId) {
+		List<GetCartItemResponse> cartItems = cartService.getCartItems(userId);
+		return ResponseEntity.ok(ApiResponse.ok(cartItems));
+	}
 }
