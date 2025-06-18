@@ -98,9 +98,9 @@ public class UserService {
 	}
 
 	private User getUserFromAuth(Authentication auth) {
-		String email = auth.getName();
-		return userRepository.findByEmail(email)
+		Long userId = Long.parseLong(auth.getName());
+		return userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+		
 	}
 }

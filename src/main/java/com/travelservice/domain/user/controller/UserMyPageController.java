@@ -50,10 +50,10 @@ public class UserMyPageController {
 	}
 
 	@PostMapping("/verify-password")
-	public ApiResponse<Map<String, Boolean>> verifyPassword(@RequestBody PasswordVerifyRequestDto requestDto,
+	public Map<String, Boolean> verifyPassword(@RequestBody PasswordVerifyRequestDto requestDto,
 		Authentication authentication) {
 		boolean verified = userService.verifyPassword(requestDto.getPassword(), authentication);
-		return ApiResponse.ok(Map.of("verified", verified));
+		return Map.of("verified", verified);
 	}
 
 	@DeleteMapping("/me")
