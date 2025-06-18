@@ -1,5 +1,6 @@
 package com.travelservice.domain.product.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,12 +58,15 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		// 태그로 필터링
-		if (tags != null && !tags.isEmpty()) {
+		if (tags != null && !tags.isBlank()) {
+			List<String> tagList = Arrays.stream(tags.split(","))
+				.map(String::trim).toList();
+
 			products = products.stream()
 				.filter(product -> product.getDescriptionGroups().stream()
 					.anyMatch(group -> group.getTitle().equalsIgnoreCase("tags") &&
 						group.getDescriptionItems().stream()
-							.anyMatch(item -> tags.contains(item.getContent()))))
+							.anyMatch(item -> tagList.contains(item.getContent()))))
 				.collect(Collectors.toList());
 		}
 
