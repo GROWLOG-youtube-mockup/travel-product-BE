@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +24,8 @@ import com.travelservice.domain.payment.dto.PaymentApproveRequestDto;
 import com.travelservice.domain.payment.dto.PaymentResponseDto;
 import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.payment.respository.PaymentRepository;
+import com.travelservice.domain.user.entity.User;
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.enums.OrderStatus;
 import com.travelservice.enums.PaymentStatus;
 
@@ -37,6 +40,7 @@ public class PaymentService {
 	private final OrderRepository orderRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final RestTemplate restTemplate;
+	private final UserRepository userRepository;
 
 	@Value("${toss.secret-key}")
 	private String tossSecretKey;
@@ -46,6 +50,34 @@ public class PaymentService {
 		// Redis에 저장된 결제 요청 정보 확인
 		if (requestDto.getOrderId() == null || !Boolean.TRUE.equals(redisTemplate.hasKey(requestDto.getOrderId()))) {
 			throw new IllegalArgumentException("유효하지 않은 주문 ID입니다.");
+		}
+
+		//테스트용 우회 로직 (paymentKey가 가짜일 경우)
+		if (requestDto.getPaymentKey().startsWith("toss-generated-key")) {
+			// Mock data
+			String method = "카드";
+			Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
+				.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
+
+			Payment payment = Payment.builder()
+				.order(order)
+				.paymentKey(requestDto.getPaymentKey())
+				.method(method)
+				.cardNumber("1234-****-****-5678")
+				.status(PaymentStatus.PAID)
+				.paidAt(LocalDateTime.now())
+				.build();
+
+			Payment saved = paymentRepository.save(payment);
+			order.setStatus(OrderStatus.PAID);
+			redisTemplate.delete(requestDto.getOrderId());
+
+			return PaymentResponseDto.builder()
+				.paymentId(saved.getPaymentId())
+				.status(saved.getStatus().name())
+				.method(saved.getMethod())
+				.paidAt(saved.getPaidAt().toString())
+				.build();
 		}
 
 		// Toss API 호출
@@ -153,7 +185,32 @@ public class PaymentService {
 	@PostConstruct
 	public void init() {
 		try {
-			redisTemplate.opsForValue().set("order_20240618_0001", "dummy");
+			// 테스트용 사용자 확인 (user_id = 1)
+			Optional<User> optionalUser = userRepository.findById(1L);
+			User user = optionalUser.orElseGet(() -> {
+				User newUser = User.builder()
+					.userId(1L)
+					.email("test@example.com")
+					.name("Test User")
+					.password("test1234")
+					.phoneNumber("01012345678")
+					.build();
+				return userRepository.save(newUser);
+			});
+
+			// 테스트용 주문 생성
+			Order order = Order.builder()
+				.user(user)
+				.orderDate(LocalDateTime.now())
+				.totalQuantity(1)
+				.status(OrderStatus.PENDING)
+				.build();
+
+			Order savedOrder = orderRepository.save(order);
+
+			// Redis에 등록
+			redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
+			System.out.println("✅ 테스트 주문 ID: " + savedOrder.getOrderId());
 		} catch (Exception e) {
 			System.out.println("⚠️ Redis 연결 실패: " + e.getMessage());
 		}
