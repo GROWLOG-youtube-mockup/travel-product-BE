@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.travelservice.domain.cart.dto.AddToCartRequest;
 import com.travelservice.domain.cart.dto.GetCartItemResponse;
 import com.travelservice.domain.cart.service.CartService;
-import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,23 +32,24 @@ public class CartController {
 	@Operation(summary = "장바구니에 상품 추가")
 	@PostMapping
 	public ResponseEntity<ApiResponse<Void>> addToCart(@RequestBody AddToCartRequest request,
-		@AuthenticationPrincipal User user) {
-		cartService.addToCart(user, request);
+		@AuthenticationPrincipal(expression = "userId") Long userId) {
+		cartService.addToCart(userId, request);
 		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 
 	@Operation(summary = "장바구니 조회")
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<GetCartItemResponse>>> getCartItems(@AuthenticationPrincipal Long userId) {
+	public ResponseEntity<ApiResponse<List<GetCartItemResponse>>> getCartItems(
+		@AuthenticationPrincipal(expression = "userId") Long userId) {
 		List<GetCartItemResponse> cartItems = cartService.getCartItems(userId);
 		return ResponseEntity.ok(ApiResponse.ok(cartItems));
 	}
 
 	@Operation(summary = "장바구니 상품 삭제")
-	@DeleteMapping
-	public ResponseEntity<ApiResponse<Void>> deleteCartItem(@AuthenticationPrincipal Long userId,
-		@PathVariable Long cartItemId) {
-		cartService.deleteCartItem(userId, cartItemId);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ApiResponse<Void>> deleteCartItem(@AuthenticationPrincipal(expression = "userId") Long userId,
+		@PathVariable Long id) {
+		cartService.deleteCartItem(userId, id);
 		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 }

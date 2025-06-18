@@ -13,6 +13,7 @@ import com.travelservice.domain.cart.repository.CartRepository;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
@@ -24,11 +25,13 @@ public class CartService {
 
 	private final CartRepository cartRepository;
 	private final ProductRepository productRepository;
+	private final UserRepository userRepository;
 
 	@Transactional
-	public void addToCart(User user, AddToCartRequest request) {
+	public void addToCart(Long userId, AddToCartRequest request) {
 		Product product = productRepository.findById(request.getProductId())
 			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+		User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		Cart cart = request.toEntity(user, product);
 		cartRepository.save(cart);

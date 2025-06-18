@@ -22,6 +22,7 @@ import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
@@ -32,6 +33,8 @@ class CartServiceTest {
 	private CartRepository cartRepository;
 	@Mock
 	private ProductRepository productRepository;
+	@Mock
+	private UserRepository userRepository;
 	@InjectMocks
 	private CartService cartService;
 
@@ -48,12 +51,14 @@ class CartServiceTest {
 
 		AddToCartRequest request = new AddToCartRequest(99L, 2, LocalDate.now());
 
+		given(userRepository.findById(user.getUserId())).willReturn(Optional.of(user));
 		given(productRepository.findById(99L)).willReturn(Optional.of(product));
+		given(cartRepository.save(any(Cart.class))).willReturn(mock(Cart.class));
 
 		// when
-		cartService.addToCart(user, request);
+		cartService.addToCart(user.getUserId(), request);
 		// then
-		then(cartRepository).should().save(any(Cart.class));
+		then(cartRepository).should(times(1)).save(any(Cart.class));
 	}
 
 	@Test
@@ -71,7 +76,7 @@ class CartServiceTest {
 		given(productRepository.findById(product.getProductId())).willReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> cartService.addToCart(user, request))
+		assertThatThrownBy(() -> cartService.addToCart(user.getUserId(), request))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.PRODUCT_NOT_FOUND.getMessage());
 	}
