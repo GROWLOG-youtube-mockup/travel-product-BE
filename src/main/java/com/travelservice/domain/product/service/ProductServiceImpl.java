@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	public List<ProductListResponse> getAllProducts(Long regionId, Long parentRegionId) {
+	public List<ProductListResponse> getAllProducts(Long regionId, Long parentRegionId, String tags) {
 		List<Product> products;
 
 		if (regionId != null) {
@@ -54,6 +54,16 @@ public class ProductServiceImpl implements ProductService {
 			products = productRepository.findByRegionIn(childRegions);
 		} else {
 			products = productRepository.findAll();
+		}
+
+		// 태그로 필터링
+		if (tags != null && !tags.isEmpty()) {
+			products = products.stream()
+				.filter(product -> product.getDescriptionGroups().stream()
+					.anyMatch(group -> group.getTitle().equalsIgnoreCase("tags") &&
+						group.getDescriptionItems().stream()
+							.anyMatch(item -> tags.contains(item.getContent()))))
+				.collect(Collectors.toList());
 		}
 
 		return products.stream()

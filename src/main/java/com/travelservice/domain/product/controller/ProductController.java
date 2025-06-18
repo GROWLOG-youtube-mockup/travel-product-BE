@@ -43,13 +43,14 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
 	}
 
-	@Operation(summary = "상품 목록 조회", description = "전체 상품을 조회합니다")
+	@Operation(summary = "상품 목록 조회", description = "전체 상품을 조회합니다 (지역, 태그 필터링 포함)")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ProductListResponse>>> getAllProducts(
 		@RequestParam(value = "regionId", required = false) Long regionId,
-		@RequestParam(value = "parentRegionId", required = false) Long parentRegionId
+		@RequestParam(value = "parentRegionId", required = false) Long parentRegionId,
+		@RequestParam(value = "tags", required = false) String tags
 	) {
-		List<ProductListResponse> products = productServiceImpl.getAllProducts(regionId, parentRegionId);
+		List<ProductListResponse> products = productServiceImpl.getAllProducts(regionId, parentRegionId, tags);
 		return ResponseEntity.ok(ApiResponse.ok(products));
 	}
 

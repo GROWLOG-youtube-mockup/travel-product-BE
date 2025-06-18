@@ -1,9 +1,11 @@
 package com.travelservice.domain.product.dto;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.travelservice.domain.product.entity.Product;
+import com.travelservice.domain.product.entity.ProductDescriptionItem;
 import com.travelservice.domain.product.entity.ProductImage;
 
 import lombok.AllArgsConstructor;
@@ -26,8 +28,17 @@ public class ProductListResponse {
 	private Integer saleStatus;
 	private Integer type;
 	private RegionResponse region;
+	private List<String> tags;
 
 	public static ProductListResponse from(Product product) {
+		List<String> tags = product.getDescriptionGroups().stream()
+			.filter(group -> "tags".equalsIgnoreCase(group.getTitle()))
+			.findFirst()
+			.map(group -> group.getDescriptionItems().stream()
+				.map(ProductDescriptionItem::getContent)
+				.collect(Collectors.toList()))
+			.orElse(Collections.emptyList());
+
 		return ProductListResponse.builder()
 			.productId(product.getProductId())
 			.name(product.getName())
@@ -38,6 +49,7 @@ public class ProductListResponse {
 			.saleStatus(product.getSaleStatus())
 			.type(product.getType())
 			.region(RegionResponse.from(product.getRegion()))
+			.tags(tags)
 			.build();
 	}
 }
