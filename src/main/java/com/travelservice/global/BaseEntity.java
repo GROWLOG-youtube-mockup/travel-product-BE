@@ -1,4 +1,4 @@
-package com.travelservice.global.common;
+package com.travelservice.global;
 
 import java.time.LocalDateTime;
 
