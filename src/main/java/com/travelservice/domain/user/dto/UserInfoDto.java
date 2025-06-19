@@ -6,15 +6,16 @@ public record UserInfoDto(
 	Long userId,
 	String name,
 	String email,
-	String phoneNumber
+	String phoneNumber,
+	int roleCode
 ) {
 	public static UserInfoDto from(User user) {
 		return new UserInfoDto(
 			user.getUserId(),
 			user.getName(),
 			user.getEmail(),
-			user.getPhoneNumber()
+			user.getPhoneNumber(),
+			user.getRoleCode()
 		);
 	}
-
 }
