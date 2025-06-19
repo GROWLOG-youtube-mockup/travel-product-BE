@@ -16,12 +16,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 @Table(name = "`user`")
 public class User {
 
@@ -44,9 +44,7 @@ public class User {
 	private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
 
 	private LocalDateTime deletedAt;
-
 	private LocalDateTime createdAt;
-
 	private LocalDateTime updatedAt;
 
 	@PrePersist

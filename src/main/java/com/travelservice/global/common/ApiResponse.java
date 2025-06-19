@@ -10,7 +10,7 @@ import lombok.Getter;
 public class ApiResponse<T> {
 	private final boolean success;
 	private final T data;
-	private final Error error;
+	private Error error;
 
 	public static <T> ApiResponse<T> ok(T data) {
 		return new ApiResponse<>(true, data, null);
@@ -23,8 +23,8 @@ public class ApiResponse<T> {
 	@Getter
 	@AllArgsConstructor
 	public static class Error {
-		private final String code;
-		private final String message;
+		private String code;
+		private String message;
 
 		public Error(ErrorCode errorCode) {
 			this.code = errorCode.getCode();

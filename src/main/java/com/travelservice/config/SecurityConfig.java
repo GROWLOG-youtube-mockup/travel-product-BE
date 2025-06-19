@@ -18,18 +18,25 @@ public class SecurityConfig {
 	};
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(SWAGGER_WHITELIST).permitAll()
-				.requestMatchers("/users/signup", "/users/login").permitAll()
-				.anyRequest().permitAll()
+			.csrf(csrf -> csrf
+				.ignoringRequestMatchers(
+					"/h2-console/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**"
+				)
+				.disable()
 			)
-			// 로그인/기본 인증 비활성화
-			.formLogin(form -> form.disable())
-			.httpBasic(basic -> basic.disable());
-
+			.headers(headers -> headers.frameOptions().disable())
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+					"/h2-console/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**"
+				).permitAll()
+				.anyRequest().permitAll() // 반드시 마지막에 선언
+			);
 		return http.build();
 	}
 }
