@@ -54,8 +54,4 @@ public class Region extends BaseEntity {
 		this.level = level;
 		this.parent = parent;
 	}
-
-	public List<Product> getProducts() {
-		return products;
-	}
 }
