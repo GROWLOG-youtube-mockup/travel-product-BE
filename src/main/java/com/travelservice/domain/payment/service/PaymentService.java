@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,21 +28,39 @@ import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.enums.OrderStatus;
 import com.travelservice.enums.PaymentStatus;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final OrderRepository orderRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
+	private final String tossSecretKey;
 
-	@Value("${toss.secret-key}")
-	private String tossSecretKey;
+	//생성자에서 .env 파일 로드 및 tossSecretKey 초기화
+	public PaymentService(PaymentRepository paymentRepository,
+		OrderRepository orderRepository,
+		RedisTemplate<String, String> redisTemplate,
+		RestTemplate restTemplate,
+		UserRepository userRepository) {
+
+		this.paymentRepository = paymentRepository;
+		this.orderRepository = orderRepository;
+		this.redisTemplate = redisTemplate;
+		this.restTemplate = restTemplate;
+		this.userRepository = userRepository;
+
+		Dotenv dotenv = Dotenv.load(); //.env 파일 로드 (루트 경로에 위치해야 함)
+		this.tossSecretKey = dotenv.get("TOSS_SECRET_KEY"); //키 가져오기
+	}
+
+	// @Value("${toss.secret-key}")
+	// private String tossSecretKey;
 
 	@Transactional
 	public PaymentResponseDto approve(PaymentApproveRequestDto requestDto) throws IOException {

@@ -22,4 +22,4 @@ server:
   port: 8080
 
 toss:
-  secret-key: dummy
+  secret-key: ${TOSS_SECRET_KEY}
