@@ -54,7 +54,7 @@ public class AuthRecoveryService {
 		String tempPassword = TemporaryPasswordGenerator.generateTemporaryPassword();
 
 		// 3. 암호화 후 저장
-		user.updatePassword(passwordEncoder.encode(tempPassword));
+		user.setPassword(passwordEncoder.encode(tempPassword));
 		userRepository.save(user);
 
 		// 4. 이메일 발송
