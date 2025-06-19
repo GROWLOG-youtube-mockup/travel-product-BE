@@ -9,13 +9,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
 import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.order.entity.Order;
+import com.travelservice.domain.payment.entity.Payment;
+import com.travelservice.domain.payment.respository.PaymentRepository;
 import com.travelservice.enums.OrderStatus;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminOrderService {
 
 	private final AdminOrderRepository adminOrderRepository;
+	private final PaymentRepository paymentRepository;
 
 	public PagedAdminOrderResponseDto findOrders(
 		Integer page, Integer size, String status, String startDate, String endDate
@@ -67,5 +73,15 @@ public class AdminOrderService {
 			.totalPages(orderPage.getTotalPages())
 			.currentPage(page)
 			.build();
+	}
+
+	@Transactional
+	public AdminOrderDetailDto getOrderDetail(Long orderId) {
+		Order order = adminOrderRepository.findById(orderId)
+			.orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
+
+		Payment payment = paymentRepository.findByOrder_OrderId(orderId).orElse(null);
+
+		return AdminOrderDetailDto.from(order, payment);
 	}
 }

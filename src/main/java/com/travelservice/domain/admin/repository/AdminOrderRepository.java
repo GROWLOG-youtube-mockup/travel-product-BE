@@ -14,6 +14,7 @@ import com.travelservice.enums.OrderStatus;
 
 @Repository
 public interface AdminOrderRepository extends JpaRepository<Order, Long> {
+
 	@Query("SELECT o FROM Order o "
 		+ "WHERE (:status IS NULL OR o.status = :status) "
 		+ "AND (:startDate IS NULL OR o.orderDate >= :startDate) "

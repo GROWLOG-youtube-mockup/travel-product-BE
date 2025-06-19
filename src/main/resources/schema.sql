@@ -28,6 +28,7 @@ CREATE TABLE "user" (
 CREATE TABLE product (
   product_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
+  description VARCHAR(500),
   price INT NOT NULL,
   total_quantity INT NOT NULL,
   stock_quantity INT NOT NULL,
@@ -61,4 +62,18 @@ CREATE TABLE order_item (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (order_id) REFERENCES "order"(order_id),
   FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+CREATE TABLE payment (
+  payment_id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT NOT NULL,
+  payment_key VARCHAR(100),
+  method VARCHAR(30),
+  card_number VARCHAR(30),
+  account_number VARCHAR(30),
+  bank VARCHAR(30),
+  mobile_phone VARCHAR(20),
+  status VARCHAR(20),
+  paid_at TIMESTAMP,
+  FOREIGN KEY (order_id) REFERENCES "order"(order_id)
 );

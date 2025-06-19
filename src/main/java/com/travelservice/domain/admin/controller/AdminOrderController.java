@@ -2,10 +2,12 @@ package com.travelservice.domain.admin.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.service.AdminOrderService;
 
@@ -34,5 +36,11 @@ public class AdminOrderController {
 			page, size, status, start_date, end_date
 		);
 		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/{orderId}")
+	public ResponseEntity<AdminOrderDetailDto> getOrderDetail(@PathVariable Long orderId) {
+		AdminOrderDetailDto dto = adminOrderService.getOrderDetail(orderId);
+		return ResponseEntity.ok(dto);
 	}
 }

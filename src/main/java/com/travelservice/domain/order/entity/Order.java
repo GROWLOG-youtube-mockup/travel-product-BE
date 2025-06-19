@@ -54,4 +54,8 @@ public class Order {
 	private OrderStatus status;
 
 	private LocalDateTime updatedAt;
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+	}
 }
