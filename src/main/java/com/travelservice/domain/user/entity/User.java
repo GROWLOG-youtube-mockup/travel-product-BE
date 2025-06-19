@@ -47,6 +47,7 @@ public class User {
 	@Column(name = "role_code", nullable = false)
 	private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
 
+	@Builder.Default
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Cart> cartItems = new ArrayList<>();
 
