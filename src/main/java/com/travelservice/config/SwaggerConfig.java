@@ -14,13 +14,14 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI openApi() {
 		return new OpenAPI()
-			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-			.components(new Components().addSecuritySchemes("Bearer Authentication",
+			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Security Requirement 추가
+			.components(new Components().addSecuritySchemes("Bearer Authentication",  // Security Scheme 추가
 				new SecurityScheme()
 					.name("Authorization")
 					.type(SecurityScheme.Type.HTTP)
 					.scheme("bearer")
-					.bearerFormat("JMWT")))
+					.bearerFormat("JWT")
+					.in(SecurityScheme.In.HEADER)))
 			.info(new Info()
 				.title("API 문서 제목")
 				.version("v1.0")
