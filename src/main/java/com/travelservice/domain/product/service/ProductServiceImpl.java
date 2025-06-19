@@ -64,9 +64,9 @@ public class ProductServiceImpl implements ProductService {
 
 			products = products.stream()
 				.filter(product -> product.getDescriptionGroups().stream()
-					.anyMatch(group -> group.getTitle().equalsIgnoreCase("tags") &&
-						group.getDescriptionItems().stream()
-							.anyMatch(item -> tagList.contains(item.getContent()))))
+					.anyMatch(group -> group.getTitle().equalsIgnoreCase("tags")
+						&& group.getDescriptionItems().stream()
+						.anyMatch(item -> tagList.contains(item.getContent()))))
 				.collect(Collectors.toList());
 		}
 
@@ -156,3 +156,4 @@ public class ProductServiceImpl implements ProductService {
 		productRepository.delete(product);
 	}
 }
+
