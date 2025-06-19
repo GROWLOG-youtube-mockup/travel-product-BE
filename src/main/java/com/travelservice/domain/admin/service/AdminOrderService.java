@@ -14,6 +14,7 @@ import com.travelservice.domain.admin.dto.AdminOrderResponseDto;
 import com.travelservice.domain.admin.dto.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.order.entity.Order;
+import com.travelservice.enums.OrderStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,18 @@ public class AdminOrderService {
 		LocalDateTime end = (endDate != null && !endDate.isBlank())
 			? LocalDate.parse(endDate).atTime(23, 59, 59) : null;
 
-		Page<Order> orderPage = adminOrderRepository.findOrdersByFilter(status, start, end, pageable);
+		// **String → Enum 변환 (유효하지 않으면 null)**
+		OrderStatus statusEnum = null;
+		if (status != null && !status.isBlank()) {
+			try {
+				statusEnum = OrderStatus.valueOf(status);
+			} catch (IllegalArgumentException e) {
+				// 잘못된 값이 들어올 경우 로그 남기고 null 처리
+				statusEnum = null;
+			}
+		}
+
+		Page<Order> orderPage = adminOrderRepository.findOrdersByFilter(statusEnum, start, end, pageable);
 
 		List<AdminOrderResponseDto> content = orderPage.getContent().stream()
 			.map(order -> AdminOrderResponseDto.builder()
