@@ -1,6 +1,7 @@
 package com.travelservice.domain.user.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -9,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.travelservice.domain.auth.repository.EmailVerificationRepository;
 import com.travelservice.domain.auth.repository.PhoneVerificationRepository;
+import com.travelservice.domain.order.entity.OrderItem;
+import com.travelservice.domain.order.repository.OrderItemRepository;
+import com.travelservice.domain.user.dto.TripDto;
+import com.travelservice.domain.user.dto.UserInfoDto;
 import com.travelservice.domain.user.dto.UserRegistrationRequestDto;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
@@ -28,6 +33,9 @@ public class UserService {
 
 	@Autowired
 	private PhoneVerificationRepository phoneVerificationRepository;
+
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -112,5 +120,19 @@ public class UserService {
 		Long userId = Long.parseLong(auth.getName());
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	public UserInfoDto getMyInfo(Long userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+		return UserInfoDto.from(user);
+	}
+
+	public List<TripDto> getMyTrips(Long userId) {
+		List<OrderItem> items = orderItemRepository.findByOrder_User_userId(userId);
+		return items.stream()
+			.map(TripDto::from)
+			.toList();
 	}
 }

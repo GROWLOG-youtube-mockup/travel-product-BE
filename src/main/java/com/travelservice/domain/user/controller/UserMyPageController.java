@@ -1,10 +1,13 @@
 package com.travelservice.domain.user.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +20,8 @@ import com.travelservice.domain.user.dto.NameUpdateRequestDto;
 import com.travelservice.domain.user.dto.PasswordUpdateRequestDto;
 import com.travelservice.domain.user.dto.PasswordVerifyRequestDto;
 import com.travelservice.domain.user.dto.PhoneUpdateRequestDto;
+import com.travelservice.domain.user.dto.TripDto;
+import com.travelservice.domain.user.dto.UserInfoDto;
 import com.travelservice.domain.user.service.UserService;
 import com.travelservice.global.common.ApiResponse;
 
@@ -60,5 +65,21 @@ public class UserMyPageController {
 	public ApiResponse<String> deleteAccount(@RequestBody DeleteRequestDto requestDto, Authentication auth) {
 		userService.deleteAccount(requestDto.getPassword(), auth);
 		return ApiResponse.ok("회원 탈퇴가 완료되었습니다.");
+	}
+
+	//마이페이지
+
+	@GetMapping("/me")
+	public ResponseEntity<ApiResponse<UserInfoDto>> getMyInfo(Authentication auth) {
+		Long userId = Long.parseLong(auth.getName());
+		UserInfoDto userInfo = userService.getMyInfo(userId);
+		return ResponseEntity.ok(ApiResponse.ok(userInfo));
+	}
+
+	@GetMapping("/me/trips")
+	public ResponseEntity<ApiResponse<List<TripDto>>> getMyTrips(Authentication auth) {
+		Long userId = Long.parseLong(auth.getName());
+		List<TripDto> trips = userService.getMyTrips(userId);
+		return ResponseEntity.ok(ApiResponse.ok(trips));
 	}
 }
