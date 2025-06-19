@@ -1,4 +1,4 @@
-package com.travelservice.domain.admin.dto;
+package com.travelservice.domain.admin.dto.order;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PagedUserResponseDto {
-	private List<UserResponseDto> content;
+public class PagedAdminOrderResponseDto {
+	private List<AdminOrderResponseDto> content;
 	private Long totalElements;
 	private Integer totalPages;
 	private Integer currentPage;

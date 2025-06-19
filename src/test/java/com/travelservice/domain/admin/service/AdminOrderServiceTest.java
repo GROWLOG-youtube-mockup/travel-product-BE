@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.admin.dto.AdminOrderResponseDto;
-import com.travelservice.domain.admin.dto.PagedAdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.order.entity.Order;

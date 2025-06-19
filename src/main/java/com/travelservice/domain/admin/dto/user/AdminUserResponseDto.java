@@ -1,6 +1,4 @@
-package com.travelservice.domain.admin.dto;
-
-import java.time.LocalDateTime;
+package com.travelservice.domain.admin.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponseDto {
+public class AdminUserResponseDto {
 	private Long userId;
 	private String name;
 	private String email;
-	private String phoneNumber;
 	private Integer roleCode;
-	private LocalDateTime createAt;
-	private LocalDateTime deleteAt;
 }

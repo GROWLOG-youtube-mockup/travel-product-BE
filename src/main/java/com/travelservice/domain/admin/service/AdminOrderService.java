@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.travelservice.domain.admin.dto.AdminOrderResponseDto;
-import com.travelservice.domain.admin.dto.PagedAdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.enums.OrderStatus;

@@ -1,4 +1,4 @@
-package com.travelservice.domain.admin.dto;
+package com.travelservice.domain.admin.dto.order;
 
 import java.time.LocalDateTime;
 

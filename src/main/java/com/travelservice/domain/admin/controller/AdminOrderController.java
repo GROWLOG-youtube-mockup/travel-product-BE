@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.travelservice.domain.admin.dto.PagedAdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.service.AdminOrderService;
 
 import io.swagger.v3.oas.annotations.Operation;

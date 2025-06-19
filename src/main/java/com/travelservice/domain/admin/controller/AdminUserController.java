@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.travelservice.domain.admin.dto.PagedAdminUserResponseDto;
-import com.travelservice.domain.admin.dto.PagedUserResponseDto;
-import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
+import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
+import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
+import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
 import com.travelservice.domain.admin.service.AdminUserService;
 
 import io.swagger.v3.oas.annotations.Operation;

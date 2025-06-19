@@ -14,10 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.admin.dto.AdminUserResponseDto;
-import com.travelservice.domain.admin.dto.PagedAdminUserResponseDto;
-import com.travelservice.domain.admin.dto.PagedUserResponseDto;
-import com.travelservice.domain.admin.dto.UserUpdateRequestDto;
+import com.travelservice.domain.admin.dto.user.AdminUserResponseDto;
+import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
+import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
+import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
 
