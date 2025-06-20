@@ -52,6 +52,7 @@ public class AdminOrderController {
 	}
 
 	@PatchMapping("/{orderId}")
+	@Operation(summary = "주문 상태 수정")
 	public ResponseEntity<?> updateOrderStatus(
 		@PathVariable Long orderId,
 		@RequestBody OrderStatusUpdateRequest request
