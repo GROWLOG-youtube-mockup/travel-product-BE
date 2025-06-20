@@ -150,8 +150,9 @@ public class AdminOrderDetailDto {
 
 		// 카드번호 마스킹 함수
 		private static String maskCardNumber(String cardNumber) {
-			if (cardNumber == null || cardNumber.length() < 4)
+			if (cardNumber == null || cardNumber.length() < 4) {
 				return "****";
+			}
 			return "****-****-****-" + cardNumber.substring(cardNumber.length() - 4);
 		}
 	}
