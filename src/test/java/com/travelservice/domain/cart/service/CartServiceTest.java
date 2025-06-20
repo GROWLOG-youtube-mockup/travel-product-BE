@@ -133,24 +133,39 @@ class CartServiceTest {
 	}
 
 	@Test
-	void deleteCartItem_success() {
+	void deleteCartItems_success() {
 		User user = User.builder().userId(1L).name("테스트 유저").email("abc@gamil.com")
 			.password("123").phoneNumber("000").roleCode(0).build();
-		Product product = Product.builder().name("테스트 상품").price(1000)
+		Product product1 = Product.builder().name("테스트 상품").price(1000)
 			.totalQuantity(100).stockQuantity(90).description(" ").type(1)
 			.saleStatus(1).duration(3).region(new Region("광주", 1, null)).build();
-		product.setProductId(99L);
-		Cart cart = Cart.builder()
+		product1.setProductId(99L);
+		Product product2 = Product.builder().name("테스트 상품").price(1000)
+			.totalQuantity(100).stockQuantity(90).description(" ").type(1)
+			.saleStatus(1).duration(3).region(new Region("광주", 1, null)).build();
+		product2.setProductId(99L);
+		Cart cart1 = Cart.builder()
 			.user(user)
-			.product(product)
+			.product(product1)
 			.quantity(2)
 			.startDate(LocalDate.of(2025, 01, 01)).build();
+		cart1.setId(1L);
+		Cart cart2 = Cart.builder()
+			.user(user)
+			.product(product2)
+			.quantity(1)
+			.startDate(LocalDate.of(2025, 01, 01)).build();
+		cart2.setId(2L);
 
-		given(cartRepository.findById(cart.getId())).willReturn(Optional.of(cart));
+		List<Long> selectedItemList = List.of(cart1.getId(), cart2.getId());
 
-		cartService.deleteCartItem(user.getUserId(), cart.getId());
+		given(cartRepository.findById(cart1.getId())).willReturn(Optional.of(cart1));
+		given(cartRepository.findById(cart2.getId())).willReturn(Optional.of(cart2));
 
-		verify(cartRepository).delete(cart);
+		cartService.deleteCartItems(user.getUserId(), selectedItemList);
+
+		verify(cartRepository).delete(cart1);
+		verify(cartRepository).delete(cart2);
 	}
 
 }

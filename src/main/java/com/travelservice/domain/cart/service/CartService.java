@@ -18,7 +18,9 @@ import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -60,14 +62,18 @@ public class CartService {
 	}
 
 	@Transactional
-	public void deleteCartItem(Long userId, Long cartItemId) {
-		Cart cart = cartRepository.findById(cartItemId)
-			.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
-
-		if (!cart.getUser().getUserId().equals(userId)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+	public void deleteCartItems(Long userId, List<Long> selectedItemIdList) {
+		if (selectedItemIdList == null || selectedItemIdList.isEmpty()) {
+			throw new CustomException(ErrorCode.NO_SELECTED_PRODUCTS);
 		}
+		for (Long cartItemId : selectedItemIdList) {
+			Cart cart = cartRepository.findById(cartItemId)
+				.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
 
-		cartRepository.delete(cart);
+			if (!cart.getUser().getUserId().equals(userId)) {
+				throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+			}
+			cartRepository.delete(cart);
+		}
 	}
 }

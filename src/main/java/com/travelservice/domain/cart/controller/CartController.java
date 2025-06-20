@@ -46,10 +46,10 @@ public class CartController {
 	}
 
 	@Operation(summary = "장바구니 상품 삭제")
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{selectedItemIdList}")
 	public ResponseEntity<ApiResponse<Void>> deleteCartItem(@AuthenticationPrincipal(expression = "userId") Long userId,
-		@PathVariable Long id) {
-		cartService.deleteCartItem(userId, id);
+		@PathVariable List<Long> selectedItemIdList) {
+		cartService.deleteCartItems(userId, selectedItemIdList);
 		return ResponseEntity.ok(ApiResponse.ok(null));
 	}
 }
