@@ -49,16 +49,12 @@ public class AdminUserController {
 
 	@PatchMapping("/users/{userId}")
 	@Operation(summary = "사용자 정보 수정")
-	public ResponseEntity<Void> updateUser(
+	public ResponseEntity<Map<String, Object>> updateUser(
 		@PathVariable Long userId,
 		@RequestBody @Valid UserUpdateRequestDto requestDto
 	) {
-		boolean updated = userService.updateUser(userId, requestDto);
-		if (updated) {
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		Map<String, Object> result = userService.updateUser(userId, requestDto);
+		return ResponseEntity.ok(result);
 	}
 
 	@DeleteMapping("/users/{userId}")

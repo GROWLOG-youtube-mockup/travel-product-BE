@@ -1,6 +1,8 @@
 package com.travelservice.domain.admin.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,29 +47,35 @@ public class AdminUserService {
 	}
 
 	@Transactional
-	public boolean updateUser(Long userId, UserUpdateRequestDto requestDto) {
+	public Map<String, Object> updateUser(Long userId, UserUpdateRequestDto requestDto) {
 
 		User user = userRepository.findById(userId)
-			.orElse(null);
-		if (user == null) {
-			return false;
-		}
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+		boolean changed = false;
 
 		// 바꿀 값만 set (null 아닌 값만 반영)
 		if (requestDto.getName() != null) {
 			user.setName(requestDto.getName());
+			changed = true;
 		}
 		if (requestDto.getEmail() != null) {
 			user.setEmail(requestDto.getEmail());
+			changed = true;
 		}
 		if (requestDto.getPhoneNumber() != null) {
 			user.setPhoneNumber(requestDto.getPhoneNumber());
+			changed = true;
 		}
 		if (requestDto.getRoleCode() != null) {
 			user.setRoleCode(requestDto.getRoleCode());
+			changed = true;
 		}
 
-		return true;
+		Map<String, Object> result = new HashMap<>();
+		result.put("user_id", user.getUserId());
+		result.put("updated_at", user.getUpdatedAt());
+		return result;
 	}
 
 	@Transactional
