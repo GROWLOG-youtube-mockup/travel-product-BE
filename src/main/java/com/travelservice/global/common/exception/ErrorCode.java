@@ -34,7 +34,11 @@ public enum ErrorCode {
 	DELETED_USER("DELETED_USER", "삭제된 회원입니다."),
 
 	// User 관련
-	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다.");
+	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다."),
+
+	CART_ITEM_NOT_FOUND("CART_ITEM_NOT_FOUND", "장바구니 항목을 찾을 수 없습니다."),
+	ORDER_ACCESS_DENIED("ORDER_ACCESS_DENIED", "다른 사용자의 주문입니다."),
+	CART_ITEM_ACCESS_DENIED("CART_ITEM_ACCESS_DENIED", "본인의 장바구니 항목만 주문할 수 있습니다.");
 
 	private final String code;
 	private final String message;

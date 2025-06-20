@@ -43,4 +43,17 @@ public class Product {
 
 	@Column(columnDefinition = "TINYINT", nullable = false)
 	private int saleStatus;
+
+	//재고 관련 메서드
+	public int getStock() {
+		return this.stockQuantity;
+	}
+
+	public void reduceStock(int quantity) {
+		if (this.stockQuantity < quantity) {
+			throw new IllegalArgumentException("재고가 부족합니다.");
+			// 또는 throw new CustomException(ErrorCode.OUT_OF_STOCK);
+		}
+		this.stockQuantity -= quantity;
+	}
 }

@@ -1,6 +1,7 @@
 package com.travelservice.domain.payment.service;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,16 +18,24 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.travelservice.domain.cart.entity.CartItem;
+import com.travelservice.domain.cart.repository.CartItemRepository;
 import com.travelservice.domain.order.entity.Order;
+import com.travelservice.domain.order.entity.OrderItem;
+import com.travelservice.domain.order.repository.OrderItemRepository;
 import com.travelservice.domain.order.repository.OrderRepository;
 import com.travelservice.domain.payment.dto.PaymentApproveRequestDto;
 import com.travelservice.domain.payment.dto.PaymentResponseDto;
 import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.payment.respository.PaymentRepository;
+import com.travelservice.domain.product.entity.Product;
+import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.enums.OrderStatus;
 import com.travelservice.enums.PaymentStatus;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
@@ -41,19 +50,28 @@ public class PaymentService {
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
 	private final String tossSecretKey;
+	private final CartItemRepository cartItemRepo;
+	private final OrderItemRepository orderItemRepo;
+	private final ProductRepository productRepo;
 
 	//생성자에서 .env 파일 로드 및 tossSecretKey 초기화
 	public PaymentService(PaymentRepository paymentRepository,
 		OrderRepository orderRepository,
 		RedisTemplate<String, String> redisTemplate,
 		RestTemplate restTemplate,
-		UserRepository userRepository) {
+		UserRepository userRepository,
+		CartItemRepository cartItemRepo,
+		OrderItemRepository orderItemRepo,
+		ProductRepository productRepo) {
 
 		this.paymentRepository = paymentRepository;
 		this.orderRepository = orderRepository;
 		this.redisTemplate = redisTemplate;
 		this.restTemplate = restTemplate;
 		this.userRepository = userRepository;
+		this.cartItemRepo = cartItemRepo;
+		this.orderItemRepo = orderItemRepo;
+		this.productRepo = productRepo;
 
 		Dotenv dotenv = Dotenv.load(); //.env 파일 로드 (루트 경로에 위치해야 함)
 		this.tossSecretKey = dotenv.get("TOSS_SECRET_KEY"); //키 가져오기
@@ -187,6 +205,52 @@ public class PaymentService {
 				.build();
 	}
 
+	public Order createOrderFromCartItem(User user, Long cartItemId) {
+		CartItem cartItem = cartItemRepo.findById(cartItemId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 장바구니 항목이 없습니다."));
+
+		// 🛡 본인 장바구니 항목인지 확인
+		if (!cartItem.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(ErrorCode.CART_ITEM_ACCESS_DENIED);
+		}
+
+		Product product = cartItem.getProduct();
+		int quantity = cartItem.getQuantity();
+
+		// 재고 확인 등 검증
+		if (product.getStock() < quantity) {
+			throw new RuntimeException("재고가 부족합니다.");
+		}
+
+		// 주문 생성
+		Order order = Order.builder()
+			.user(user)
+			.orderDate(LocalDateTime.now())
+			.status(OrderStatus.PENDING)
+			.totalQuantity(quantity)
+			.build();
+
+		Order savedOrder = orderRepository.save(order);
+
+		OrderItem orderItem = OrderItem.builder()
+			.order(savedOrder)
+			.product(product)
+			.quantity(quantity)
+			.price(product.getPrice() * quantity)
+			.build();
+
+		orderItemRepo.save(orderItem);
+
+		// 재고 차감 및 장바구니 항목 제거
+		product.reduceStock(quantity);
+		productRepo.save(product);
+
+		cartItemRepo.delete(cartItem);
+
+		return savedOrder;
+	}
+
+
 	public PaymentResponseDto getPaymentStatusByOrderId(Long orderId) {
 		Payment payment = paymentRepository.findByOrder_OrderId(orderId)
 			.orElseThrow(() -> new RuntimeException("해당 주문에 대한 결제 정보가 없습니다."));
@@ -197,6 +261,18 @@ public class PaymentService {
 			.method(payment.getMethod())
 			.paidAt(payment.getPaidAt().toString())
 			.build();
+	}
+
+	public Payment getPaymentStatus(Long orderId, User user) {
+		Order order = orderRepository.findById(orderId)
+			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+
+		if (!order.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(ErrorCode.ORDER_ACCESS_DENIED);
+		}
+
+		return paymentRepository.findByOrder(order)
+			.orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
 	}
 
 	@PostConstruct

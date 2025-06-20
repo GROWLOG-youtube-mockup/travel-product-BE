@@ -18,6 +18,9 @@ import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
+import com.travelservice.enums.OrderStatus;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +32,8 @@ public class OrderService {
 	private final UserRepository userRepo;
 	private final CartItemRepository cartItemRepo;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final OrderRepository orderRepository;
+	private final CartItemRepository cartItemRepository;
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
@@ -57,7 +62,7 @@ public class OrderService {
 				.startDate(dto.getStartDate())
 				.build();
 
-			order.getItems().add(item);
+			order.getOrderItems().add(item);
 			totalQty += dto.getQuantity();
 		}
 		order.setTotalQuantity(totalQty);
@@ -102,7 +107,7 @@ public class OrderService {
 			totalQty += cartItem.getQuantity();
 		}
 
-		order.setItems(orderItems);
+		order.setOrderItems(orderItems);
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
 
@@ -121,4 +126,44 @@ public class OrderService {
 			.orElseThrow(() -> new RuntimeException("유저 없음"));
 		return orderRepo.findByUser(user);
 	}
+
+	public Order findByIdAndUser(Long id, User user) {
+		Order order = orderRepo.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+		if (!order.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(ErrorCode.INVALID_ACCESSTOKEN);
+		}
+		return order;
+	}
+
+	public List<Order> findByUser(User user) {
+		return orderRepository.findByUser(user);
+	}
+
+	public Order createOrderFromCartItem(User user, Long cartItemId) {
+		// 👉 cartItemId에 해당하는 CartItem 조회
+		CartItem cartItem = cartItemRepository.findById(cartItemId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+		// 👉 단일 상품 기반으로 OrderItem 만들기
+		OrderItem orderItem = OrderItem.builder()
+			.product(cartItem.getProduct())
+			.quantity(cartItem.getQuantity())
+			.price(cartItem.getProduct().getPrice())
+			.build();
+
+		// 👉 Order 만들기
+		Order order = Order.builder()
+			.user(user)
+			.orderDate(LocalDateTime.now())
+			.status(OrderStatus.PENDING)
+			.totalQuantity(cartItem.getQuantity())
+			.orderItems(List.of(orderItem))
+			.build();
+
+		orderItem.setOrder(order); // 양방향 연관관계 설정
+
+		return orderRepository.save(order);
+	}
+
 }

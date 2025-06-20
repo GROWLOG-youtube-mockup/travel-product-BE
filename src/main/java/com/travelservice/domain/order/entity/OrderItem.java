@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.travelservice.domain.product.entity.Product;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,4 +38,6 @@ public class OrderItem {
 
 	private int peopleCount;
 	private LocalDate startDate;
+	private int quantity;
+	private int price;
 }

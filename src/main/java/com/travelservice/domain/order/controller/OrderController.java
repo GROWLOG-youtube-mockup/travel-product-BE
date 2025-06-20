@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import com.travelservice.domain.order.dto.OrderRequestDto;
 import com.travelservice.domain.order.dto.OrderResponseDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
+import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -43,17 +45,17 @@ public class OrderController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
-		Order order = orderService.findById(id);
+	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id, @AuthenticationPrincipal User user) {
+		Order order = orderService.findByIdAndUser(id, user);
 		return ResponseEntity.ok(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(@RequestParam String email) {
-		List<Order> orders = orderService.findOrdersByEmail(email);
-		List<OrderResponseDto> dtos = orders.stream()
+	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(@AuthenticationPrincipal User user) {
+		List<Order> orders = orderService.findByUser(user);
+		List<OrderResponseDto> result = orders.stream()
 				.map(OrderResponseDto::new)
 				.toList();
-		return ResponseEntity.ok(ApiResponse.ok(dtos));
+		return ResponseEntity.ok(ApiResponse.ok(result));
 	}
 }

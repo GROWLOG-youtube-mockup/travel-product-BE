@@ -47,7 +47,7 @@ public class Order {
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	@Builder.Default
-	private List<OrderItem> items = new ArrayList<>();
+	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Setter(AccessLevel.NONE)

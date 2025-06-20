@@ -102,7 +102,7 @@ public class OrderServiceTest {
 		Order order = orderService.createOrderFromCart(user.getEmail());
 
 		assertThat(order.getOrderId()).isNotNull();
-		assertThat(order.getItems()).hasSize(1);
+		assertThat(order.getOrderItems()).hasSize(1);
 		assertThat(order.getTotalQuantity()).isEqualTo(2);
 	}
 }

@@ -28,7 +28,7 @@ public class OrderResponseDto {
 		this.orderId = order.getOrderId();
 		this.orderDate = order.getOrderDate();
 		this.totalQuantity = order.getTotalQuantity();
-		this.totalPrice = order.getItems().stream()
+		this.totalPrice = order.getOrderItems().stream()
 				.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
 				.sum();
 	}
