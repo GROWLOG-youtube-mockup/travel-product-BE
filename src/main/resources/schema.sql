@@ -77,3 +77,12 @@ CREATE TABLE payment (
   paid_at TIMESTAMP,
   FOREIGN KEY (order_id) REFERENCES "order"(order_id)
 );
+
+CREATE TABLE admin_action_log (
+  log_id INT AUTO_INCREMENT PRIMARY KEY,
+  action_type TINYINT NOT NULL, -- 0: PRODUCT_ADD, 1: ORDER_STATUS_CHANGE, 2: USER_MANAGE
+  target_id INT NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
+);

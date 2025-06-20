@@ -25,10 +25,18 @@ VALUES
   (1, 1001, 1, 2, '2025-06-05', NOW(), NOW()),
   (2, 1002, 1, 1, '2025-06-03', NOW(), NOW());
 
--- payment
 -- payment (결제)
 INSERT INTO payment (
   payment_id, order_id, payment_key, method, card_number, account_number, bank, mobile_phone, status, paid_at
 ) VALUES
   (1, 1001, 'paykey-abc123', 'CARD', '1234-5678-9876-5432', NULL, NULL, '010-1111-1111', 'PAID', '2025-06-05 11:01:00'),
   (2, 1002, 'paykey-def456', 'ACCOUNT_TRANSFER', NULL, '123456-78-901234', '신한은행', '010-1111-1111', 'PAID', '2025-06-03 14:14:00');
+
+-- admin action log
+INSERT INTO admin_action_log (action_type, target_id, timestamp, user_id)
+VALUES
+  (2, 101, TIMESTAMP '2025-06-06 11:23:00', 1),
+  (2, 102, TIMESTAMP '2025-06-06 12:45:00', 2),
+  (1, 201, TIMESTAMP '2025-06-06 13:30:00', 1),
+  (0, 301, TIMESTAMP '2025-06-06 14:10:00', 3),
+  (2, 103, TIMESTAMP '2025-06-07 09:15:00', 1);
