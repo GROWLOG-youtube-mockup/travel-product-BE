@@ -43,10 +43,10 @@ public class OrderServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		User existingUser = userRepository.findByEmail("test@example.com");
+		Optional<User> optionalUser = userRepository.findByEmail("test@example.com");
 
-		if (existingUser != null) {
-			testUser = existingUser;
+		if (optionalUser.isPresent()) {
+			testUser = optionalUser.get();
 		} else {
 			testUser = userRepository.save(User.builder()
 				.email("test@example.com")

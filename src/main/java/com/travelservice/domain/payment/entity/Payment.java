@@ -6,6 +6,8 @@ import com.travelservice.domain.order.entity.Order;
 import com.travelservice.enums.PaymentStatus;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +40,8 @@ public class Payment {
 	private String accountNumber;
 	private String bank;
 	private String mobilePhone;
+
+	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
 	private LocalDateTime paidAt;
 }

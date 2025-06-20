@@ -32,10 +32,8 @@ public class OrderService {
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 		Order order = new Order();
 		order.setUser(user);
@@ -70,10 +68,8 @@ public class OrderService {
 
 	@Transactional
 	public Order createOrderFromCart(String email) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 		List<CartItem> cartItems = cartItemRepo.findByUser(user);
 		if (cartItems.isEmpty()) {
@@ -121,10 +117,8 @@ public class OrderService {
 	}
 
 	public List<Order> findOrdersByEmail(String email) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
 		return orderRepo.findByUser(user);
 	}
 }
