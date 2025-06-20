@@ -24,7 +24,6 @@ public class AddProductRequest {
 	private String name;
 	private Integer price;
 	private Integer totalQuantity;
-	private Integer stockQuantity;
 	private String description;
 	private Integer saleStatus;
 	private Integer type;
@@ -38,13 +37,14 @@ public class AddProductRequest {
 			.name(name)
 			.price(price)
 			.totalQuantity(totalQuantity)
-			.stockQuantity(stockQuantity)
 			.description(description)
 			.saleStatus(saleStatus)
 			.type(type)
 			.duration(duration)
 			.region(region)
 			.build();
+
+		product.setStockQuantity(totalQuantity);
 
 		// 이미지 Url을 ProductImage 엔티티로 변환하여 추가
 		if (imageUrls != null) {
