@@ -34,7 +34,6 @@ public class AdminActionLog {
 	private User user;
 
 	private int actionType;  // 0: PRODUCT_ADD, 1: ORDER_STATUS_CHANGE, 2: USER_MANAGE
-	private int targetType;  // 0: PRODUCT, 1: ORDER, 2: USER
 	private Long targetId;
 
 	private LocalDateTime timestamp;
