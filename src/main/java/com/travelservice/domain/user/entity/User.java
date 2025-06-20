@@ -41,10 +41,13 @@ public class User {
 	private String phoneNumber;
 
 	@Column(name = "role_code", nullable = false)
-	private int roleCode;
+
+	private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
 
 	private LocalDateTime deletedAt;
+
 	private LocalDateTime createdAt;
+	
 	private LocalDateTime updatedAt;
 
 	@PrePersist
@@ -56,5 +59,17 @@ public class User {
 	@PreUpdate
 	public void preUpdate() {
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	public void updatePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 }
