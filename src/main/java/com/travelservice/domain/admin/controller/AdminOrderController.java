@@ -1,15 +1,21 @@
 package com.travelservice.domain.admin.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
+import com.travelservice.domain.admin.dto.order.OrderStatusUpdateRequest;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.service.AdminOrderService;
+import com.travelservice.domain.order.entity.Order;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +45,25 @@ public class AdminOrderController {
 	}
 
 	@GetMapping("/{orderId}")
+	@Operation(summary = "주문 상세 조회")
 	public ResponseEntity<AdminOrderDetailDto> getOrderDetail(@PathVariable Long orderId) {
 		AdminOrderDetailDto dto = adminOrderService.getOrderDetail(orderId);
 		return ResponseEntity.ok(dto);
+	}
+
+	@PatchMapping("/{orderId}")
+	public ResponseEntity<?> updateOrderStatus(
+		@PathVariable Long orderId,
+		@RequestBody OrderStatusUpdateRequest request
+	) {
+		Order updatedOrder = adminOrderService.updateOrderStatus(orderId, request);
+
+		Map<String, Object> response = Map.of(
+			"order_id", updatedOrder.getOrderId(),
+			"status", updatedOrder.getStatus(),
+			"updated_at", updatedOrder.getUpdatedAt()
+		);
+
+		return ResponseEntity.ok(response);
 	}
 }

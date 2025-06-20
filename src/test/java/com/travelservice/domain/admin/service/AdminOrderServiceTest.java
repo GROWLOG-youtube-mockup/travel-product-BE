@@ -44,7 +44,7 @@ class AdminOrderServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		// 1. 테스트 유저 생성
+		// 테스트 유저 생성
 		testUser = adminUserRepository.save(User.builder()
 			.email("test%d@example.com".formatted(System.currentTimeMillis()))
 			.name("테스터")
@@ -52,7 +52,7 @@ class AdminOrderServiceTest {
 			.phoneNumber("010-1234-5678")
 			.build());
 
-		// 2. 주문 데이터 생성
+		// 주문 데이터 생성
 		testOrder = adminOrderRepository.save(Order.builder()
 			.user(testUser)
 			.status(OrderStatus.PENDING)
@@ -60,7 +60,7 @@ class AdminOrderServiceTest {
 			.orderDate(LocalDateTime.now())
 			.build());
 
-		// 3. 결제 데이터 생성 및 저장
+		// 결제 데이터 생성 및 저장
 		testPayment = paymentRepository.save(Payment.builder()
 			.order(this.testOrder)
 			.status(PaymentStatus.PAID)

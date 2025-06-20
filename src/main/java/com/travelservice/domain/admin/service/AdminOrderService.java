@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
 import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.OrderStatusUpdateRequest;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.order.entity.Order;
@@ -83,5 +84,15 @@ public class AdminOrderService {
 		Payment payment = paymentRepository.findByOrder_OrderId(orderId).orElse(null);
 
 		return AdminOrderDetailDto.from(order, payment);
+	}
+
+	public Order updateOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
+		Order order = adminOrderRepository.findById(orderId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+
+		order.setStatus(request.getStatus());
+		order.setUpdatedAt(LocalDateTime.now());
+
+		return adminOrderRepository.save(order);
 	}
 }
