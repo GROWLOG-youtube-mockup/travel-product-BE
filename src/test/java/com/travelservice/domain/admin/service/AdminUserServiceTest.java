@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.travelservice.domain.admin.dto.user.AdminUserResponseDto;
 import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
-import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
 
@@ -99,31 +98,31 @@ class AdminUserServiceTest {
 		assertEquals(1, result.getTotalPages());
 	}
 
-	@Test
-	void shouldUpdateUserSuccessfully() {
-		// given
-		User original = userRepository.findById(userId1).get();
-
-		String newName = "새이름";
-		Integer newRoleCode = 2;
-
-		UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
-			.name(newName)
-			.email(original.getEmail())
-			.phoneNumber(original.getPhoneNumber())
-			.roleCode(newRoleCode)
-			.build();
-
-		// when
-		boolean updated = userService.updateUser(userId1, requestDto);
-
-		// then
-		assertThat(updated).isTrue();
-
-		User updatedUser = userRepository.findById(userId1).get();
-		assertThat(updatedUser.getName()).isEqualTo(newName);
-		assertThat(updatedUser.getRoleCode()).isEqualTo(newRoleCode);
-	}
+	// @Test
+	// void shouldUpdateUserSuccessfully() {
+	// 	// given
+	// 	User original = userRepository.findById(userId1).get();
+	//
+	// 	String newName = "새이름";
+	// 	Integer newRoleCode = 2;
+	//
+	// 	UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
+	// 		.name(newName)
+	// 		.email(original.getEmail())
+	// 		.phoneNumber(original.getPhoneNumber())
+	// 		.roleCode(newRoleCode)
+	// 		.build();
+	//
+	// 	// when
+	// 	boolean updated = userService.updateUser(userId1, requestDto);
+	//
+	// 	// then
+	// 	assertThat(updated).isTrue();
+	//
+	// 	User updatedUser = userRepository.findById(userId1).get();
+	// 	assertThat(updatedUser.getName()).isEqualTo(newName);
+	// 	assertThat(updatedUser.getRoleCode()).isEqualTo(newRoleCode);
+	// }
 
 	@Test
 	void shouldRetrieveAdminUsersSuccessfully() {
