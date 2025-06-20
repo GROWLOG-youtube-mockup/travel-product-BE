@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
 import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
+import com.travelservice.domain.admin.dto.order.OrderStatusUpdateRequest;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
@@ -109,4 +110,25 @@ class AdminOrderServiceTest {
 		assertThat(detail.getPayment().getStatus()).isEqualTo(PaymentStatus.PAID.name());
 		assertThat(detail.getPayment().getCardNumber()).endsWith("1234");
 	}
+
+	@Test
+	void updateOrderStatus_success() {
+		// given
+		Long orderId = testOrder.getOrderId();
+		OrderStatus newStatus = OrderStatus.PAID;
+
+		// DTO 생성해서 값 세팅
+		OrderStatusUpdateRequest request = new OrderStatusUpdateRequest();
+		request.setStatus(newStatus);
+
+		// when
+		Order updatedOrder = adminOrderService.updateOrderStatus(orderId, request);
+
+		// then
+		assertThat(updatedOrder).isNotNull();
+		assertThat(updatedOrder.getOrderId()).isEqualTo(orderId);
+		assertThat(updatedOrder.getStatus()).isEqualTo(newStatus);
+		assertThat(updatedOrder.getUpdatedAt()).isNotNull();
+	}
+
 }
