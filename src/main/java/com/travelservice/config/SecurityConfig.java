@@ -37,7 +37,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(SWAGGER_WHITELIST).permitAll()
-				.requestMatchers("/products").permitAll()
+				.requestMatchers("/products", "/products/**", "/images/**").permitAll()
 				.requestMatchers("/users/signup", "/users/login").permitAll()
 				.requestMatchers("/auth/**").permitAll() // 이메일 인증 등 허용
 				.anyRequest().authenticated() //  나머지는 인증 필요
