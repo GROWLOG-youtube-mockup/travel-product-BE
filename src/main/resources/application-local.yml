@@ -11,20 +11,37 @@ spring:
       path: /h2-console
 
   jpa:
+    database: h2
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
-
+    defer-datasource-initialization: true
   sql:
     init:
-      mode: always      # 항상 schema.sql, data.sql 실행
-      encoding: UTF-8
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+mail:
+  from: ${MAIL_FROM}
 
 server:
   port: 8080
 
+logging:
+  level:
+    root: INFO
+    com.travelservice: DEBUG
 toss:
   secret-key: ${TOSS_SECRET_KEY}

@@ -1,12 +1,18 @@
 package com.travelservice.domain.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.travelservice.domain.cart.entity.Cart;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -16,12 +22,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 @Table(name = "`user`")
 public class User {
 
@@ -43,8 +49,14 @@ public class User {
 	@Column(name = "role_code", nullable = false)
 	private int roleCode; // 0: USER, 1: ADMIN, 2: SUPER_ADMIN
 
+	@Builder.Default
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Cart> cartItems = new ArrayList<>();
+
 	private LocalDateTime deletedAt;
+
 	private LocalDateTime createdAt;
+
 	private LocalDateTime updatedAt;
 
 	@PrePersist
@@ -56,5 +68,17 @@ public class User {
 	@PreUpdate
 	public void preUpdate() {
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	public void updatePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 }

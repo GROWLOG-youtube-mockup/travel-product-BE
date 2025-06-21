@@ -21,7 +21,6 @@ public class ApiResponse<T> {
 	}
 
 	@Getter
-	@AllArgsConstructor
 	public static class Error {
 		private String code;
 		private String message;

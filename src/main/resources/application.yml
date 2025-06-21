@@ -1,6 +1,10 @@
 spring:
   profiles:
     active: local  # ??? ??: local ?? prod
+    include:
+      - s3
+  config:
+    import: optional:file:.env[.properties]
 
 
 springdoc:
