@@ -32,10 +32,8 @@ public class OrderService {
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 		Order order = new Order();
 		order.setUser(user);
@@ -70,10 +68,8 @@ public class OrderService {
 
 	@Transactional
 	public Order createOrderFromCart(String email) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 		List<CartItem> cartItems = cartItemRepo.findByUser(user);
 		if (cartItems.isEmpty()) {
@@ -97,11 +93,11 @@ public class OrderService {
 			product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
 
 			OrderItem item = OrderItem.builder()
-					.order(order)
-					.product(product)
-					.peopleCount(cartItem.getQuantity())
-					.startDate(cartItem.getStartDate())
-					.build();
+				.order(order)
+				.product(product)
+				.peopleCount(cartItem.getQuantity())
+				.startDate(cartItem.getStartDate())
+				.build();
 			orderItems.add(item);
 			totalQty += cartItem.getQuantity();
 		}
@@ -117,14 +113,13 @@ public class OrderService {
 
 	public Order findById(Long orderId) {
 		return orderRepo.findById(orderId)
-				.orElseThrow(() -> new RuntimeException("주문 없음"));
+			.orElseThrow(() -> new RuntimeException("주문 없음"));
 	}
 
 	public List<Order> findOrdersByEmail(String email) {
-		User user = userRepo.findByEmail(email);
-		if (user == null) {
-			throw new RuntimeException("유저 없음");
-		}
+		User user = userRepo.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("유저 없음"));
+		
 		return orderRepo.findByUser(user);
 	}
 }
