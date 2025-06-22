@@ -57,24 +57,6 @@ public class PaymentController {
 		return ResponseEntity.ok(ApiResponse.ok(new PaymentResponseDto(payment)));
 	}
 
-	@Operation(
-		summary = "장바구니 항목 즉시 주문 + 결제",
-		description = "장바구니에서 선택한 항목을 기반으로 주문을 생성하고, 즉시 결제까지 처리. Toss와의 연동은 테스트용이며, 추후 프론트 연동 시 분리할 수 있음."
-	)
-	@PostMapping("/from-cart/{cartItemId}")
-	public ResponseEntity<ApiResponse<OrderResponseDto>> orderSingleCartItem(
-		@PathVariable Long cartItemId,
-		@AuthenticationPrincipal User user
-	) {
-		Order order = orderService.createOrderFromCartItem(user, cartItemId);
-
-		Payment payment = paymentService.payNow(order);
-
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.ok(new OrderResponseDto(order)));
-	}
-
-	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
 	@Operation(
 		summary = "Toss 결제 성공 Redirect 수신",
@@ -103,5 +85,25 @@ public class PaymentController {
 		paymentService.cancel(orderId);
 		return ResponseEntity.ok(ApiResponse.ok("결제가 취소되었습니다."));
 	}
+
+	/*
+	//여러 건 결제가 없으므로 /orders/pay에서 처리
+	@Operation(
+		summary = "장바구니 항목 즉시 주문 + 결제",
+		description = "장바구니에서 선택한 항목을 기반으로 주문을 생성하고, 즉시 결제까지 처리. Toss와의 연동은 테스트용이며, 추후 프론트 연동 시 분리할 수 있음."
+	)
+	@PostMapping("/from-cart/{cartItemId}")
+	public ResponseEntity<ApiResponse<OrderResponseDto>> orderSingleCartItem(
+		@PathVariable Long cartItemId,
+		@AuthenticationPrincipal User user
+	) {
+		Order order = orderService.createOrderFromCartItem(user, cartItemId);
+
+		Payment payment = paymentService.payNow(order);
+
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
+	}*/
+	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
 }

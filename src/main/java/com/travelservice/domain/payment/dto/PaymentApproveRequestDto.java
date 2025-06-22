@@ -17,7 +17,7 @@ public class PaymentApproveRequestDto {
 	@JsonProperty("payment_key")
 	private String paymentKey;
 	@JsonProperty("order_id")
-	private String orderId;
+	private Long orderId;
 	private int amount;
 	@JsonProperty("payment_gateway")
 	private String paymentGateway;

@@ -82,8 +82,10 @@ public class PaymentService {
 
 	@Transactional
 	public PaymentResponseDto approve(PaymentApproveRequestDto requestDto) throws IOException {
+		String orderIdKey = String.valueOf(requestDto.getOrderId());
+
 		// Redis에 저장된 결제 요청 정보 확인
-		if (requestDto.getOrderId() == null || !Boolean.TRUE.equals(redisTemplate.hasKey(requestDto.getOrderId()))) {
+		if (requestDto.getOrderId() == null || !Boolean.TRUE.equals(redisTemplate.hasKey(orderIdKey))) {
 			throw new IllegalArgumentException("유효하지 않은 주문 ID입니다.");
 		}
 
@@ -91,7 +93,7 @@ public class PaymentService {
 		if (requestDto.getPaymentKey().startsWith("toss-generated-key")) {
 			// Mock data
 			String method = "카드";
-			Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
+			Order order = orderRepository.findById(requestDto.getOrderId())
 				.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
 
 			Payment payment = Payment.builder()
@@ -105,7 +107,7 @@ public class PaymentService {
 
 			Payment saved = paymentRepository.save(payment);
 			order.setStatus(OrderStatus.PAID);
-			redisTemplate.delete(requestDto.getOrderId());
+			redisTemplate.delete(orderIdKey);
 
 			return PaymentResponseDto.builder()
 				.paymentId(saved.getPaymentId())
@@ -129,7 +131,8 @@ public class PaymentService {
 
 		ResponseEntity<JsonNode> response;
 		try {
-			response = restTemplate.postForEntity("https://api.tosspayments.com/v1/payments/confirm", entity, JsonNode.class);
+			response = restTemplate.postForEntity("https://api.tosspayments.com/v1/payments/confirm", entity,
+				JsonNode.class);
 		} catch (HttpClientErrorException e) {
 			JsonNode errorBody = new ObjectMapper().readTree(e.getResponseBodyAsString());
 			throw new RuntimeException("결제 승인 실패: " + errorBody.get("message").asText());
@@ -179,30 +182,30 @@ public class PaymentService {
 		}
 
 		Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
-				.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
+			.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
 
 		Payment payment = Payment.builder()
-				.order(order)
-				.paymentKey(requestDto.getPaymentKey())
-				.method(method)
-				.cardNumber(cardNumber)
-				.accountNumber(accountNumber)
-				.bank(bank)
-				.mobilePhone(mobilePhone)
-				.status(PaymentStatus.PAID)
-				.paidAt(LocalDateTime.now())
-				.build();
+			.order(order)
+			.paymentKey(requestDto.getPaymentKey())
+			.method(method)
+			.cardNumber(cardNumber)
+			.accountNumber(accountNumber)
+			.bank(bank)
+			.mobilePhone(mobilePhone)
+			.status(PaymentStatus.PAID)
+			.paidAt(LocalDateTime.now())
+			.build();
 
 		Payment saved = paymentRepository.save(payment);
 		order.setStatus(OrderStatus.PAID);
-		redisTemplate.delete(requestDto.getOrderId());
+		redisTemplate.delete(orderIdKey);
 
 		return PaymentResponseDto.builder()
-				.paymentId(saved.getPaymentId())
-				.status(saved.getStatus().name())
-				.method(saved.getMethod())
-				.paidAt(saved.getPaidAt().toString())
-				.build();
+			.paymentId(saved.getPaymentId())
+			.status(saved.getStatus().name())
+			.method(saved.getMethod())
+			.paidAt(saved.getPaidAt().toString())
+			.build();
 	}
 
 	public Order createOrderFromCartItem(User user, Long cartItemId) {
