@@ -71,7 +71,6 @@ CREATE TABLE admin_action_log
 (
     log_id      BIGINT AUTO_INCREMENT PRIMARY KEY,
     action_type TINYINT NOT NULL COMMENT '0: PRODUCT_ADD, 1: ORDER_STATUS_CHANGE, 2: USER_MANAGE',
-    target_type TINYINT NOT NULL COMMENT '0: PRODUCT, 1: ORDER, 2: USER',
     target_id   BIGINT     NOT NULL,
     timestamp   DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id     BIGINT     NOT NULL,
@@ -186,6 +185,7 @@ CREATE TABLE "order"
     user_id        BIGINT NOT NULL,
     order_date     DATETIME DEFAULT CURRENT_TIMESTAMP,
     cancel_date    DATETIME,
+    status VARCHAR(20) NOT NULL,
     total_quantity INT NOT NULL,
     created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -217,9 +217,14 @@ CREATE TABLE payment
 (
     payment_id       BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id         BIGINT         NOT NULL,
-    card_number      VARCHAR(30) NOT NULL,
-    status           TINYINT     NOT NULL COMMENT '0: APPROVED, 1: CANCELED',
-    payment_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    payment_key VARCHAR(100),
+    method VARCHAR(30),
+    card_number      VARCHAR(30),
+    account_number VARCHAR(30),
+    bank VARCHAR(30),
+    mobile_phone VARCHAR(20),
+    status  VARCHAR(20),
+    paid_at TIMESTAMP,
     CONSTRAINT fk_payment_order FOREIGN KEY (order_id)
         REFERENCES "order" (order_id)
         ON DELETE CASCADE ON UPDATE CASCADE

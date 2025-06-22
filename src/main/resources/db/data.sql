@@ -50,20 +50,12 @@ INSERT INTO product_description_item (group_id, content, sort_order) VALUES
 (5, '좋아요 😘', 1),
 (6, 'Best 추천 👍', 1);
 
--- region (여행 지역)
-INSERT INTO region (region_id, name, level, parent_id) VALUES (1, '서울', 1, NULL);
-
 -- user (유저)
 INSERT INTO "user" (name, email, password, phone_number, role_code, created_at)
 VALUES
   ('kim', 'kim1@test.com', 'pw1', '010-1111-1111', 0, TIMESTAMP '2025-06-15 10:00:00'),
   ('admin', 'kim@test.com', 'pw2', '010-2222-2222', 1, TIMESTAMP '2025-06-15 10:01:00'),
   ('superadmin', 'suadmin@test.com', 'pw3', '010-3333-3333', 2, TIMESTAMP '2025-06-15 10:02:00');
-
--- product (상품)
-INSERT INTO product (product_id, name, description, price, total_quantity, stock_quantity, sale_status, type, duration, region_region_id, created_at, updated_at)
-VALUES
-  (1, '제주도 2박3일 패키지', '제주도에서 즐기는 2박3일 일정', 250000, 30, 25, 1, 1, 3, 1, NOW(), NOW());
 
 -- order (주문)
 INSERT INTO "order" (order_id, user_id, order_date, status, total_quantity, created_at, updated_at)
