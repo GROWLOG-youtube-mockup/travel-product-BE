@@ -41,11 +41,16 @@ public class PaymentServiceTest {
 	@InjectMocks
 	private PaymentService paymentService;
 
-	@Mock private PaymentRepository paymentRepository;
-	@Mock private OrderRepository orderRepository;
-	@Mock private RedisTemplate<String, String> redisTemplate;
-	@Mock private RestTemplate restTemplate;
-	@Mock private UserRepository userRepository;
+	@Mock
+	private PaymentRepository paymentRepository;
+	@Mock
+	private OrderRepository orderRepository;
+	@Mock
+	private RedisTemplate<String, String> redisTemplate;
+	@Mock
+	private RestTemplate restTemplate;
+	@Mock
+	private UserRepository userRepository;
 
 	private PaymentApproveRequestDto validRequest;
 

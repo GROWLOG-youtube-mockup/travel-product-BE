@@ -74,10 +74,12 @@ public class JwtTokenProvider {
 	}
 
 	public String mapRoleCodeToAuthority(int roleCode) {
-		if (roleCode == 1)
+		if (roleCode == 1) {
 			return "ADMIN";
-		if (roleCode == 2)
+		}
+		if (roleCode == 2) {
 			return "SUPER_ADMIN";
+		}
 		return "USER";
 	}
 }

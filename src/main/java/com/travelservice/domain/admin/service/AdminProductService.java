@@ -65,8 +65,9 @@ public class AdminProductService {
 	}
 
 	private String typeToString(Integer type) {
-		if (type == null)
+		if (type == null) {
 			return "";
+		}
 		switch (type) {
 			case 0:
 				return "자유여행";
@@ -84,8 +85,9 @@ public class AdminProductService {
 	}
 
 	private String saleStatusToString(Integer saleStatus) {
-		if (saleStatus == null)
+		if (saleStatus == null) {
 			return "";
+		}
 		switch (saleStatus) {
 			case 0:
 				return "ON_SALE";
