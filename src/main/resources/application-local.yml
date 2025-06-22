@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
+    username: ${LOCAL_DB_USERNAME:sa}
+    password: ${LOCAL_DB_PASSWORD:}
 
   h2:
     console:
@@ -26,6 +26,11 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 mail:
   from: ${MAIL_FROM}

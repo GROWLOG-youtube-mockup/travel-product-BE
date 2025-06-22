@@ -96,4 +96,12 @@ public class PaymentController {
                 amount: %d
                 """.formatted(paymentKey, orderId, amount);
 	}
+
+	@Operation(summary = "결제 취소", description = "주문 ID를 기반으로 결제 및 주문을 취소.")
+	@PostMapping("/cancel")
+	public ResponseEntity<ApiResponse<String>> cancelPayment(@RequestParam Long orderId) {
+		paymentService.cancel(orderId);
+		return ResponseEntity.ok(ApiResponse.ok("결제가 취소되었습니다."));
+	}
+
 }

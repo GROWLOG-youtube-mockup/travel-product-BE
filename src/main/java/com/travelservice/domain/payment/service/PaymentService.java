@@ -324,4 +324,18 @@ public class PaymentService {
 		orderRepository.save(order);
 		return paymentRepository.save(payment);
 	}
+
+	@Transactional
+	public void cancel(Long orderId) {
+		Payment payment = paymentRepository.findByOrder_OrderId(orderId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+
+		if (payment.getStatus() == PaymentStatus.CANCELLED) {
+			throw new CustomException(ErrorCode.ALREADY_CANCELLED);
+		}
+
+		payment.setStatus(PaymentStatus.CANCELLED);
+		payment.getOrder().setStatus(OrderStatus.CANCELLED);
+	}
+
 }
