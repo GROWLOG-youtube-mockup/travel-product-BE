@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,11 @@ public class AdminUserService {
 	@Transactional
 	public Map<String, Object> updateUser(Long userId, UserUpdateRequestDto requestDto) {
 
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Long currentUserId = Long.valueOf(authentication.getName());
+		User currentUser = userRepository.findById(currentUserId)
+			.orElseThrow(() -> new RuntimeException("권한 정보 조회 실패"));
+
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
@@ -68,8 +75,12 @@ public class AdminUserService {
 			changed = true;
 		}
 		if (requestDto.getRoleCode() != null) {
-			user.setRoleCode(requestDto.getRoleCode());
-			changed = true;
+			if (currentUser.getRoleCode() == 2) {
+				user.setRoleCode(requestDto.getRoleCode());
+				changed = true;
+			} else {
+				throw new RuntimeException("관리자 권한으로는 회원 역할(role_code) 변경이 불가합니다.");
+			}
 		}
 
 		Map<String, Object> result = new HashMap<>();
