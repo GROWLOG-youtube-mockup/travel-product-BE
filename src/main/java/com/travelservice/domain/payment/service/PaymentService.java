@@ -308,4 +308,20 @@ public class PaymentService {
 			System.out.println("⚠️ Redis 연결 실패: " + e.getMessage());
 		}
 	}
+
+	@Transactional
+	public Payment payNow(Order order) {
+		Payment payment = Payment.builder()
+			.order(order)
+			.paymentKey("test-key")
+			.method("카드")
+			.status(PaymentStatus.PAID)
+			.paidAt(LocalDateTime.now())
+			.build();
+
+		order.setStatus(OrderStatus.PAID);
+
+		orderRepository.save(order);
+		return paymentRepository.save(payment);
+	}
 }

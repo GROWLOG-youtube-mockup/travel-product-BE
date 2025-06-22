@@ -26,6 +26,7 @@ import com.travelservice.domain.payment.service.PaymentService;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,6 +36,10 @@ public class PaymentController {
 	private final PaymentService paymentService;
 	private final OrderService orderService;
 
+	@Operation(
+		summary = "Toss 결제 승인 처리",
+		description = "Toss 결제 성공 후, 프론트에서 전달받은 paymentKey, orderId, amount 값을 기반으로 결제를 최종 승인하고, 결제 상태를 'PAID'로 변경."
+	)
 	@PostMapping("/approve")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> approve(@RequestBody PaymentApproveRequestDto dto)
 			throws IOException {
@@ -42,24 +47,39 @@ public class PaymentController {
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
+	@Operation(
+		summary = "결제 상태 조회",
+		description = "특정 주문(orderId)에 대한 결제 정보를 조회. 결제 금액, 결제 방식, 결제 일시 등 상세 정보를 반환."
+	)
 	@GetMapping("/{orderId}")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> getPaymentStatus(@PathVariable Long orderId, @AuthenticationPrincipal User user) {
 		Payment payment = paymentService.getPaymentStatus(orderId, user);
 		return ResponseEntity.ok(ApiResponse.ok(new PaymentResponseDto(payment)));
 	}
 
+	@Operation(
+		summary = "장바구니 항목 즉시 주문 + 결제",
+		description = "장바구니에서 선택한 항목을 기반으로 주문을 생성하고, 즉시 결제까지 처리. Toss와의 연동은 테스트용이며, 추후 프론트 연동 시 분리할 수 있음."
+	)
 	@PostMapping("/from-cart/{cartItemId}")
 	public ResponseEntity<ApiResponse<OrderResponseDto>> orderSingleCartItem(
 		@PathVariable Long cartItemId,
 		@AuthenticationPrincipal User user
 	) {
 		Order order = orderService.createOrderFromCartItem(user, cartItemId);
+
+		Payment payment = paymentService.payNow(order);
+
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
+	@Operation(
+		summary = "Toss 결제 성공 Redirect 수신",
+		description = "Toss 결제 완료 후 리디렉션 주소로 호출되며, paymentKey, orderId, amount를 확인. 테스트 또는 개발용으로 사용됨. 프론트 연동 시 프론트에서 리다이렉션 처리"
+	)
 	@GetMapping("/success")
 	public String tossSuccess(
 		@RequestParam String paymentKey,
