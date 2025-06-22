@@ -25,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByRegionIn(List<Region> regions);
 
 	// 페이징용 추가
-	Page<Product> findAll_Admin(Pageable pageable);
+	Page<Product> findAll(Pageable pageable);
 
-	Page<Product> findByRegion_RegionId_Admin(Long regionId, Pageable pageable);
+	Page<Product> findByRegion_RegionId(Long regionId, Pageable pageable);
 }
