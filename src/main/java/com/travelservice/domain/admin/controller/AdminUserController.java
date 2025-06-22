@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
 import com.travelservice.domain.admin.service.AdminUserService;
@@ -41,9 +40,11 @@ public class AdminUserController {
 	@Operation(summary = "사용자 목록 조회")
 	public ResponseEntity<PagedUserResponseDto> getUsers(
 		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(defaultValue = "10") Integer size) {
+		@RequestParam(defaultValue = "10") Integer size,
+		@RequestParam(required = false) Integer roleCode
+	) {
 
-		PagedUserResponseDto response = userService.getUsers(page, size);
+		PagedUserResponseDto response = userService.getUsers(page, size, roleCode);
 		return ResponseEntity.ok(response);
 	}
 
@@ -67,15 +68,5 @@ public class AdminUserController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
-	}
-
-	@GetMapping("/admins")
-	@Operation(summary = "관리자 목록 조회")
-	public ResponseEntity<PagedAdminUserResponseDto> getAdmins(
-		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(defaultValue = "10") Integer size
-	) {
-		PagedAdminUserResponseDto adminUsers = userService.getAdminUsers(page, size);
-		return ResponseEntity.ok(adminUsers);
 	}
 }

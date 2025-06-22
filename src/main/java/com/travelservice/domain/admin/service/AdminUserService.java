@@ -13,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.admin.dto.user.AdminUserResponseDto;
-import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
@@ -30,11 +28,15 @@ public class AdminUserService {
 
 	private final AdminUserRepository userRepository;
 
-	public PagedUserResponseDto getUsers(Integer page, Integer size) {
+	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
 		Page<User> userPage;
 
-		userPage = userRepository.findActiveUsers(pageable);
+		if (roleCode == null) {
+			userPage = userRepository.findActiveUsers(pageable);
+		} else {
+			userPage = userRepository.findActiveUsersByRoleCodes(roleCode, pageable);
+		}
 
 		List<UserResponseDto> users = userPage.getContent().stream()
 			.map(this::convertToDto)
@@ -95,23 +97,6 @@ public class AdminUserService {
 		return updated > 0;
 	}
 
-	public PagedAdminUserResponseDto getAdminUsers(int page, int size) {
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
-		List<Integer> adminRoles = List.of(1, 2);
-		Page<User> adminUserPage = userRepository.findActiveUsersByRoleCodes(adminRoles, pageable);
-
-		List<AdminUserResponseDto> adminUsers = adminUserPage.getContent().stream()
-			.map(this::convertToAdminUserDto)
-			.toList();
-
-		return PagedAdminUserResponseDto.builder()
-			.content(adminUsers)
-			.totalElements(adminUserPage.getTotalElements())
-			.totalPages(adminUserPage.getTotalPages())
-			.currentPage(page)
-			.build();
-	}
-
 	private UserResponseDto convertToDto(User user) {
 		return UserResponseDto.builder()
 			.userId(user.getUserId())
@@ -121,15 +106,6 @@ public class AdminUserService {
 			.roleCode(user.getRoleCode())
 			.createAt(user.getCreatedAt())
 			.deleteAt(user.getDeletedAt())
-			.build();
-	}
-
-	private AdminUserResponseDto convertToAdminUserDto(User user) {
-		return AdminUserResponseDto.builder()
-			.userId(user.getUserId())
-			.name(user.getName())
-			.email(user.getEmail())
-			.roleCode(user.getRoleCode())
 			.build();
 	}
 }

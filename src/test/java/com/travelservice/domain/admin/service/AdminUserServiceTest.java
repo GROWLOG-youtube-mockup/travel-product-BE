@@ -1,10 +1,8 @@
 package com.travelservice.domain.admin.service;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.admin.dto.user.AdminUserResponseDto;
-import com.travelservice.domain.admin.dto.user.PagedAdminUserResponseDto;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
@@ -75,7 +71,7 @@ class AdminUserServiceTest {
 		//given
 
 		//when
-		PagedUserResponseDto result = userService.getUsers(1, 10);
+		PagedUserResponseDto result = userService.getUsers(1, 10, null);
 
 		//then
 		assertEquals(3, result.getTotalElements());
@@ -90,7 +86,7 @@ class AdminUserServiceTest {
 		//given
 
 		//when
-		PagedUserResponseDto result = userService.getUsers(2, 10);
+		PagedUserResponseDto result = userService.getUsers(2, 10, null);
 
 		//then
 		assertEquals(0, result.getContent().size());
@@ -124,24 +120,4 @@ class AdminUserServiceTest {
 	// 	assertThat(updatedUser.getRoleCode()).isEqualTo(newRoleCode);
 	// }
 
-	@Test
-	void shouldRetrieveAdminUsersSuccessfully() {
-		// given
-		int page = 1;
-		int size = 10;
-		List<Integer> roleCodes = List.of(1, 2);
-
-		// when
-		PagedAdminUserResponseDto result = userService.getAdminUsers(page, size);
-
-		// then
-		assertThat(result.getContent().size()).isEqualTo(2);
-		assertThat(result.getTotalElements()).isEqualTo(2);
-		assertThat(result.getTotalPages()).isEqualTo(1);
-		assertThat(result.getCurrentPage()).isEqualTo(1);
-
-		List<AdminUserResponseDto> adminUsers = result.getContent();
-		assertThat(adminUsers.get(0).getName()).isEqualTo("superadmin");
-		assertThat(adminUsers.get(1).getName()).isEqualTo("김철수");
-	}
 }
