@@ -62,4 +62,22 @@ public class JwtTokenProvider {
 		);
 	}
 
+	public int getRoleCode(String token) {
+		Claims claims = Jwts.parser()
+			.setSigningKey(secretKey)
+			.parseClaimsJws(token)
+			.getBody();
+
+		Object roleCodeObj = claims.get("roleCode");
+
+		return Integer.parseInt(roleCodeObj.toString());
+	}
+
+	public String mapRoleCodeToAuthority(int roleCode) {
+		if (roleCode == 1)
+			return "ADMIN";
+		if (roleCode == 2)
+			return "SUPER_ADMIN";
+		return "USER";
+	}
 }
