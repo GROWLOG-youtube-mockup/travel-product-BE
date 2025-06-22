@@ -2,7 +2,6 @@ package com.travelservice.domain.admin.controller;
 
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
 import com.travelservice.domain.admin.service.AdminUserService;
+import com.travelservice.global.common.ApiResponse;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,35 +39,36 @@ public class AdminUserController {
 	 */
 	@GetMapping("/users")
 	@Operation(summary = "사용자 목록 조회")
-	public ResponseEntity<PagedUserResponseDto> getUsers(
+	public ApiResponse<PagedUserResponseDto> getUsers(
 		@RequestParam(defaultValue = "1") Integer page,
 		@RequestParam(defaultValue = "10") Integer size,
 		@RequestParam(required = false) Integer roleCode
 	) {
 
 		PagedUserResponseDto response = userService.getUsers(page, size, roleCode);
-		return ResponseEntity.ok(response);
+		return ApiResponse.ok(response);
 	}
 
 	@PatchMapping("/users/{userId}")
 	@Operation(summary = "사용자 정보 수정")
-	public ResponseEntity<Map<String, Object>> updateUser(
+	public ApiResponse<Map<String, Object>> updateUser(
 		@PathVariable Long userId,
 		@RequestBody @Valid UserUpdateRequestDto requestDto
 	) {
 		Map<String, Object> result = userService.updateUser(userId, requestDto);
-		return ResponseEntity.ok(result);
+		return ApiResponse.ok(result);
 	}
 
 	@DeleteMapping("/users/{userId}")
 	@Operation(summary = "회원 삭제")
-	public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+	public ApiResponse<?> deleteUser(@PathVariable Long userId) {
 		boolean deleted = userService.deleteUser(userId);
 
 		if (deleted) {
-			return ResponseEntity.ok().body(Map.of("message", "User deleted (soft delete) successfully"));
+			return ApiResponse.ok(Map.of("message", "User deleted (soft delete) successfully"));
 		} else {
-			return ResponseEntity.notFound().build();
+			return ApiResponse.error(ErrorCode.USER_NOT_FOUND);
 		}
 	}
+
 }

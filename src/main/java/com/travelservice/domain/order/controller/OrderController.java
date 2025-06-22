@@ -25,35 +25,36 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/orders")
 public class OrderController {
 	private final OrderService orderService;
+
 	@PostMapping
-	public ResponseEntity<ApiResponse<OrderResponseDto>> creatOrder(
-			@RequestBody OrderRequestDto dto,
-			@RequestParam String email
+	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(
+		@RequestBody OrderRequestDto dto,
+		@RequestParam String email
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@PostMapping("/from-cart")
 	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(@RequestParam String email) {
 		Order order = orderService.createOrderFromCart(email);
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
+	public ApiResponse<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
 		Order order = orderService.findById(id);
-		return ResponseEntity.ok(ApiResponse.ok(new OrderResponseDto(order)));
+		return ApiResponse.ok(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(@RequestParam String email) {
+	public ApiResponse<ApiResponse<List<OrderResponseDto>>> getMyOrders(@RequestParam String email) {
 		List<Order> orders = orderService.findOrdersByEmail(email);
 		List<OrderResponseDto> dtos = orders.stream()
-				.map(OrderResponseDto::new)
-				.toList();
-		return ResponseEntity.ok(ApiResponse.ok(dtos));
+			.map(OrderResponseDto::new)
+			.toList();
+		return ApiResponse.ok(ApiResponse.ok(dtos));
 	}
 }

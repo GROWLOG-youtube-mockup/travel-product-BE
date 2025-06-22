@@ -2,7 +2,6 @@ package com.travelservice.domain.admin.controller;
 
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +15,7 @@ import com.travelservice.domain.admin.dto.order.OrderStatusUpdateRequest;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
 import com.travelservice.domain.admin.service.AdminOrderService;
 import com.travelservice.domain.order.entity.Order;
+import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +31,7 @@ public class AdminOrderController {
 
 	@GetMapping
 	@Operation(summary = "주문 목록 조회")
-	public ResponseEntity<PagedAdminOrderResponseDto> getOrderList(
+	public ApiResponse<PagedAdminOrderResponseDto> getOrderList(
 		@RequestParam(defaultValue = "1") Integer page,
 		@RequestParam(defaultValue = "10") Integer size,
 		@RequestParam(required = false) String status,
@@ -41,19 +41,19 @@ public class AdminOrderController {
 		PagedAdminOrderResponseDto result = adminOrderService.findOrders(
 			page, size, status, start_date, end_date
 		);
-		return ResponseEntity.ok(result);
+		return ApiResponse.ok(result);
 	}
 
 	@GetMapping("/{orderId}")
 	@Operation(summary = "주문 상세 조회")
-	public ResponseEntity<AdminOrderDetailDto> getOrderDetail(@PathVariable Long orderId) {
+	public ApiResponse<AdminOrderDetailDto> getOrderDetail(@PathVariable Long orderId) {
 		AdminOrderDetailDto dto = adminOrderService.getOrderDetail(orderId);
-		return ResponseEntity.ok(dto);
+		return ApiResponse.ok(dto);
 	}
 
 	@PatchMapping("/{orderId}")
 	@Operation(summary = "주문 상태 수정")
-	public ResponseEntity<?> updateOrderStatus(
+	public ApiResponse<?> updateOrderStatus(
 		@PathVariable Long orderId,
 		@RequestBody OrderStatusUpdateRequest request
 	) {
@@ -65,6 +65,6 @@ public class AdminOrderController {
 			"updated_at", updatedOrder.getUpdatedAt()
 		);
 
-		return ResponseEntity.ok(response);
+		return ApiResponse.ok(response);
 	}
 }

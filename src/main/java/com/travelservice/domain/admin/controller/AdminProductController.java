@@ -41,7 +41,9 @@ public class AdminProductController {
 		@RequestBody AddProductRequest request) {
 
 		ProductDetailResponse response = productServiceImpl.createProduct(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
+		return ResponseEntity
+			.status(HttpStatus.CREATED)
+			.body(ApiResponse.ok(response));
 	}
 
 	@GetMapping
@@ -56,24 +58,24 @@ public class AdminProductController {
 
 	@Operation(summary = "상품 상세 조회")
 	@GetMapping("/{productId}")
-	public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductById(@PathVariable Long productId) {
+	public ApiResponse<ApiResponse<ProductDetailResponse>> getProductById(@PathVariable Long productId) {
 		ProductDetailResponse response = productServiceImpl.getProductDetail(productId);
-		return ResponseEntity.ok(ApiResponse.ok(response));
+		return ApiResponse.ok(ApiResponse.ok(response));
 	}
 
 	@Operation(summary = "상품 정보 수정")
 	@PutMapping("/{productId}")
-	public ResponseEntity<ApiResponse<ProductDetailResponse>> updateProduct(@PathVariable Long productId,
+	public ApiResponse<ApiResponse<ProductDetailResponse>> updateProduct(@PathVariable Long productId,
 		@RequestBody UpdateProductRequest request) {
 		Product updatedProduct = productServiceImpl.updateProduct(productId, request);
 
-		return ResponseEntity.ok(ApiResponse.ok(ProductDetailResponse.from(updatedProduct)));
+		return ApiResponse.ok(ApiResponse.ok(ProductDetailResponse.from(updatedProduct)));
 	}
 
 	@Operation(summary = "상품 삭제")
 	@DeleteMapping("/{productId}")
-	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
+	public ApiResponse<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
 		productServiceImpl.deleteProduct(productId);
-		return ResponseEntity.ok(ApiResponse.ok(null));
+		return ApiResponse.ok(ApiResponse.ok(null));
 	}
 }
