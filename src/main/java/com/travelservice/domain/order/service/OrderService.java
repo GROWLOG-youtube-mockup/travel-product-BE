@@ -8,8 +8,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.cart.entity.CartItem;
-import com.travelservice.domain.cart.repository.CartItemRepository;
+import com.travelservice.domain.cart.entity.Cart;
+import com.travelservice.domain.cart.repository.CartRepository;
 import com.travelservice.domain.order.dto.OrderItemDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.entity.OrderItem;
@@ -27,7 +27,7 @@ public class OrderService {
 	private final OrderRepository orderRepo;
 	private final ProductRepository productRepo;
 	private final UserRepository userRepo;
-	private final CartItemRepository cartItemRepo;
+	private final CartRepository cartRepo;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
@@ -71,7 +71,7 @@ public class OrderService {
 		User user = userRepo.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("유저 없음"));
 
-		List<CartItem> cartItems = cartItemRepo.findByUser(user);
+		List<Cart> cartItems = cartRepo.findByUser_UserId(user.getUserId());
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("장바구니 비어있음");
 		}
@@ -83,30 +83,30 @@ public class OrderService {
 		int totalQty = 0;
 		List<OrderItem> orderItems = new ArrayList<>();
 
-		for (CartItem cartItem : cartItems) {
-			Product product = cartItem.getProduct();
+		for (Cart cart : cartItems) {
+			Product product = cart.getProduct();
 
-			if (product.getStockQuantity() < cartItem.getQuantity()) {
+			if (product.getStockQuantity() < cart.getQuantity()) {
 				throw new RuntimeException("재고 부족");
 			}
 
-			product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
+			product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
 
 			OrderItem item = OrderItem.builder()
 				.order(order)
 				.product(product)
-				.peopleCount(cartItem.getQuantity())
-				.startDate(cartItem.getStartDate())
+				.peopleCount(cart.getQuantity())
+				.startDate(cart.getStartDate())
 				.build();
 			orderItems.add(item);
-			totalQty += cartItem.getQuantity();
+			totalQty += cart.getQuantity();
 		}
 
 		order.setItems(orderItems);
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
 
-		cartItemRepo.deleteAll(cartItems);
+		cartRepo.deleteAll(cartItems);
 
 		return savedOrder;
 	}
@@ -119,7 +119,7 @@ public class OrderService {
 	public List<Order> findOrdersByEmail(String email) {
 		User user = userRepo.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("유저 없음"));
-		
+
 		return orderRepo.findByUser(user);
 	}
 }

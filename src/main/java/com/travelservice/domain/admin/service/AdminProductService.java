@@ -19,9 +19,9 @@ public class AdminProductService {
 	public PagedAdminProductListResponse getAdminProductList(Pageable pageable, Long regionId) {
 		Page<Product> page;
 		if (regionId != null) {
-			page = productRepository.findByRegion_RegionId_Admin(regionId, pageable);
+			page = productRepository.findByRegion_RegionId(regionId, pageable);
 		} else {
-			page = productRepository.findAll_Admin(pageable);
+			page = productRepository.findAll(pageable);
 		}
 
 		return new PagedAdminProductListResponse(
