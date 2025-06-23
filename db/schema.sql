@@ -44,17 +44,8 @@ CREATE TABLE region
 (
     region_id  INT AUTO_INCREMENT PRIMARY KEY,
     name       VARCHAR(45) NOT NULL,
-    level      TINYINT     NOT NULL, /
-    /
-    1
-    :
-    광역시
-    /
-    도, 2
-    :
-    시군구
-    parent_id
-    INT,
+    level      TINYINT     NOT NULL, --1:광역시/도, 2: 시군구
+    parent_id  INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_parent_region

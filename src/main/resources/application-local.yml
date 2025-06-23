@@ -11,12 +11,18 @@ spring:
       path: /h2-console
 
   jpa:
+    database: h2
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
 
   mail:
     host: smtp.gmail.com
@@ -32,3 +38,10 @@ mail:
 
 server:
   port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.travelservice: DEBUG
+toss:
+  secret-key: ${TOSS_SECRET_KEY}

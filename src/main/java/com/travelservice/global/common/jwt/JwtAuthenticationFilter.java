@@ -25,9 +25,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (token != null && jwtTokenProvider.validateToken(token)) {
 			Long userId = jwtTokenProvider.getUserId(token);
+			int roleCode = jwtTokenProvider.getRoleCode(token); // 1,2 등 꺼냄
+			String authority = jwtTokenProvider.mapRoleCodeToAuthority(roleCode); // "ADMIN" 등 변환
 
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
-				null, null);
+			CustomUserDetails userDetails = new CustomUserDetails(userId, authority);
+			UsernamePasswordAuthenticationToken authenticationToken =
+				new UsernamePasswordAuthenticationToken(
+					userDetails,
+					null,
+					userDetails.getAuthorities()
+				);
 
 			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 		}

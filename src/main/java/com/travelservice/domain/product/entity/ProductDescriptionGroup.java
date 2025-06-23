@@ -19,11 +19,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
+@Setter
 @Table(name = "product_description_group")
 public class ProductDescriptionGroup {
 
@@ -54,10 +57,6 @@ public class ProductDescriptionGroup {
 		this.type = type;
 		this.sortOrder = sortOrder;
 		// this.descriptionItems = descriptionItems;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
 	}
 
 	public void addItem(ProductDescriptionItem item) {

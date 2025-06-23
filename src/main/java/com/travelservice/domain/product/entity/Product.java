@@ -3,6 +3,7 @@ package com.travelservice.domain.product.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.travelservice.domain.cart.entity.Cart;
 import com.travelservice.global.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -67,6 +68,9 @@ public class Product extends BaseEntity {
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ProductDescriptionGroup> descriptionGroups = new ArrayList<>();
+
+	@OneToMany(mappedBy = "product")
+	private List<Cart> cartItems = new ArrayList<>();
 
 	@Builder // 빌더 패턴으로 객체 생성
 	public Product(String name, Integer price, Integer totalQuantity, Integer stockQuantity,
