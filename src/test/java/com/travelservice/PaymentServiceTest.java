@@ -41,11 +41,16 @@ public class PaymentServiceTest {
 	@InjectMocks
 	private PaymentService paymentService;
 
-	@Mock private PaymentRepository paymentRepository;
-	@Mock private OrderRepository orderRepository;
-	@Mock private RedisTemplate<String, String> redisTemplate;
-	@Mock private RestTemplate restTemplate;
-	@Mock private UserRepository userRepository;
+	@Mock
+	private PaymentRepository paymentRepository;
+	@Mock
+	private OrderRepository orderRepository;
+	@Mock
+	private RedisTemplate<String, String> redisTemplate;
+	@Mock
+	private RestTemplate restTemplate;
+	@Mock
+	private UserRepository userRepository;
 
 	private PaymentApproveRequestDto validRequest;
 
@@ -53,7 +58,7 @@ public class PaymentServiceTest {
 	void setUp() throws Exception {
 		validRequest = PaymentApproveRequestDto.builder()
 			.paymentKey("toss-generated-key-123")
-			.orderId("1")
+			.orderId(1L)
 			.amount(10000)
 			.build();
 
@@ -87,7 +92,7 @@ public class PaymentServiceTest {
 
 	@Test
 	void approve_fail_redis_missing() {
-		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "1", 50000, "toss", "tx123");
+		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", 1L, 50000, "toss", "tx123");
 		when(redisTemplate.hasKey("1")).thenReturn(false);
 
 		assertThrows(IllegalArgumentException.class, () -> paymentService.approve(dto));
@@ -95,7 +100,7 @@ public class PaymentServiceTest {
 
 	@Test
 	void approve_fail_order_not_found() {
-		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", "999", 10000, "toss", "tx123");
+		PaymentApproveRequestDto dto = new PaymentApproveRequestDto("payKey", 999L, 10000, "toss", "tx123");
 		when(redisTemplate.hasKey("999")).thenReturn(true);
 		when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -124,7 +129,7 @@ public class PaymentServiceTest {
 
 		PaymentApproveRequestDto invalidRequest = PaymentApproveRequestDto.builder()
 			.paymentKey("wrong_key")
-			.orderId("wrong_order_id")
+			.orderId(1010L)
 			.amount(9999)
 			.build();
 

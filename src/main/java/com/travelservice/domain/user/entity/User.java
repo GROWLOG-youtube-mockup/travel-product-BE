@@ -47,7 +47,7 @@ public class User {
 	private LocalDateTime deletedAt;
 
 	private LocalDateTime createdAt;
-	
+
 	private LocalDateTime updatedAt;
 
 	@PrePersist

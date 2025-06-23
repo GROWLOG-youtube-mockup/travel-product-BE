@@ -35,7 +35,8 @@ public class SecurityConfig {
 	};
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws Exception {
+	public SecurityFilterChain filterChain(
+		HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws Exception {
 		http
 			.csrf(csrf -> csrf
 				.ignoringRequestMatchers(SWAGGER_WHITELIST)
@@ -51,7 +52,8 @@ public class SecurityConfig {
 				.requestMatchers("/auth/**").permitAll()
 				.anyRequest().authenticated()
 			)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository),
+				UsernamePasswordAuthenticationFilter.class)
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable());
 
