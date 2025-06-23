@@ -249,7 +249,6 @@ public class PaymentService {
 		OrderItem orderItem = OrderItem.builder()
 			.order(savedOrder)
 			.product(product)
-			.quantity(quantity)
 			.price(product.getPrice() * quantity)
 			.build();
 

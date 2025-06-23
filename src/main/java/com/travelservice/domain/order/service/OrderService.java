@@ -32,8 +32,6 @@ public class OrderService {
 	private final UserRepository userRepo;
 	private final CartItemRepository cartItemRepo;
 	private final RedisTemplate<String, String> redisTemplate;
-	/*private final OrderRepository orderRepository;
-	private final CartItemRepository cartItemRepository;*/
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
@@ -53,21 +51,22 @@ public class OrderService {
 			Product product = productRepo.findById(dto.getProductId())
 				.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-			if (product.getStockQuantity() < dto.getQuantity()) {
+			if (product.getStockQuantity() < dto.getPeopleCount()) {
 				throw new CustomException(ErrorCode.OUT_OF_STOCK);
 			}
 
-			product.setStockQuantity(product.getStockQuantity() - dto.getQuantity());
+			product.setStockQuantity(product.getStockQuantity() - dto.getPeopleCount());
 
 			OrderItem item = OrderItem.builder()
 				.order(order)
 				.product(product)
-				.peopleCount(dto.getQuantity())
+				.peopleCount(dto.getPeopleCount())
 				.startDate(dto.getStartDate())
+				.price(product.getPrice()) //가격은 현재 가격으로 저장하기 위해 추가
 				.build();
 
 			order.getOrderItems().add(item);
-			totalQty += dto.getQuantity();
+			totalQty += dto.getPeopleCount();
 		}
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
@@ -82,7 +81,7 @@ public class OrderService {
 
 		List<CartItem> cartItems = cartItemRepo.findByUser(user);
 		if (cartItems.isEmpty()) {
-			throw new RuntimeException("장바구니 비어있음");
+			throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
 		}
 
 		Order order = new Order();
@@ -96,7 +95,7 @@ public class OrderService {
 			Product product = cartItem.getProduct();
 
 			if (product.getStockQuantity() < cartItem.getQuantity()) {
-				throw new RuntimeException("재고 부족");
+				throw new CustomException(ErrorCode.OUT_OF_STOCK);
 			}
 
 			product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
@@ -144,6 +143,7 @@ public class OrderService {
 		return orderRepo.findByUser(user);
 	}
 
+	/*
 	public Order createOrderFromCartItem(User user, Long cartItemId) {
 		// 👉 cartItemId에 해당하는 CartItem 조회
 		CartItem cartItem = cartItemRepo.findById(cartItemId)
@@ -168,6 +168,6 @@ public class OrderService {
 		orderItem.setOrder(order); // 양방향 연관관계 설정
 
 		return orderRepo.save(order);
-	}
+	}*/
 
 }

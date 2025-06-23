@@ -38,6 +38,5 @@ public class OrderItem {
 
 	private int peopleCount;
 	private LocalDate startDate;
-	private int quantity;
 	private int price;
 }

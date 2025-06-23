@@ -22,7 +22,7 @@ public class OrderItemDto {
 	private Long productId;
 
 	@Min(value = 1, message = "예약 인원은 1 이상이어야 합니다.")
-	private int quantity;
+	private int peopleCount;
 
 	@NotNull(message = "여행 시작일은 필수입니다.")
 	@JsonProperty("start_date")
