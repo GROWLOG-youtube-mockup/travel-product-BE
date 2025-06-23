@@ -30,14 +30,20 @@ public enum ErrorCode {
 	EMAIL_NOT_VERIFIED("EMAIL_NOT_VERIFIED", "이메일이 인증되지 않았습니다."),
 	AUTH_CODE_NOT_FOUND("AUTH_404", "인증번호를 먼저 요청해주세요."),
 	INVALID_AUTH_CODE("AUTH_401", "인증번호가 일치하지 않습니다."),
+	DELETED_USER("DELETED_USER", "삭제된 회원입니다."),
 
 	// User 관련
 	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다."),
+
+	// 회원 탈퇴 관련
+	INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 일치하지 않습니다.");
+
 	UNAUTHORIZED_ACCESS("UNAUTHORIZED_ACCESS", "접근 권한이 없습니다."),
 	// Cart 관련
 	CART_ITEM_NOT_FOUND("CART_ITEM_NOT_FOUND", "상품을 찾을 수 없습니다."),
 	CART_EMPTY("CART_EMPTY", "장바구니에 상품이 없습니다."),
 	NO_SELECTED_PRODUCTS("NO_SELECTED_PRODUCTS", "선택된 상품이 없습니다.");
+
 
 	private final String code;
 	private final String message;

@@ -13,6 +13,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 public class SwaggerConfig {
 	@Bean
 	public OpenAPI openApi() {
+		final String securitySchemeName = "bearerAuth";
+
 		return new OpenAPI()
 			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Security Requirement 추가
 			.components(new Components().addSecuritySchemes("Bearer Authentication",  // Security Scheme 추가
@@ -25,6 +27,16 @@ public class SwaggerConfig {
 			.info(new Info()
 				.title("API 문서 제목")
 				.version("v1.0")
-				.description("API 설명"));
+				.description("API 설명"))
+			.components(new Components()
+				.addSecuritySchemes(securitySchemeName,
+					new SecurityScheme()
+						.name(securitySchemeName)
+						.type(SecurityScheme.Type.HTTP)
+						.scheme("bearer")
+						.bearerFormat("JWT")
+				)
+			);
 	}
+
 }

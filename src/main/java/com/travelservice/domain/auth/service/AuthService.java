@@ -32,6 +32,11 @@ public class AuthService {
 		User user = userRepository.findByEmail(requestDto.getEmail())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+		// 사용자 삭제 여부 확인(deletedAt이 null이 아닌 경우)
+		if (user.getDeletedAt() != null) {
+			throw new CustomException(ErrorCode.DELETED_USER); // 아래 ErrorCode 추가 필요
+		}
+
 		if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
 			throw new CustomException(ErrorCode.LOGIN_FAILED);
 		}

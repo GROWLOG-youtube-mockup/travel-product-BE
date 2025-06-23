@@ -70,7 +70,7 @@ public class User {
 		this.updatedAt = LocalDateTime.now();
 	}
 
-	public void updatePassword(String encodedPassword) {
+	/*public void updatePassword(String encodedPassword) {
 		this.password = encodedPassword;
 	}
 
@@ -81,4 +81,8 @@ public class User {
 	public void updatePhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+	public void updateDeletedAt(LocalDateTime deletedAt) {
+		this.deletedAt = deletedAt;
+	}*/
 }
