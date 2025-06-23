@@ -45,7 +45,9 @@ public enum ErrorCode {
 	PAYMENT_NOT_FOUND("PAYMENT_NOT_FOUND", "결제 정보를 찾을 수 없습니다."),
 	ALREADY_CANCELLED("ALREADY_CANCELLED", "이미 취소된 결제입니다."),
 	INVALID_ORDER_ID("INVALID_ORDER_ID", "유효하지 않은 주문 ID입니다."),
-	PAYMENT_APPROVE_FAILED("PAYMENT_APPROVE_FAILED", "결제 승인에 실패했습니다.");
+	PAYMENT_APPROVE_FAILED("PAYMENT_APPROVE_FAILED", "결제 승인에 실패했습니다."),
+	INVALID_PAYMENT_AMOUNT("INVALID_PAYMENT_AMOUNT", "결제 금액이 올바르지 않습니다." );
+
 
 
 	private final String code;

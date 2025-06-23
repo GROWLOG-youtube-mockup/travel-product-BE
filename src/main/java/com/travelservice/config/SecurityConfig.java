@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.jwt.JwtAuthenticationFilter;
 import com.travelservice.global.common.jwt.JwtTokenProvider;
 
@@ -34,7 +35,7 @@ public class SecurityConfig {
 	};
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws Exception {
 		http
 			.csrf(csrf -> csrf
 				.ignoringRequestMatchers(SWAGGER_WHITELIST)
@@ -50,7 +51,7 @@ public class SecurityConfig {
 				.requestMatchers("/auth/**").permitAll()
 				.anyRequest().authenticated()
 			)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable());
 

@@ -87,7 +87,6 @@ public class PaymentController {
 	}
 
 	/*
-	//여러 건 결제가 없으므로 /orders/pay에서 처리
 	@Operation(
 		summary = "장바구니 항목 즉시 주문 + 결제",
 		description = "장바구니에서 선택한 항목을 기반으로 주문을 생성하고, 즉시 결제까지 처리. Toss와의 연동은 테스트용이며, 추후 프론트 연동 시 분리할 수 있음."
@@ -104,6 +103,7 @@ public class PaymentController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}*/
+
 	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
 }

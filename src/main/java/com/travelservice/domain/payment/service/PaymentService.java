@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -53,6 +54,7 @@ public class PaymentService {
 	private final CartItemRepository cartItemRepo;
 	private final OrderItemRepository orderItemRepo;
 	private final ProductRepository productRepo;
+	private final PasswordEncoder passwordEncoder;
 
 	//생성자에서 .env 파일 로드 및 tossSecretKey 초기화
 	public PaymentService(PaymentRepository paymentRepository,
@@ -62,7 +64,8 @@ public class PaymentService {
 		UserRepository userRepository,
 		CartItemRepository cartItemRepo,
 		OrderItemRepository orderItemRepo,
-		ProductRepository productRepo) {
+		ProductRepository productRepo,
+		PasswordEncoder passwordEncoder) {
 
 		this.paymentRepository = paymentRepository;
 		this.orderRepository = orderRepository;
@@ -72,6 +75,7 @@ public class PaymentService {
 		this.cartItemRepo = cartItemRepo;
 		this.orderItemRepo = orderItemRepo;
 		this.productRepo = productRepo;
+		this.passwordEncoder = passwordEncoder;
 
 		Dotenv dotenv = Dotenv.load(); //.env 파일 로드 (루트 경로에 위치해야 함)
 		this.tossSecretKey = dotenv.get("TOSS_SECRET_KEY"); //키 가져오기
@@ -181,8 +185,16 @@ public class PaymentService {
 			default -> System.out.println("⚠️ 예상치 못한 결제수단: " + method);
 		}
 
-		Order order = orderRepository.findById(Long.valueOf(requestDto.getOrderId()))
+		Order order = orderRepository.findById(requestDto.getOrderId())
 			.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
+
+		int expectedAmount = order.getOrderItems().stream()
+			.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
+			.sum();
+
+		if (expectedAmount != requestDto.getAmount()) {
+			throw new CustomException(ErrorCode.INVALID_PAYMENT_AMOUNT); // or 400 예외
+		}
 
 		Payment payment = Payment.builder()
 			.order(order)
@@ -288,7 +300,7 @@ public class PaymentService {
 					.userId(1L)
 					.email("test@example.com")
 					.name("Test User")
-					.password("test1234")
+					.password(passwordEncoder.encode("test1234"))
 					.phoneNumber("01012345678")
 					.build();
 				return userRepository.save(newUser);

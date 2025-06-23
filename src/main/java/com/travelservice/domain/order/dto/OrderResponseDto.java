@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,6 +27,9 @@ public class OrderResponseDto {
 	private int totalPrice;
 
 	public OrderResponseDto(Order order) {
+		log.info("Order: {}", order);
+		log.info("OrderItems: {}", order.getOrderItems());
+
 		this.orderId = order.getOrderId();
 		this.orderDate = order.getOrderDate();
 		this.totalQuantity = order.getTotalQuantity();
