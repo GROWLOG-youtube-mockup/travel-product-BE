@@ -77,7 +77,7 @@ public class OrderService {
 	@Transactional
 	public Order createOrderFromCart(String email) {
 		User user = userRepo.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("유저 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		List<CartItem> cartItems = cartItemRepo.findByUser(user);
 		if (cartItems.isEmpty()) {
@@ -105,6 +105,7 @@ public class OrderService {
 					.product(product)
 					.peopleCount(cartItem.getQuantity())
 					.startDate(cartItem.getStartDate())
+					.price(product.getPrice()) // 현재 가격으로 저장
 					.build();
 			orderItems.add(item);
 			totalQty += cartItem.getQuantity();
