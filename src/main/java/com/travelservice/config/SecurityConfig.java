@@ -29,14 +29,20 @@ public class SecurityConfig {
 		"/webjars/**"
 	};
 
+	private static final String[] DEV_WHITELIST = {
+		"/h2-console/**"
+	};
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider) throws
 		Exception {
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.headers(headers -> headers.frameOptions().sameOrigin())
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(SWAGGER_WHITELIST).permitAll()
+				.requestMatchers(DEV_WHITELIST).permitAll()
 				.requestMatchers("/users/signup").permitAll()
 				.requestMatchers("/products", "/products/**", "/images/**").permitAll()
 				.requestMatchers("/users/signup", "/users/login").permitAll()
