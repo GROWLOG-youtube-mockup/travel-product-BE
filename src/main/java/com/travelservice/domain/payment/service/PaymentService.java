@@ -351,15 +351,23 @@ public class PaymentService {
 
 	@Transactional
 	public void cancel(Long orderId) {
-		Payment payment = paymentRepository.findByOrder_OrderId(orderId)
-			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+		Order order = orderRepository.findById(orderId)
+			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
-		if (payment.getStatus() == PaymentStatus.CANCELLED) {
-			throw new CustomException(ErrorCode.ALREADY_CANCELLED);
+		Optional<Payment> optionalPayment = paymentRepository.findByOrder(order);
+
+		// 결제 되었으면 → Payment 상태도 같이 취소
+		if (optionalPayment.isPresent()) {
+			Payment payment = optionalPayment.get();
+			if (payment.getStatus() == PaymentStatus.CANCELLED) {
+				throw new CustomException(ErrorCode.ALREADY_CANCELLED);
+			}
+			payment.setStatus(PaymentStatus.CANCELLED);
 		}
 
-		payment.setStatus(PaymentStatus.CANCELLED);
-		payment.getOrder().setStatus(OrderStatus.CANCELLED);
+		// 주문 상태는 무조건 취소
+		order.setStatus(OrderStatus.CANCELLED);
+		order.setCancelDate(LocalDateTime.now());
 	}
 
 }

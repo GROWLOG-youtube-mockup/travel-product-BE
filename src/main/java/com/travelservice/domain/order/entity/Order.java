@@ -51,7 +51,7 @@ public class Order {
 
 	@Enumerated(EnumType.STRING)
 	@Setter(AccessLevel.NONE)
-	private OrderStatus status;
+	private OrderStatus status = OrderStatus.PENDING;
 
 	public void setStatus(OrderStatus status) {
 		this.status = status;
