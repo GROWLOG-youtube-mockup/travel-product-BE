@@ -37,16 +37,8 @@ public class AdminProductService {
 		// 대표 이미지(썸네일)
 		String thumbnail = null;
 		if (product.getImages() != null && !product.getImages().isEmpty()) {
-			thumbnail = product.getImages().get(0).getImageUrl();
+			thumbnail = product.getImages().getFirst().getImageUrl();
 		}
-
-		// type, saleStatus를 String 변환 (필요시 enum 매핑)
-		String typeStr = typeToString(product.getType());
-		String saleStatusStr = saleStatusToString(product.getSaleStatus());
-
-		// duration 변환 (예: 4박 5일)
-		String durationStr =
-			product.getDuration() != null ? product.getDuration() + "박 " + (product.getDuration() + 1) + "일" : null;
 
 		return AdminProductResponseDto.builder()
 			.productId(product.getProductId())
@@ -56,48 +48,12 @@ public class AdminProductService {
 				.regionId(product.getRegion().getRegionId().intValue())
 				.name(product.getRegion().getName())
 				.build())
-			.type(typeStr)
-			.saleStatus(saleStatusStr)
+			.type(product.getType())
+			.saleStatus(product.getSaleStatus())
 			.price(product.getPrice())
 			.stockQuantity(product.getStockQuantity())
-			.duration(durationStr)
+			.duration(product.getDuration())
 			.build();
-	}
-
-	private String typeToString(Integer type) {
-		if (type == null) {
-			return "";
-		}
-		switch (type) {
-			case 0:
-				return "자유여행";
-			case 1:
-				return "패키지";
-			case 2:
-				return "여름방학";
-			case 3:
-				return "역사";
-			case 4:
-				return "액티비티";
-			default:
-				return "기타";
-		}
-	}
-
-	private String saleStatusToString(Integer saleStatus) {
-		if (saleStatus == null) {
-			return "";
-		}
-		switch (saleStatus) {
-			case 0:
-				return "ON_SALE";
-			case 1:
-				return "UP_COMING";
-			case 2:
-				return "END";
-			default:
-				return "UNKNOWN";
-		}
 	}
 
 	@Getter
