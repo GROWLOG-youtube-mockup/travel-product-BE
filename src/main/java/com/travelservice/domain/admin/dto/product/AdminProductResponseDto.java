@@ -14,11 +14,11 @@ public class AdminProductResponseDto {
 	private String thumbnail;
 	private String name;
 	private RegionDto region;
-	private String type;
-	private String saleStatus;
+	private Integer type;
+	private Integer saleStatus;
 	private Integer price;
 	private Integer stockQuantity;
-	private String duration;
+	private Integer duration;
 
 	@Getter
 	@NoArgsConstructor
