@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
+	@NotEmpty(message = "주문 항목은 최소 1개 이상이어야 합니다.")
 	private List<OrderItemDto> items;
 	@JsonProperty("payment_method")
 	private String paymentMethod;

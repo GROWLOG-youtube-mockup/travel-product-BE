@@ -324,6 +324,7 @@ public class PaymentService {
 		}
 	}
 
+	/*
 	@Transactional
 	public Payment payNow(Order order) {
 		Payment payment = Payment.builder()
@@ -338,7 +339,7 @@ public class PaymentService {
 
 		orderRepository.save(order);
 		return paymentRepository.save(payment);
-	}
+	}*/
 
 	@Transactional
 	public void cancel(Long orderId) {

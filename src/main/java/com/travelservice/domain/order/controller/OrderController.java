@@ -21,6 +21,7 @@ import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +38,7 @@ public class OrderController {
 	)
 	@PostMapping
 	public ResponseEntity<ApiResponse<OrderResponseDto>> creatOrder(
-		@RequestBody OrderRequestDto dto,
+		@Valid @RequestBody OrderRequestDto dto,
 		@RequestParam String email
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());

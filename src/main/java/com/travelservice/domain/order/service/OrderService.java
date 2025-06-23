@@ -32,13 +32,17 @@ public class OrderService {
 	private final UserRepository userRepo;
 	private final CartItemRepository cartItemRepo;
 	private final RedisTemplate<String, String> redisTemplate;
-	private final OrderRepository orderRepository;
-	private final CartItemRepository cartItemRepository;
+	/*private final OrderRepository orderRepository;
+	private final CartItemRepository cartItemRepository;*/
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
+		if (itemDtos == null || itemDtos.isEmpty()) {
+			throw new CustomException(ErrorCode.BAD_REQUEST);
+		}
+
 		User user = userRepo.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("유저 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		Order order = new Order();
 		order.setUser(user);
@@ -47,10 +51,10 @@ public class OrderService {
 		int totalQty = 0;
 		for (OrderItemDto dto : itemDtos) {
 			Product product = productRepo.findById(dto.getProductId())
-				.orElseThrow(() -> new RuntimeException("상품 없음"));
+				.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
 			if (product.getStockQuantity() < dto.getQuantity()) {
-				throw new RuntimeException("재고 부족");
+				throw new CustomException(ErrorCode.OUT_OF_STOCK);
 			}
 
 			product.setStockQuantity(product.getStockQuantity() - dto.getQuantity());
@@ -68,7 +72,7 @@ public class OrderService {
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
 		redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
-		return orderRepo.save(order);
+		return savedOrder;
 	}
 
 	@Transactional
@@ -137,12 +141,12 @@ public class OrderService {
 	}
 
 	public List<Order> findByUser(User user) {
-		return orderRepository.findByUser(user);
+		return orderRepo.findByUser(user);
 	}
 
 	public Order createOrderFromCartItem(User user, Long cartItemId) {
 		// 👉 cartItemId에 해당하는 CartItem 조회
-		CartItem cartItem = cartItemRepository.findById(cartItemId)
+		CartItem cartItem = cartItemRepo.findById(cartItemId)
 			.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
 
 		// 👉 단일 상품 기반으로 OrderItem 만들기
@@ -163,7 +167,7 @@ public class OrderService {
 
 		orderItem.setOrder(order); // 양방향 연관관계 설정
 
-		return orderRepository.save(order);
+		return orderRepo.save(order);
 	}
 
 }
