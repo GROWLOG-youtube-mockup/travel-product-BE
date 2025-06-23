@@ -96,8 +96,17 @@ public class PaymentService {
 		if (requestDto.getPaymentKey().startsWith("toss-generated-key")) {
 			// Mock data
 			String method = "카드";
+
 			Order order = orderRepository.findById(requestDto.getOrderId())
 				.orElseThrow(() ->new CustomException(ErrorCode.INVALID_ORDER_ID));
+
+			int expectedAmount = order.getOrderItems().stream()
+				.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
+				.sum();
+
+			if (expectedAmount != requestDto.getAmount()) {
+				throw new CustomException(ErrorCode.INVALID_PAYMENT_AMOUNT);
+			}
 
 			Payment payment = Payment.builder()
 				.order(order)
@@ -184,15 +193,16 @@ public class PaymentService {
 			default -> System.out.println("⚠️ 예상치 못한 결제수단: " + method);
 		}
 
+		// Toss 응답 처리 후 order 조회
 		Order order = orderRepository.findById(requestDto.getOrderId())
-			.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
+			.orElseThrow(() -> new CustomException(ErrorCode.INVALID_ORDER_ID));
 
 		int expectedAmount = order.getOrderItems().stream()
 			.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
 			.sum();
 
 		if (expectedAmount != requestDto.getAmount()) {
-			throw new CustomException(ErrorCode.INVALID_PAYMENT_AMOUNT); // or 400 예외
+			throw new CustomException(ErrorCode.INVALID_PAYMENT_AMOUNT);
 		}
 
 		Payment payment = Payment.builder()

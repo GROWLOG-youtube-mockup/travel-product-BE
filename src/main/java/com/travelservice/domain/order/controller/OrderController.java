@@ -68,7 +68,9 @@ public class OrderController {
 	) {
 		//log.info("요청 들어옴 - user: {}", user);
 		Order order = orderService.findByIdAndUser(id, user);
-		return ResponseEntity.ok(ApiResponse.ok(new OrderResponseDto(order)));
+
+		OrderResponseDto responseDto = OrderResponseDto.withItems(order);
+		return ResponseEntity.ok(ApiResponse.ok(responseDto));
 	}
 
 	@Operation(
@@ -82,7 +84,7 @@ public class OrderController {
 		log.info("요청 들어옴 - user: {}", user); // 추가
 		List<Order> orders = orderService.findByUser(user);
 		List<OrderResponseDto> result = orders.stream()
-			.map(OrderResponseDto::new)
+			.map(OrderResponseDto::withItems)
 			.toList();
 		return ResponseEntity.ok(ApiResponse.ok(result));
 	}
