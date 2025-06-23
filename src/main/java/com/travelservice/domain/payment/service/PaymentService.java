@@ -1,7 +1,6 @@
 package com.travelservice.domain.payment.service;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,19 +40,19 @@ import com.travelservice.global.common.exception.ErrorCode;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final OrderRepository orderRepository;
+	private final UserRepository userRepository;
+	private final CartItemRepository cartItemRepository;
+	private final OrderItemRepository orderItemRepository;
+	private final ProductRepository productRepository;
+
 	private final RedisTemplate<String, String> redisTemplate;
 	private final RestTemplate restTemplate;
-	private final UserRepository userRepository;
 	private final String tossSecretKey;
-	private final CartItemRepository cartItemRepo;
-	private final OrderItemRepository orderItemRepo;
-	private final ProductRepository productRepo;
 	private final PasswordEncoder passwordEncoder;
 
 	//생성자에서 .env 파일 로드 및 tossSecretKey 초기화
@@ -69,12 +68,12 @@ public class PaymentService {
 
 		this.paymentRepository = paymentRepository;
 		this.orderRepository = orderRepository;
+		this.userRepository = userRepository;
+		this.cartItemRepository = cartItemRepo;
+		this.orderItemRepository = orderItemRepo;
+		this.productRepository = productRepo;
 		this.redisTemplate = redisTemplate;
 		this.restTemplate = restTemplate;
-		this.userRepository = userRepository;
-		this.cartItemRepo = cartItemRepo;
-		this.orderItemRepo = orderItemRepo;
-		this.productRepo = productRepo;
 		this.passwordEncoder = passwordEncoder;
 
 		Dotenv dotenv = Dotenv.load(); //.env 파일 로드 (루트 경로에 위치해야 함)
@@ -90,7 +89,7 @@ public class PaymentService {
 
 		// Redis에 저장된 결제 요청 정보 확인
 		if (requestDto.getOrderId() == null || !Boolean.TRUE.equals(redisTemplate.hasKey(orderIdKey))) {
-			throw new IllegalArgumentException("유효하지 않은 주문 ID입니다.");
+			throw new CustomException(ErrorCode.INVALID_ORDER_ID);
 		}
 
 		//테스트용 우회 로직 (paymentKey가 가짜일 경우)
@@ -98,7 +97,7 @@ public class PaymentService {
 			// Mock data
 			String method = "카드";
 			Order order = orderRepository.findById(requestDto.getOrderId())
-				.orElseThrow(() -> new RuntimeException("유효하지 않은 주문 ID입니다."));
+				.orElseThrow(() ->new CustomException(ErrorCode.INVALID_ORDER_ID));
 
 			Payment payment = Payment.builder()
 				.order(order)
@@ -148,7 +147,7 @@ public class PaymentService {
 
 		if (data == null || !data.has("method")) {
 			System.out.println("❗ 결제 응답에 'method'가 없습니다. data = " + data);
-			throw new IllegalStateException("결제 승인 응답에 필수 필드 누락");
+			throw new CustomException(ErrorCode.PAYMENT_APPROVE_FAILED);
 		}
 
 		String method = data.has("method") ? data.get("method").asText() : "";
@@ -221,7 +220,7 @@ public class PaymentService {
 	}
 
 	public Order createOrderFromCartItem(User user, Long cartItemId) {
-		CartItem cartItem = cartItemRepo.findById(cartItemId)
+		CartItem cartItem = cartItemRepository.findById(cartItemId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 장바구니 항목이 없습니다."));
 
 		// 🛡 본인 장바구니 항목인지 확인
@@ -254,13 +253,13 @@ public class PaymentService {
 			.price(product.getPrice() * quantity)
 			.build();
 
-		orderItemRepo.save(orderItem);
+		orderItemRepository.save(orderItem);
 
 		// 재고 차감 및 장바구니 항목 제거
 		product.reduceStock(quantity);
-		productRepo.save(product);
+		productRepository.save(product);
 
-		cartItemRepo.delete(cartItem);
+		cartItemRepository.delete(cartItem);
 
 		return savedOrder;
 	}
@@ -280,14 +279,14 @@ public class PaymentService {
 
 	public Payment getPaymentStatus(Long orderId, User user) {
 		Order order = orderRepository.findById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
 		if (!order.getUser().getUserId().equals(user.getUserId())) {
 			throw new CustomException(ErrorCode.ORDER_ACCESS_DENIED);
 		}
 
 		return paymentRepository.findByOrder(order)
-			.orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 	}
 
 	@PostConstruct
