@@ -17,7 +17,7 @@ public class AdminOrderResponseDto {
 	private String userName;
 	private String userEmail;
 	private String status;
-	private Integer totalQuantity;
+	private Integer peopleCount;
 	private LocalDateTime orderDate;
 	private LocalDateTime cancelDate;
 	private LocalDateTime updatedAt; // 상태변경일자

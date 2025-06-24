@@ -90,6 +90,8 @@ public class AdminOrderDetailDto {
 		@JsonProperty("order_item_id")
 		private Long orderItemId;
 		private ProductInfo product;
+		@JsonProperty("price")
+		private int price;
 		@JsonProperty("people_count")
 		private int peopleCount;
 		@JsonProperty("total_price")
@@ -101,12 +103,13 @@ public class AdminOrderDetailDto {
 
 			Product product = item.getProduct();
 			int peopleCount = item.getPeopleCount();
-			int price = product.getPrice() != null ? product.getPrice() : 0;
+			int price = item.getPrice();
 			int totalPrice = price * peopleCount;
 
 			return OrderItemInfo.builder()
 				.orderItemId(item.getOrderItemId())
 				.product(ProductInfo.from(item.getProduct()))
+				.price(price)
 				.peopleCount(item.getPeopleCount())
 				.totalPrice(totalPrice)
 				.startDate(item.getStartDate())
@@ -120,13 +123,11 @@ public class AdminOrderDetailDto {
 		@JsonProperty("product_id")
 		private Long productId;
 		private String name;
-		private Integer price;
 
 		public static ProductInfo from(Product product) {
 			return ProductInfo.builder()
 				.productId(product.getProductId())
 				.name(product.getName())
-				.price(product.getPrice())
 				.build();
 		}
 	}

@@ -61,7 +61,7 @@ public class AdminOrderService {
 				.userName(order.getUser().getName())
 				.userEmail(order.getUser().getEmail())
 				.status(order.getStatus().name())
-				.totalQuantity(order.getTotalQuantity())
+				.peopleCount(order.getTotalQuantity())
 				.orderDate(order.getOrderDate())
 				.cancelDate(order.getCancelDate())
 				.updatedAt(order.getUpdatedAt())
