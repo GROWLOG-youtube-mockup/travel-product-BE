@@ -119,6 +119,14 @@ public class OrderService {
 		return order;
 	}
 
+	public List<OrderResponseDto> getOrders(Long userId) {
+		List<Order> orders = orderRepo.findByUser_UserId(userId);
+
+		return orders.stream()
+			.map(OrderResponseDto::withItems)
+			.toList();
+	}
+
 	public Order findById(Long orderId) {
 		return orderRepo.findById(orderId)
 			.orElseThrow(() -> new RuntimeException("주문 없음"));
@@ -130,13 +138,15 @@ public class OrderService {
 		return orderRepo.findByUser(user);
 	}
 
-	public Order findByIdAndUser(Long id, User user) {
-		Order order = orderRepo.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
-		if (!order.getUser().getUserId().equals(user.getUserId())) {
-			throw new CustomException(ErrorCode.INVALID_ACCESSTOKEN);
-		}
-		return order;
+	public Order findByIdAndUser(Long orderId, Long userId) {
+		return orderRepo.findByOrderIdAndUser_UserId(orderId, userId)
+			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
+		// Order order = orderRepo.findById(orderId)
+		// 	.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+		// if (!order.getUser().getUserId().equals(user.getUserId())) {
+		// 	throw new CustomException(ErrorCode.INVALID_ACCESSTOKEN);
+		// }
+		// return order;
 	}
 
 	public List<Order> findByUser(User user) {
