@@ -42,7 +42,7 @@ public class OrderController {
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@Operation(
@@ -63,14 +63,13 @@ public class OrderController {
 		summary = "예약 상세 조회",
 		description = "로그인된 사용자가 자신의 특정 예약(주문)을 상세 조회. 여행 상품명, 시작일, 인원 수, 결제 상태 등을 포함."
 	)
-	@GetMapping("/{id}")
+	@GetMapping("/{orderId}")
 	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(
-		@PathVariable Long id,
-		@AuthenticationPrincipal User user
+		@PathVariable Long orderId,
+		@AuthenticationPrincipal(expression = "userId") Long userId
 	) {
 		//log.info("요청 들어옴 - user: {}", user);
-		Order order = orderService.findByIdAndUser(id, user);
-
+		Order order = orderService.findByIdAndUser(orderId, userId);
 		OrderResponseDto responseDto = OrderResponseDto.withItems(order);
 		return ResponseEntity.ok(ApiResponse.ok(responseDto));
 	}
@@ -81,13 +80,10 @@ public class OrderController {
 	)
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(
-		@AuthenticationPrincipal User user
+		@AuthenticationPrincipal(expression = "userId") Long userId
 	) {
-		log.info("요청 들어옴 - user: {}", user); // 추가
-		List<Order> orders = orderService.findByUser(user);
-		List<OrderResponseDto> result = orders.stream()
-			.map(OrderResponseDto::withItems)
-			.toList();
-		return ResponseEntity.ok(ApiResponse.ok(result));
+		log.info("요청 들어옴 - user: {}", userId); // 추가
+		List<OrderResponseDto> orders = orderService.getOrders(userId);
+		return ResponseEntity.ok(ApiResponse.ok(orders));
 	}
 }

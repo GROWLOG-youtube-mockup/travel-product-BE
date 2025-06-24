@@ -9,11 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.jwt.JwtAuthenticationFilter;
 import com.travelservice.global.common.jwt.JwtTokenProvider;
-import com.travelservice.domain.user.repository.UserRepository;
-
-
 
 @Configuration
 public class SecurityConfig {
@@ -54,12 +52,10 @@ public class SecurityConfig {
 				.requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
 				.anyRequest().authenticated() //  나머지는 인증 필요
 			)
-			//.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository),
+				UsernamePasswordAuthenticationFilter.class)
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable());
-
-
 
 		return http.build();
 	}
