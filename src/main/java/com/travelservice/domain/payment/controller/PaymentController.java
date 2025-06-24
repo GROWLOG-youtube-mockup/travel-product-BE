@@ -2,7 +2,8 @@ package com.travelservice.domain.payment.controller;
 
 import java.io.IOException;
 
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.travelservice.domain.order.dto.OrderResponseDto;
-import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
 import com.travelservice.domain.payment.dto.PaymentApproveRequestDto;
 import com.travelservice.domain.payment.dto.PaymentResponseDto;
@@ -42,7 +38,7 @@ public class PaymentController {
 	)
 	@PostMapping("/approve")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> approve(@RequestBody PaymentApproveRequestDto dto)
-			throws IOException {
+		throws IOException {
 		PaymentResponseDto response = paymentService.approve(dto);
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
@@ -52,7 +48,8 @@ public class PaymentController {
 		description = "특정 주문(orderId)에 대한 결제 정보를 조회. 결제 금액, 결제 방식, 결제 일시 등 상세 정보를 반환."
 	)
 	@GetMapping("/{orderId}")
-	public ResponseEntity<ApiResponse<PaymentResponseDto>> getPaymentStatus(@PathVariable Long orderId, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse<PaymentResponseDto>> getPaymentStatus(
+		@PathVariable Long orderId, @AuthenticationPrincipal User user) {
 		Payment payment = paymentService.getPaymentStatus(orderId, user);
 		return ResponseEntity.ok(ApiResponse.ok(new PaymentResponseDto(payment)));
 	}
@@ -61,8 +58,8 @@ public class PaymentController {
 
 	@Operation(
 		summary = "Toss 결제 성공 Redirect 수신",
-		description = "Toss 결제 완료 후 리디렉션 주소로 호출되며, paymentKey, orderId, amount를 확인. 테스트 또는 개발용으로 사용됨. 프론트 연동 시 프론트에서 리다이렉션 처리"
-	)
+		description =
+			"Toss 결제 완료 후 리디렉션 주소로 호출되며, paymentKey, orderId, amount를 확인.테스트 또는 개발용으로 사용됨. 프론트 연동 시 프론트에서 리다이렉션 처리")
 	@GetMapping("/success")
 	public String tossSuccess(
 		@RequestParam String paymentKey,
@@ -72,12 +69,12 @@ public class PaymentController {
 		log.info("Toss redirect 받음: paymentKey={}, orderId={}, amount={}", paymentKey, orderId, amount);
 
 		return """
-                Toss 결제 성공!<br>
-                아래 값을 Postman에 복사해서 /payments/approve API 테스트 하세요.<br><br>
-                paymentKey: %s<br>
-                orderId: %s<br>
-                amount: %d
-                """.formatted(paymentKey, orderId, amount);
+			toss 결제 성공!<br>
+			아래 값을 Postman에 복사해서 /payments/approve API 테스트 하세요.<br><br>
+			paymentKey: %s<br>
+			orderId: %s<br>
+			amount: %d
+			""".formatted(paymentKey, orderId, amount);
 	}
 
 	@Operation(summary = "결제 취소", description = "주문 ID를 기반으로 결제 및 주문을 취소.")
