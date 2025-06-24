@@ -29,9 +29,6 @@ public class AdminOrderDetailDto {
 
 	private String status;
 
-	@JsonProperty("total_quantity")
-	private Integer totalQuantity;
-
 	@JsonProperty("order_date")
 	private LocalDateTime orderDate;
 
@@ -46,16 +43,18 @@ public class AdminOrderDetailDto {
 
 	private PaymentInfo payment;
 
+	@JsonProperty("total_price")
+	private Integer totalPrice;
+
 	// --- 정적 팩토리 메서드 ---
 	public static AdminOrderDetailDto from(Order order, Payment payment) {
 		User user = order.getUser();
-		List<OrderItem> items = order.getItems();
+		List<OrderItem> items = order.getOrderItems();
 
 		return AdminOrderDetailDto.builder()
 			.orderId(order.getOrderId())
 			.user(UserInfo.from(user))
 			.status(order.getStatus().name())
-			.totalQuantity(order.getTotalQuantity())
 			.orderDate(order.getOrderDate())
 			.cancelDate(order.getCancelDate())
 			.updatedAt(order.getUpdatedAt())
@@ -93,20 +92,24 @@ public class AdminOrderDetailDto {
 		private ProductInfo product;
 		@JsonProperty("people_count")
 		private int peopleCount;
+		@JsonProperty("total_price")
+		private int totalPrice;
 		@JsonProperty("start_date")
 		private LocalDate startDate;
-		@JsonProperty("created_at")
-		private LocalDateTime createdAt;
-		@JsonProperty("updated_at")
-		private LocalDateTime updatedAt;
 
 		public static OrderItemInfo from(OrderItem item) {
+
+			Product product = item.getProduct();
+			int peopleCount = item.getPeopleCount();
+			int price = product.getPrice() != null ? product.getPrice() : 0;
+			int totalPrice = price * peopleCount;
+
 			return OrderItemInfo.builder()
 				.orderItemId(item.getOrderItemId())
 				.product(ProductInfo.from(item.getProduct()))
 				.peopleCount(item.getPeopleCount())
+				.totalPrice(totalPrice)
 				.startDate(item.getStartDate())
-				.updatedAt(null)
 				.build();
 		}
 	}
