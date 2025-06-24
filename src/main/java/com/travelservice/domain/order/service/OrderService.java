@@ -18,6 +18,9 @@ import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
+import com.travelservice.enums.OrderStatus;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,8 +35,12 @@ public class OrderService {
 
 	@Transactional
 	public Order createOrder(String email, List<OrderItemDto> itemDtos) {
+		if (itemDtos == null || itemDtos.isEmpty()) {
+			throw new CustomException(ErrorCode.BAD_REQUEST);
+		}
+
 		User user = userRepo.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("유저 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		Order order = new Order();
 		order.setUser(user);
@@ -42,38 +49,39 @@ public class OrderService {
 		int totalQty = 0;
 		for (OrderItemDto dto : itemDtos) {
 			Product product = productRepo.findById(dto.getProductId())
-				.orElseThrow(() -> new RuntimeException("상품 없음"));
+				.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-			if (product.getStockQuantity() < dto.getQuantity()) {
-				throw new RuntimeException("재고 부족");
+			if (product.getStockQuantity() < dto.getPeopleCount()) {
+				throw new CustomException(ErrorCode.OUT_OF_STOCK);
 			}
 
-			product.setStockQuantity(product.getStockQuantity() - dto.getQuantity());
+			product.setStockQuantity(product.getStockQuantity() - dto.getPeopleCount());
 
 			OrderItem item = OrderItem.builder()
 				.order(order)
 				.product(product)
-				.peopleCount(dto.getQuantity())
+				.peopleCount(dto.getPeopleCount())
 				.startDate(dto.getStartDate())
+				.price(product.getPrice()) //가격은 현재 가격으로 저장하기 위해 추가
 				.build();
 
-			order.getItems().add(item);
-			totalQty += dto.getQuantity();
+			order.getOrderItems().add(item);
+			totalQty += dto.getPeopleCount();
 		}
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
 		redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
-		return orderRepo.save(order);
+		return savedOrder;
 	}
 
 	@Transactional
 	public Order createOrderFromCart(String email) {
 		User user = userRepo.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("유저 없음"));
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		List<Cart> cartItems = cartRepo.findByUser_UserId(user.getUserId());
 		if (cartItems.isEmpty()) {
-			throw new RuntimeException("장바구니 비어있음");
+			throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
 		}
 
 		Order order = new Order();
@@ -87,22 +95,24 @@ public class OrderService {
 			Product product = cart.getProduct();
 
 			if (product.getStockQuantity() < cart.getQuantity()) {
-				throw new RuntimeException("재고 부족");
+				throw new CustomException(ErrorCode.OUT_OF_STOCK);
 			}
 
 			product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
 
 			OrderItem item = OrderItem.builder()
-				.order(order)
-				.product(product)
-				.peopleCount(cart.getQuantity())
-				.startDate(cart.getStartDate())
-				.build();
+					.order(order)
+					.product(product)
+					.peopleCount(cart.getQuantity())
+					.startDate(cart.getStartDate())
+					.price(product.getPrice()) // 현재 가격으로 저장
+					.build();
+
 			orderItems.add(item);
 			totalQty += cart.getQuantity();
 		}
 
-		order.setItems(orderItems);
+		order.setOrderItems(orderItems);
 		order.setTotalQuantity(totalQty);
 		Order savedOrder = orderRepo.save(order);
 
@@ -113,13 +123,25 @@ public class OrderService {
 
 	public Order findById(Long orderId) {
 		return orderRepo.findById(orderId)
-			.orElseThrow(() -> new RuntimeException("주문 없음"));
+				.orElseThrow(() -> new RuntimeException("주문 없음"));
 	}
 
 	public List<Order> findOrdersByEmail(String email) {
 		User user = userRepo.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("유저 없음"));
+		return orderRepo.findByUser(user);
+	}
 
+	public Order findByIdAndUser(Long id, User user) {
+		Order order = orderRepo.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+		if (!order.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(ErrorCode.INVALID_ACCESSTOKEN);
+		}
+		return order;
+	}
+
+	public List<Order> findByUser(User user) {
 		return orderRepo.findByUser(user);
 	}
 }

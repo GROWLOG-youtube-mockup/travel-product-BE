@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.travelservice.domain.cart.entity.Cart;
 import com.travelservice.global.BaseEntity;
+import com.travelservice.global.common.exception.CustomException;
+import com.travelservice.global.common.exception.ErrorCode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -139,5 +141,17 @@ public class Product extends BaseEntity {
 
 	public void clearDescriptionGroups() {
 		this.descriptionGroups.clear();
+	}
+
+	//재고 관련 메서드
+	public int getStock() {
+		return this.stockQuantity;
+	}
+
+	public void reduceStock(int quantity) {
+		if (this.stockQuantity < quantity) {
+			throw new CustomException(ErrorCode.OUT_OF_STOCK);
+		}
+		this.stockQuantity -= quantity;
 	}
 }

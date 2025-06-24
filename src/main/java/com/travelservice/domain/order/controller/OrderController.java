@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,45 +17,75 @@ import com.travelservice.domain.order.dto.OrderRequestDto;
 import com.travelservice.domain.order.dto.OrderResponseDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
+import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders")
 public class OrderController {
 	private final OrderService orderService;
 
+	@Operation(
+		summary = "단건 예약 생성 (결제는 별도 진행)",
+		description = "장바구니에서 하나의 항목을 선택하여 예약을 생성. 결제는 toss API에서 별도로 처리."
+	)
 	@PostMapping
-	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(
-		@RequestBody OrderRequestDto dto,
+	public ResponseEntity<ApiResponse<OrderResponseDto>> creatOrder(
+		@Valid @RequestBody OrderRequestDto dto,
 		@RequestParam String email
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.ok(new OrderResponseDto(order)));
+				.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
+	@Operation(
+		summary = "장바구니 항목 예약 생성 ",
+		description = "장바구니에서 상품을 선택하여 예약을 생성하는 API."
+	)
 	@PostMapping("/from-cart")
 	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(@RequestParam String email) {
 		Order order = orderService.createOrderFromCart(email);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.ok(new OrderResponseDto(order)));
+				.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
+	@Operation(
+		summary = "예약 상세 조회",
+		description = "로그인된 사용자가 자신의 특정 예약(주문)을 상세 조회. 여행 상품명, 시작일, 인원 수, 결제 상태 등을 포함."
+	)
 	@GetMapping("/{id}")
-	public ApiResponse<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
-		Order order = orderService.findById(id);
-		return ApiResponse.ok(ApiResponse.ok(new OrderResponseDto(order)));
+	public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(
+		@PathVariable Long id,
+		@AuthenticationPrincipal User user
+	) {
+		//log.info("요청 들어옴 - user: {}", user);
+		Order order = orderService.findByIdAndUser(id, user);
+
+		OrderResponseDto responseDto = OrderResponseDto.withItems(order);
+		return ResponseEntity.ok(ApiResponse.ok(responseDto));
 	}
 
+	@Operation(
+		summary = "내 전체 예약 목록 조회",
+		description = "현재 로그인된 사용자의 모든 예약(주문) 내역을 조회. 예약별로 여행 상품명, 상태, 시작일 등의 정보를 제공."
+	)
 	@GetMapping
-	public ApiResponse<ApiResponse<List<OrderResponseDto>>> getMyOrders(@RequestParam String email) {
-		List<Order> orders = orderService.findOrdersByEmail(email);
-		List<OrderResponseDto> dtos = orders.stream()
-			.map(OrderResponseDto::new)
+	public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getMyOrders(
+		@AuthenticationPrincipal User user
+	) {
+		log.info("요청 들어옴 - user: {}", user); // 추가
+		List<Order> orders = orderService.findByUser(user);
+		List<OrderResponseDto> result = orders.stream()
+			.map(OrderResponseDto::withItems)
 			.toList();
-		return ApiResponse.ok(ApiResponse.ok(dtos));
+		return ResponseEntity.ok(ApiResponse.ok(result));
 	}
 }

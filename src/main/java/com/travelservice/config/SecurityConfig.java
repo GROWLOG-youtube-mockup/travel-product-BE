@@ -11,6 +11,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.travelservice.global.common.jwt.JwtAuthenticationFilter;
 import com.travelservice.global.common.jwt.JwtTokenProvider;
+import com.travelservice.domain.user.repository.UserRepository;
+
+
 
 @Configuration
 public class SecurityConfig {
@@ -34,7 +37,7 @@ public class SecurityConfig {
 	};
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider) throws
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws
 		Exception {
 		http
 			.csrf(csrf -> csrf.disable())
@@ -50,9 +53,12 @@ public class SecurityConfig {
 				.requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
 				.anyRequest().authenticated() //  나머지는 인증 필요
 			)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			//.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable());
+
+
 
 		return http.build();
 	}
