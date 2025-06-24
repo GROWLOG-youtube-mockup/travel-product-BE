@@ -16,10 +16,10 @@ public class SwaggerConfig {
 		final String securitySchemeName = "bearerAuth";
 
 		return new OpenAPI()
-			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Security Requirement 추가
-			.components(new Components().addSecuritySchemes("Bearer Authentication",  // Security Scheme 추가
+			.addSecurityItem(new SecurityRequirement().addList(securitySchemeName)) // Security Requirement 추가
+			.components(new Components().addSecuritySchemes(securitySchemeName,  // Security Scheme 추가
 				new SecurityScheme()
-					.name("Authorization")
+					.name(securitySchemeName)
 					.type(SecurityScheme.Type.HTTP)
 					.scheme("bearer")
 					.bearerFormat("JWT")
