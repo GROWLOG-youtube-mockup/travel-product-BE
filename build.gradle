@@ -9,23 +9,23 @@ group = 'com.growlog.travelservice'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 checkstyle {
-	maxWarnings = 0
-	configFile = file("${rootDir}/config/naver-checkstyle-rules.xml")
-	configProperties = ["suppressionFile": "${rootDir}/config/naver-checkstyle-suppressions.xml"]
-	toolVersion = "8.42"
+    maxWarnings = 0
+    configFile = file("${rootDir}/config/naver-checkstyle-rules.xml")
+    configProperties = ["suppressionFile": "${rootDir}/config/naver-checkstyle-suppressions.xml"]
+    toolVersion = "8.42"
 }
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
@@ -54,6 +54,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     //.env
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     //JWT
@@ -63,5 +64,5 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

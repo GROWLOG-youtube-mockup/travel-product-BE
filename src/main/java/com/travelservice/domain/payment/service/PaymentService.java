@@ -18,8 +18,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelservice.domain.cart.entity.CartItem;
-import com.travelservice.domain.cart.repository.CartItemRepository;
+import com.travelservice.domain.cart.entity.Cart;
+import com.travelservice.domain.cart.repository.CartRepository;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.entity.OrderItem;
 import com.travelservice.domain.order.repository.OrderItemRepository;
@@ -46,7 +46,7 @@ public class PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
-	private final CartItemRepository cartItemRepository;
+	private final CartRepository cartItemRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ProductRepository productRepository;
 
@@ -61,7 +61,7 @@ public class PaymentService {
 		RedisTemplate<String, String> redisTemplate,
 		RestTemplate restTemplate,
 		UserRepository userRepository,
-		CartItemRepository cartItemRepo,
+		CartRepository cartItemRepo,
 		OrderItemRepository orderItemRepo,
 		ProductRepository productRepo,
 		PasswordEncoder passwordEncoder) {
@@ -98,7 +98,7 @@ public class PaymentService {
 			String method = "카드";
 
 			Order order = orderRepository.findById(requestDto.getOrderId())
-				.orElseThrow(() ->new CustomException(ErrorCode.INVALID_ORDER_ID));
+				.orElseThrow(() -> new CustomException(ErrorCode.INVALID_ORDER_ID));
 
 			int expectedAmount = order.getOrderItems().stream()
 				.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
@@ -230,7 +230,7 @@ public class PaymentService {
 	}
 
 	public Order createOrderFromCartItem(User user, Long cartItemId) {
-		CartItem cartItem = cartItemRepository.findById(cartItemId)
+		Cart cartItem = cartItemRepository.findById(cartItemId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 장바구니 항목이 없습니다."));
 
 		// 🛡 본인 장바구니 항목인지 확인
@@ -272,7 +272,6 @@ public class PaymentService {
 
 		return savedOrder;
 	}
-
 
 	public PaymentResponseDto getPaymentStatusByOrderId(Long orderId) {
 		Payment payment = paymentRepository.findByOrder_OrderId(orderId)
