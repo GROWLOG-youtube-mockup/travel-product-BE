@@ -200,6 +200,7 @@ CREATE TABLE order_item
     order_item_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id      BIGINT  NOT NULL,
     product_id    BIGINT  NOT NULL,
+    price INT NOT NULL,
     people_count  INT  NOT NULL,
     start_date    DATE NOT NULL COMMENT '선택한 여행 시작일',
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,

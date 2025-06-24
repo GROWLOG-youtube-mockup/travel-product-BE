@@ -64,10 +64,10 @@ VALUES
   (1002, 1, '2025-06-03 14:12:00', 'PENDING', 1, '2025-06-03 14:12:00', '2025-06-03 14:13:00');
 
 -- order_item (주문 아이템)
-INSERT INTO order_item (order_item_id, order_id, product_id, people_count, start_date, created_at, updated_at)
+INSERT INTO order_item (order_item_id, order_id, product_id, price, people_count, start_date, created_at, updated_at)
 VALUES
-  (1, 1001, 1, 2, '2025-06-05', NOW(), NOW()),
-  (2, 1002, 1, 1, '2025-06-03', NOW(), NOW());
+  (1, 1001, 1, 19900, 2, '2025-06-05', NOW(), NOW()),
+  (2, 1002, 1, 19900, 1, '2025-06-03', NOW(), NOW());
 
 -- payment (결제)
 INSERT INTO payment (

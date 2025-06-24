@@ -18,7 +18,6 @@ import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
-import com.travelservice.enums.OrderStatus;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
@@ -101,12 +100,12 @@ public class OrderService {
 			product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
 
 			OrderItem item = OrderItem.builder()
-					.order(order)
-					.product(product)
-					.peopleCount(cart.getQuantity())
-					.startDate(cart.getStartDate())
-					.price(product.getPrice()) // 현재 가격으로 저장
-					.build();
+				.order(order)
+				.product(product)
+				.peopleCount(cart.getQuantity())
+				.startDate(cart.getStartDate())
+				.price(product.getPrice()) // 현재 가격으로 저장
+				.build();
 
 			orderItems.add(item);
 			totalQty += cart.getQuantity();
@@ -123,7 +122,7 @@ public class OrderService {
 
 	public Order findById(Long orderId) {
 		return orderRepo.findById(orderId)
-				.orElseThrow(() -> new RuntimeException("주문 없음"));
+			.orElseThrow(() -> new RuntimeException("주문 없음"));
 	}
 
 	public List<Order> findOrdersByEmail(String email) {

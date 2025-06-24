@@ -41,8 +41,8 @@ public class OrderResponseDto {
 		this.orderDate = order.getOrderDate();
 
 		this.totalPrice = order.getOrderItems().stream()
-				.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
-				.sum();
+			.mapToInt(i -> i.getProduct().getPrice() * i.getPeopleCount())
+			.sum();
 	}
 
 	public static OrderResponseDto withItems(Order order) {
@@ -52,8 +52,8 @@ public class OrderResponseDto {
 				i.getProduct().getName(),
 				i.getStartDate(),
 				i.getPeopleCount(),
-				i.getPrice(),
-				i.getPrice() * i.getPeopleCount()))
+				i.getProduct().getPrice(),
+				i.getProduct().getPrice() * i.getPeopleCount()))
 			.toList());
 		return dto;
 	}
