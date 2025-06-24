@@ -17,7 +17,6 @@ import com.travelservice.domain.order.dto.OrderRequestDto;
 import com.travelservice.domain.order.dto.OrderResponseDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.service.OrderService;
-import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,11 +49,14 @@ public class OrderController {
 		summary = "장바구니 항목 예약 생성 ",
 		description = "장바구니에서 상품을 선택하여 예약을 생성하는 API."
 	)
-	@PostMapping("/from-cart")
-	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(@RequestParam String email) {
-		Order order = orderService.createOrderFromCart(email);
+	@PostMapping("/from-cart/{cartItemId}")
+	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(
+		@PathVariable Long cartItemId,
+		@RequestParam String email
+	) {
+		Order order = orderService.createOrderFromCart(email, cartItemId);
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@Operation(

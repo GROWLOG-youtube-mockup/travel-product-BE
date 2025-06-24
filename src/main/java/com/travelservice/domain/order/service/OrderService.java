@@ -1,7 +1,6 @@
 package com.travelservice.domain.order.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,13 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.travelservice.domain.cart.entity.Cart;
 import com.travelservice.domain.cart.repository.CartRepository;
 import com.travelservice.domain.order.dto.OrderItemDto;
+import com.travelservice.domain.order.dto.OrderResponseDto;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.order.entity.OrderItem;
+import com.travelservice.domain.order.repository.OrderItemRepository;
 import com.travelservice.domain.order.repository.OrderRepository;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.repository.UserRepository;
+import com.travelservice.enums.OrderStatus;
 import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 	private final OrderRepository orderRepo;
+	private final OrderItemRepository orderItemRepo;
 	private final ProductRepository productRepo;
 	private final UserRepository userRepo;
 	private final CartRepository cartRepo;
@@ -74,50 +77,46 @@ public class OrderService {
 	}
 
 	@Transactional
-	public Order createOrderFromCart(String email) {
+	public Order createOrderFromCart(String email, Long cartItemId) {
+
+		Cart cartItem = cartRepo.findById(cartItemId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
 		User user = userRepo.findByEmail(email)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		List<Cart> cartItems = cartRepo.findByUser_UserId(user.getUserId());
-		if (cartItems.isEmpty()) {
-			throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
+		if (!cartItem.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
 		}
 
-		Order order = new Order();
-		order.setUser(user);
-		order.setOrderDate(LocalDateTime.now());
-
-		int totalQty = 0;
-		List<OrderItem> orderItems = new ArrayList<>();
-
-		for (Cart cart : cartItems) {
-			Product product = cart.getProduct();
-
-			if (product.getStockQuantity() < cart.getQuantity()) {
-				throw new CustomException(ErrorCode.OUT_OF_STOCK);
-			}
-
-			product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
-
-			OrderItem item = OrderItem.builder()
-				.order(order)
-				.product(product)
-				.peopleCount(cart.getQuantity())
-				.startDate(cart.getStartDate())
-				.price(product.getPrice()) // 현재 가격으로 저장
-				.build();
-
-			orderItems.add(item);
-			totalQty += cart.getQuantity();
+		Product product = cartItem.getProduct();
+		if (product.getStockQuantity() < cartItem.getQuantity()) {
+			throw new CustomException(ErrorCode.OUT_OF_STOCK);
 		}
+		product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
 
-		order.setOrderItems(orderItems);
-		order.setTotalQuantity(totalQty);
-		Order savedOrder = orderRepo.save(order);
+		Order order = Order.builder()
+			.user(cartItem.getUser())
+			.orderDate(LocalDateTime.now())
+			.totalQuantity(cartItem.getQuantity())
+			.status(OrderStatus.PENDING)
+			.build();
+		orderRepo.save(order);
 
-		cartRepo.deleteAll(cartItems);
+		OrderItem orderItem = OrderItem.builder()
+			.order(order)
+			.product(cartItem.getProduct())
+			.peopleCount(cartItem.getQuantity())
+			.startDate(cartItem.getStartDate())
+			.price(cartItem.getProduct().getPrice())
+			.build();
+		orderItemRepo.save(orderItem);
 
-		return savedOrder;
+		order.getOrderItems().add(orderItem);
+
+		cartRepo.deleteById(cartItemId);
+
+		return order;
 	}
 
 	public Order findById(Long orderId) {
