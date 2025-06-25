@@ -1,5 +1,7 @@
 package com.travelservice.config;
 
+import static org.springframework.security.config.Customizer.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,11 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.travelservice.domain.user.repository.UserRepository;
 import com.travelservice.global.common.jwt.JwtAuthenticationFilter;
 import com.travelservice.global.common.jwt.JwtTokenProvider;
-import com.travelservice.domain.user.repository.UserRepository;
-
-
 
 @Configuration
 public class SecurityConfig {
@@ -37,9 +37,11 @@ public class SecurityConfig {
 	};
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider,
+		UserRepository userRepository) throws
 		Exception {
 		http
+			.cors(withDefaults())
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.headers(headers -> headers.frameOptions().sameOrigin())
@@ -54,11 +56,10 @@ public class SecurityConfig {
 				.anyRequest().authenticated() //  나머지는 인증 필요
 			)
 			//.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userRepository),
+				UsernamePasswordAuthenticationFilter.class)
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable());
-
-
 
 		return http.build();
 	}
