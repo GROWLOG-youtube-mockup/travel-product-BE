@@ -49,7 +49,9 @@ dependencies {
     testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     // AWS
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.2") // BOM
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 
     //java mail sender
     implementation 'org.springframework.boot:spring-boot-starter-mail'
