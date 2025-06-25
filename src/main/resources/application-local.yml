@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
+    username: ${LOCAL_DB_USERNAME:sa}
+    password: ${LOCAL_DB_PASSWORD:}
 
   h2:
     console:
@@ -11,12 +11,42 @@ spring:
       path: /h2-console
 
   jpa:
+    database: h2
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+mail:
+  from: ${MAIL_FROM}
 
 server:
   port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.travelservice: DEBUG
+toss:
+  secret-key: ${TOSS_SECRET_KEY}
