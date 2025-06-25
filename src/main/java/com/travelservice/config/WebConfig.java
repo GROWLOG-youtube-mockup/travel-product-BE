@@ -16,7 +16,7 @@ public class WebConfig {
 					.allowedOrigins("http://localhost:5173")
 					.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
 					.allowedHeaders("*")
-					.allowCredentials(true);// 쿠키나 인증 정보 포함 허용 시 필요
+					.allowCredentials(true); // 쿠키나 인증 정보 포함 허용 시 필요
 			}
 		};
 	}

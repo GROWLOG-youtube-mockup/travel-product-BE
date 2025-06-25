@@ -43,7 +43,7 @@ public class OrderController {
 	) {
 		Order order = orderService.createOrder(email, dto.getItems());
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@Operation(
@@ -54,7 +54,7 @@ public class OrderController {
 	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(@RequestParam String email) {
 		Order order = orderService.createOrderFromCart(email);
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(ApiResponse.ok(new OrderResponseDto(order)));
+			.body(ApiResponse.ok(new OrderResponseDto(order)));
 	}
 
 	@Operation(
