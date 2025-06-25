@@ -35,11 +35,11 @@ public class AdminOrderController {
 		@RequestParam(defaultValue = "1") Integer page,
 		@RequestParam(defaultValue = "10") Integer size,
 		@RequestParam(required = false) String status,
-		@RequestParam(required = false) String start_date,
-		@RequestParam(required = false) String end_date
+		@RequestParam(required = false) String startDate,
+		@RequestParam(required = false) String endDate
 	) {
 		PagedAdminOrderResponseDto result = adminOrderService.findOrders(
-			page, size, status, start_date, end_date
+			page, size, status, startDate, endDate
 		);
 		return ApiResponse.ok(result);
 	}
