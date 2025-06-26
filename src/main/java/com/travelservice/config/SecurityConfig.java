@@ -1,5 +1,7 @@
 package com.travelservice.config;
 
+import static org.springframework.security.config.Customizer.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +41,7 @@ public class SecurityConfig {
 		HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository
 	) throws Exception {
 		http
+			.cors(withDefaults())
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.headers(headers -> headers.frameOptions().sameOrigin())

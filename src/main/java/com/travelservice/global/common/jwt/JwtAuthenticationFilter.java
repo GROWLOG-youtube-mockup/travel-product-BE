@@ -3,7 +3,6 @@ package com.travelservice.global.common.jwt;
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			Long userId = jwtTokenProvider.getUserId(token);
 			int roleCode = jwtTokenProvider.getRoleCode(token); // 1,2 등 꺼냄
 			String authority = jwtTokenProvider.mapRoleCodeToAuthority(roleCode); // "ADMIN" 등 변환
-
 
 			// ✅ DB에서 User 조회
 			User user = userRepository.findById(userId)

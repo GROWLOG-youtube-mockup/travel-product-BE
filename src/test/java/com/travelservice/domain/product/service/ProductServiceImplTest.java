@@ -1,24 +1,16 @@
 package com.travelservice.domain.product.service;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travelservice.domain.product.dto.ProductListResponse;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.product.entity.ProductDescriptionGroup;
 import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
-import com.travelservice.global.common.exception.CustomException;
-import com.travelservice.global.common.exception.ErrorCode;
 
 @SpringBootTest
 @Transactional
