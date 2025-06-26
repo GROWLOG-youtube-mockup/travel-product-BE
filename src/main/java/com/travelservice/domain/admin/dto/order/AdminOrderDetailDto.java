@@ -12,6 +12,7 @@ import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.product.entity.Product;
 import com.travelservice.domain.user.entity.User;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,14 +28,18 @@ public class AdminOrderDetailDto {
 
 	private UserInfo user;
 
+	@Schema(description = "주문 상태. (PENDING, PAID, CANCELLED) ")
 	private String status;
 
+	@Schema(description = "주문 일자")
 	@JsonProperty("order_date")
 	private LocalDateTime orderDate;
 
+	@Schema(description = "취소 일자(유효한 주문이라면 null값)")
 	@JsonProperty("cancel_date")
 	private LocalDateTime cancelDate;
 
+	@Schema(description = "상태 변경 일자")
 	@JsonProperty("updated_at")
 	private LocalDateTime updatedAt;
 
@@ -90,12 +95,16 @@ public class AdminOrderDetailDto {
 		@JsonProperty("order_item_id")
 		private Long orderItemId;
 		private ProductInfo product;
+		@Schema(description = "주문 가격")
 		@JsonProperty("price")
 		private int price;
+		@Schema(description = "상품 수를 의미합니다.(상품 수=인원)")
 		@JsonProperty("people_count")
 		private int peopleCount;
+		@Schema(description = "주문의 총 가격")
 		@JsonProperty("total_price")
 		private int totalPrice;
+		@Schema(description = "주문의 시작 일자")
 		@JsonProperty("start_date")
 		private LocalDate startDate;
 
@@ -139,7 +148,9 @@ public class AdminOrderDetailDto {
 		private Long paymentId;
 		@JsonProperty("card_number")
 		private String cardNumber;
+		@Schema(description = "결제 상태. (PAID, FAILED, CANCELLED)")
 		private String status;
+		@Schema(description = "결제 일자")
 		@JsonProperty("payment_datetime")
 		private LocalDateTime paidAt;
 
