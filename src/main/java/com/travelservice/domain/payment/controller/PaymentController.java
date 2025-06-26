@@ -49,7 +49,8 @@ public class PaymentController {
 	)
 	@GetMapping("/{orderId}")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> getPaymentStatus(
-		@PathVariable Long orderId, @AuthenticationPrincipal User user) {
+		@PathVariable Long orderId, @AuthenticationPrincipal User user
+	) {
 		Payment payment = paymentService.getPaymentStatus(orderId, user);
 		return ResponseEntity.ok(ApiResponse.ok(new PaymentResponseDto(payment)));
 	}
@@ -58,8 +59,7 @@ public class PaymentController {
 
 	@Operation(
 		summary = "Toss 결제 성공 Redirect 수신",
-		description =
-			"Toss 결제 완료 후 리디렉션 주소로 호출되며, paymentKey, orderId, amount를 확인.테스트 또는 개발용으로 사용됨. 프론트 연동 시 프론트에서 리다이렉션 처리")
+		description = "Toss 결제 완료 후 리디렉션 주소로 호출, paymentKey, orderId, amount 확인. 테스트/개발용. 프론트에서 리다이렉션")
 	@GetMapping("/success")
 	public String tossSuccess(
 		@RequestParam String paymentKey,

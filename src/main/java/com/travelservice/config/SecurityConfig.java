@@ -36,8 +36,8 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(
-		HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) throws
-		Exception {
+		HttpSecurity http, JwtTokenProvider jwtTokenProvider, UserRepository userRepository
+	) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
