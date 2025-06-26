@@ -49,6 +49,7 @@ public class OrderResponseDto {
 		OrderResponseDto dto = new OrderResponseDto(order);
 		dto.setItems(order.getOrderItems().stream()
 			.map(i -> new OrderItemInfo(
+				i.getProduct().getProductId(),
 				i.getProduct().getName(),
 				i.getStartDate(),
 				i.getPeopleCount(),
