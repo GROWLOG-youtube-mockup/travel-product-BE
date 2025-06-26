@@ -19,7 +19,6 @@ import com.travelservice.domain.payment.dto.PaymentApproveRequestDto;
 import com.travelservice.domain.payment.dto.PaymentResponseDto;
 import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.payment.service.PaymentService;
-import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,9 +48,9 @@ public class PaymentController {
 	)
 	@GetMapping("/{orderId}")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> getPaymentStatus(
-		@PathVariable Long orderId, @AuthenticationPrincipal User user
+		@PathVariable Long orderId, @AuthenticationPrincipal(expression = "userId") Long userId
 	) {
-		Payment payment = paymentService.getPaymentStatus(orderId, user);
+		Payment payment = paymentService.getPaymentStatus(orderId, userId);
 		return ResponseEntity.ok(ApiResponse.ok(new PaymentResponseDto(payment)));
 	}
 
