@@ -22,11 +22,13 @@ import com.travelservice.domain.payment.service.PaymentService;
 import com.travelservice.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/payments")
+@Tag(name = "payment API - 결제")
 public class PaymentController {
 	private final PaymentService paymentService;
 	private final OrderService orderService;
@@ -34,10 +36,10 @@ public class PaymentController {
 	@Operation(
 		summary = "Toss 결제 승인 처리",
 		description = "Toss 결제 성공 후, 프론트에서 전달받은 paymentKey, orderId, amount 값을 기반으로 결제를 최종 승인하고, 결제 상태를 'PAID'로 변경."
-					  + "amount: 결제 금액"
-					  + "payment_key: (toss-generated-key)"
-					  + "payment_gateway: toss"
-					  + "transaction_id: (tx-001)"
+			+ "amount: 결제 금액"
+			+ "payment_key: (toss-generated-key)"
+			+ "payment_gateway: toss"
+			+ "transaction_id: (tx-001)"
 	)
 	@PostMapping("/approve")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> approve(@RequestBody PaymentApproveRequestDto dto)

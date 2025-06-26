@@ -12,6 +12,7 @@ import com.travelservice.domain.auth.dto.LoginResponseDto;
 import com.travelservice.domain.auth.service.AuthService;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "auth API - 회원 인증", description = "로그인 및 로그아웃 기능을 제공.")
 public class AuthController {
 
 	private final AuthService authService;

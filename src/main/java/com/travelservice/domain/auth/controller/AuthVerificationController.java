@@ -14,11 +14,13 @@ import com.travelservice.domain.auth.service.EmailVerificationService;
 import com.travelservice.domain.auth.service.PhoneVerificationService;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "auth API - 본인 인증", description = "이메일 인증 기능을 제공.")
 public class AuthVerificationController {
 	private final EmailVerificationService emailVerificationService;
 	private final PhoneVerificationService phoneVerificationService;
