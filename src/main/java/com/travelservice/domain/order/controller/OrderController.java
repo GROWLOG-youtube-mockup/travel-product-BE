@@ -46,20 +46,6 @@ public class OrderController {
 	}
 
 	@Operation(
-		summary = "장바구니 항목 예약 생성 ",
-		description = "장바구니에서 상품을 선택하여 예약을 생성하는 API."
-	)
-	@PostMapping("/from-cart/{cartItemId}")
-	public ResponseEntity<ApiResponse<OrderResponseDto>> orderFromCart(
-		@PathVariable Long cartItemId,
-		@RequestParam String email
-	) {
-		Order order = orderService.createOrderFromCart(email, cartItemId);
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.ok(new OrderResponseDto(order)));
-	}
-
-	@Operation(
 		summary = "예약 상세 조회",
 		description = "로그인된 사용자가 자신의 특정 예약(주문)을 상세 조회. 여행 상품명, 시작일, 인원 수, 결제 상태 등을 포함."
 	)

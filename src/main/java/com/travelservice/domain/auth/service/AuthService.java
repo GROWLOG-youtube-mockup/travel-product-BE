@@ -54,7 +54,7 @@ public class AuthService {
 
 		userLoginHistoryRepository.save(loginHistory);
 
-		String accessToken = jwtTokenProvider.creteToken(user.getUserId(), user.getRoleCode());
+		String accessToken = jwtTokenProvider.createToken(user.getUserId(), user.getRoleCode());
 
 		return new LoginResponseDto(user.getUserId(), user.getName(), accessToken);
 	}
