@@ -38,10 +38,11 @@ import com.travelservice.global.common.exception.CustomException;
 import com.travelservice.global.common.exception.ErrorCode;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final OrderRepository orderRepository;
@@ -285,51 +286,51 @@ public class PaymentService {
 			.build();
 	}
 
-	public Payment getPaymentStatus(Long orderId, User user) {
+	public Payment getPaymentStatus(Long orderId, Long userId) {
 		Order order = orderRepository.findById(orderId)
 			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
-		if (!order.getUser().getUserId().equals(user.getUserId())) {
-			throw new CustomException(ErrorCode.ORDER_ACCESS_DENIED);
+		if (!order.getUser().getUserId().equals(userId)) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
 		}
 
 		return paymentRepository.findByOrder(order)
 			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 	}
 
-	@PostConstruct
-	public void init() {
-		try {
-			// 테스트용 사용자 확인 (user_id = 1)
-			Optional<User> optionalUser = userRepository.findById(1L);
-			User user = optionalUser.orElseGet(() -> {
-				User newUser = User.builder()
-					.userId(1L)
-					.email("test@example.com")
-					.name("Test User")
-					.password(passwordEncoder.encode("test1234"))
-					.phoneNumber("01012345678")
-					.build();
-				return userRepository.save(newUser);
-			});
-
-			// 테스트용 주문 생성
-			Order order = Order.builder()
-				.user(user)
-				.orderDate(LocalDateTime.now())
-				.totalQuantity(1)
-				.status(OrderStatus.PENDING)
-				.build();
-
-			Order savedOrder = orderRepository.save(order);
-
-			// Redis에 등록
-			redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
-			System.out.println("✅ 테스트 주문 ID: " + savedOrder.getOrderId());
-		} catch (Exception e) {
-			System.out.println("⚠️ Redis 연결 실패: " + e.getMessage());
-		}
-	}
+	// @PostConstruct
+	// public void init() {
+	// 	try {
+	// 		// 테스트용 사용자 확인 (user_id = 1)
+	// 		Optional<User> optionalUser = userRepository.findById(1L);
+	// 		User user = optionalUser.orElseGet(() -> {
+	// 			User newUser = User.builder()
+	// 				.userId(1L)
+	// 				.email("test@example.com")
+	// 				.name("Test User")
+	// 				.password(passwordEncoder.encode("test1234"))
+	// 				.phoneNumber("01012345678")
+	// 				.build();
+	// 			return userRepository.save(newUser);
+	// 		});
+	//
+	// 		// 테스트용 주문 생성
+	// 		Order order = Order.builder()
+	// 			.user(user)
+	// 			.orderDate(LocalDateTime.now())
+	// 			.totalQuantity(1)
+	// 			.status(OrderStatus.PENDING)
+	// 			.build();
+	//
+	// 		Order savedOrder = orderRepository.save(order);
+	//
+	// 		// Redis에 등록
+	// 		redisTemplate.opsForValue().set(savedOrder.getOrderId().toString(), "dummy");
+	// 		System.out.println("✅ 테스트 주문 ID: " + savedOrder.getOrderId());
+	// 	} catch (Exception e) {
+	// 		System.out.println("⚠️ Redis 연결 실패: " + e.getMessage());
+	// 	}
+	// }
 
 	/*
 	@Transactional

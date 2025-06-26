@@ -35,7 +35,13 @@ public class AdminProductController {
 
 	private final ProductServiceImpl productServiceImpl;
 
-	@Operation(summary = "상품 추가")
+	@Operation(summary = "상품 추가",
+		description = "totalQuantity: 총 상품 수량"
+					  + "description: 단순 문자열"
+					  + "saleStatus:  0: UPCOMING, 1: ON_SALE, 2: SOLD_OUT"
+					  + "type: 0: FREE, 1: PACKAGE, 2: SUMMER_VAC, 3: HISTORY, 4: ACTIVITY"
+					  + "duration: 여행기간(days)"
+					  + "descriptionGroups - type: 0: 포함사항, 1: 불포함사항, 2: 기타")
 	@PostMapping
 	public ResponseEntity<ApiResponse<ProductDetailResponse>> createProduct(
 		@RequestBody AddProductRequest request) {

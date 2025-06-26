@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-	private final Long userId;
+	private Long userId;
 	private final String authority;
 
 	@Override

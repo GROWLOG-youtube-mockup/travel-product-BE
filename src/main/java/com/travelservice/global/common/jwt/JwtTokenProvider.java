@@ -26,7 +26,7 @@ public class JwtTokenProvider {
 		this.expiration = Long.parseLong(dotenv.get("JWT_EXPIRATION")); // JWT 만료 시간 (밀리초 단위)
 	}
 
-	public String creteToken(Long userId, int roleCode) {
+	public String createToken(Long userId, int roleCode) {
 		Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
 		claims.put("roleCode", roleCode);
 
