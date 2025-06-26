@@ -20,11 +20,11 @@ public class OrderRequestDto {
 		requiredMode = Schema.RequiredMode.REQUIRED,
 		example = """
 			[
-			  {
-			    "peopleCount": 2,
-			    "product_id": 3,
-			    "start_date": "2025-08-01"
-			  }
+				{
+					"peopleCount": 2,
+					"product_id": 3,
+					"start_date": "2025-08-01"
+				}
 			]
 			"""
 	)

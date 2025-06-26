@@ -31,7 +31,7 @@ public class CartController {
 
 	@Operation(summary = "장바구니에 상품 추가",
 		description = "quantity: 인원 수(= people count),"
-					  + "startDate: 여행 시작일자")
+			+ "startDate: 여행 시작일자")
 	@PostMapping
 	public ResponseEntity<ApiResponse<Void>> addToCart(@RequestBody AddToCartRequest request,
 		@AuthenticationPrincipal(expression = "userId") Long userId) {
