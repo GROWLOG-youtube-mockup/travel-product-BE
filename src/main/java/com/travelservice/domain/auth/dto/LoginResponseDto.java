@@ -18,4 +18,6 @@ public class LoginResponseDto {
 	@Schema(description = "Access Token (Bearer 토큰 형식, Authorization 헤더에 포함)",
 		example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
 	private String accessToken;
+
+	private Integer roleCode;
 }

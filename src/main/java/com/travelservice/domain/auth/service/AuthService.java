@@ -56,7 +56,7 @@ public class AuthService {
 
 		String accessToken = jwtTokenProvider.createToken(user.getUserId(), user.getRoleCode());
 
-		return new LoginResponseDto(user.getUserId(), user.getName(), accessToken);
+		return new LoginResponseDto(user.getUserId(), user.getName(), accessToken, user.getRoleCode());
 	}
 
 	// 로그인한 사용자 정보 조회용
