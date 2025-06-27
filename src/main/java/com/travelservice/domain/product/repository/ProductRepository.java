@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByRegionIn(List<Region> regions);
 
 	// 페이징용 추가
+	@EntityGraph(attributePaths = {"images", "region"})
 	Page<Product> findAll(Pageable pageable);
 
+	@EntityGraph(attributePaths = {"images", "region"})
 	Page<Product> findByRegion_RegionId(Long regionId, Pageable pageable);
 }
