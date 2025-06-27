@@ -27,8 +27,8 @@ public class ProductController {
 	private final ProductServiceImpl productServiceImpl;
 
 	@Operation(summary = "상품 목록 조회",
-		description = "전체 상품을 조회합니다 (지역, 태그 필터링 포함)"
-					  + "stockQuantity: 잔여 수량 (totalQuantity - 판매된 상품 수"
+		description = "전체 상품을 조회합니다 (지역, 태그 필터링 포함)\n"
+					  + "stockQuantity: 잔여 수량 (totalQuantity - 판매된 상품 수\n"
 					  + "tags: {title = tags}인 descriptionGroup의 item content 값")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ProductListResponse>>> getAllProducts(

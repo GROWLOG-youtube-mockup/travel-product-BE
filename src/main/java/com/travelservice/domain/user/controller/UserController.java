@@ -12,15 +12,29 @@ import com.travelservice.domain.user.entity.User;
 import com.travelservice.domain.user.service.UserService;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/users")
+@Tag(name = "user API - 회원", description = "회원가입을 지원하는 API")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
+	@Operation(
+		summary = "회원가입 API",
+		description = "사용자로부터 이름, 이메일, 비밀번호 등을 입력받아 회원으로 등록."
+	)
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponse<User>> registerMember(@RequestBody UserRegistrationRequestDto requestDto) {
+	public ResponseEntity<ApiResponse<User>> registerMember(
+		@RequestBody
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			description = "회원가입 요청 정보",
+			required = true
+		)
+		UserRegistrationRequestDto requestDto) {
 		User user = userService.registerMember(requestDto);
 		return ResponseEntity.ok(ApiResponse.ok(user));
 	}

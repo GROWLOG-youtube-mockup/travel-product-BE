@@ -24,22 +24,27 @@ import com.travelservice.domain.user.dto.UserInfoDto;
 import com.travelservice.domain.user.service.UserService;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/users")
+@Tag(name = "user API - 회원 마이페이지", description = "회원의 마이페이지 관련 기능을 제공.")
 public class UserMyPageController {
 
 	@Autowired
 	private UserService userService;
 
+	@Operation(summary = "회원 이름 변경")
 	@PatchMapping("/me/name")
 	public ApiResponse<String> updateName(@RequestBody NameUpdateRequestDto requestDto, Authentication authentication) {
 		userService.updateName(requestDto.getName(), authentication);
 		return ApiResponse.ok("이름이 변경되었습니다.");
 	}
 
+	@Operation(summary = "전화번호 변경")
 	@PatchMapping("/me/phone")
 	public ApiResponse<String> updatePhoneNumber(@RequestBody PhoneUpdateRequestDto requestDto,
 		Authentication authentication) {
@@ -47,12 +52,14 @@ public class UserMyPageController {
 		return ApiResponse.ok("전화번호가 변경되었습니다.");
 	}
 
+	@Operation(summary = "비밀번호 변경")
 	@PatchMapping("/me/password")
 	public ApiResponse<String> updatePassword(@RequestBody PasswordUpdateRequestDto dto, Authentication auth) {
 		userService.updatePassword(dto.getCurrentPassword(), dto.getNewPassword(), auth);
 		return ApiResponse.ok("비밀번호가 변경되었습니다.");
 	}
 
+	@Operation(summary = "비밀번호 검증")
 	@PostMapping("/verify-password")
 	public ApiResponse<Map<String, Boolean>> verifyPassword(@RequestBody PasswordVerifyRequestDto requestDto,
 		Authentication authentication) {
@@ -60,6 +67,7 @@ public class UserMyPageController {
 		return ApiResponse.ok(Map.of("verified", verified));
 	}
 
+	@Operation(summary = "회원 탈퇴")
 	@DeleteMapping("/me")
 	public ApiResponse<String> deleteAccount(@RequestBody DeleteRequestDto requestDto, Authentication auth) {
 		userService.deleteAccount(requestDto.getPassword(), auth);
@@ -68,6 +76,7 @@ public class UserMyPageController {
 
 	//마이페이지
 
+	@Operation(summary = "내 정보 조회")
 	@GetMapping("/me")
 	public ResponseEntity<ApiResponse<UserInfoDto>> getMyInfo(Authentication auth) {
 		Long userId = Long.parseLong(auth.getName());
@@ -75,6 +84,7 @@ public class UserMyPageController {
 		return ResponseEntity.ok(ApiResponse.ok(userInfo));
 	}
 
+	@Operation(summary = "내 여행 내역 조회")
 	@GetMapping("/me/trips")
 	public ResponseEntity<ApiResponse<List<TripDto>>> getMyTrips(Authentication auth) {
 		Long userId = Long.parseLong(auth.getName());

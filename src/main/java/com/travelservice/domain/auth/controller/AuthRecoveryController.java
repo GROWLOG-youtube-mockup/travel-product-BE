@@ -11,6 +11,7 @@ import com.travelservice.domain.auth.dto.ResetPasswordRequestDto;
 import com.travelservice.domain.auth.service.AuthRecoveryService;
 import com.travelservice.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "auth API - 인증 복구", description = "이메일 찾기 및 비밀번호 재설정 기능을 제공.")
 public class AuthRecoveryController {
 	private final AuthRecoveryService authRecoveryService;
 
