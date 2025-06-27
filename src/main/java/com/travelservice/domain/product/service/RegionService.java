@@ -1,6 +1,5 @@
 package com.travelservice.domain.product.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,11 +38,14 @@ public class RegionService {
 	}
 
 	// 특정 레벨 지역만 조회
-	public List<RegionResponse> getRegionsByLevel(Integer level) {
-		if (level == null) {
-			return Collections.emptyList();
+	public List<RegionResponse> getRegions(Integer level, Long parentId) {
+		List<Region> regions = List.of();
+		if (parentId != null) {
+			regions = regionRepository.findByParent_RegionId(parentId);
+		} else if (level != null) {
+			regions = regionRepository.findByLevel(level);
 		}
-		return regionRepository.findByLevel(level).stream()
+		return regions.stream()
 			.map(RegionResponse::from)
 			.collect(Collectors.toList());
 	}
