@@ -50,6 +50,7 @@ public class SecurityConfig {
 				.requestMatchers(DEV_WHITELIST).permitAll()
 				.requestMatchers("/users/signup").permitAll()
 				.requestMatchers("/products", "/products/**", "/images/**").permitAll()
+				.requestMatchers("/regions").permitAll()
 				.requestMatchers("/users/signup", "/users/login").permitAll()
 				.requestMatchers("/auth/**").permitAll() // 이메일 인증 등 허용
 				.requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")

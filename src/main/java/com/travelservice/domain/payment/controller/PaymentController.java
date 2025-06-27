@@ -35,11 +35,11 @@ public class PaymentController {
 
 	@Operation(
 		summary = "Toss 결제 승인 처리",
-		description = "Toss 결제 성공 후, 프론트에서 전달받은 paymentKey, orderId, amount 값을 기반으로 결제를 최종 승인하고, 결제 상태를 'PAID'로 변경."
-			+ "amount: 결제 금액"
-			+ "payment_key: (toss-generated-key)"
-			+ "payment_gateway: toss"
-			+ "transaction_id: (tx-001)"
+		description = "Toss 결제 성공 후, 프론트에서 전달받은 paymentKey, orderId, amount 값을 기반으로 결제를 최종 승인하고, 결제 상태를 'PAID'로 변경.\n"
+					  + "- amount: 결제 금액\n"
+					  + "- payment_key: (toss-generated-key)\n"
+					  + "- payment_gateway: toss\n"
+					  + "- transaction_id: (tx-001)\n"
 	)
 	@PostMapping("/approve")
 	public ResponseEntity<ApiResponse<PaymentResponseDto>> approve(@RequestBody PaymentApproveRequestDto dto)
