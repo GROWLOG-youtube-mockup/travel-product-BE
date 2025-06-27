@@ -1,13 +1,18 @@
 package com.travelservice.domain.product.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.product.dto.RegionResponse;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.RegionRepository;
 
 @Service
+@Transactional
 public class RegionService {
 
 	private final RegionRepository regionRepository;
@@ -34,8 +39,13 @@ public class RegionService {
 	}
 
 	// 특정 레벨 지역만 조회
-	public List<Region> getRegionsByLevel(Integer level) {
-		return regionRepository.findByLevel(level);
+	public List<RegionResponse> getRegionsByLevel(Integer level) {
+		if (level == null) {
+			return Collections.emptyList();
+		}
+		return regionRepository.findByLevel(level).stream()
+			.map(RegionResponse::from)
+			.collect(Collectors.toList());
 	}
 
 }
