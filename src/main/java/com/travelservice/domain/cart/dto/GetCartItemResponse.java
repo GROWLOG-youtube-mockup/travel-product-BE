@@ -14,6 +14,7 @@ public class GetCartItemResponse {
 	private Long cartItemId;
 	private Long productId;
 	private String productName;
+	private String productImage;
 	private Integer quantity;
 	private Integer stockQuantity;
 	private LocalDate startDate;
