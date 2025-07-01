@@ -59,7 +59,8 @@ public enum ErrorCode {
 	ORDER_ALREADY_COMPLETED("ORDER_ALREADY_COMPLETED", "이미 완료된 주문입니다."),
 	ORDER_CANCELLATION_NOT_ALLOWED("ORDER_CANCELLATION_NOT_ALLOWED", "이 주문은 취소할 수 없습니다."),
 	ORDER_ITEM_NOT_FOUND("ORDER_ITEM_NOT_FOUND", "주문 항목을 찾을 수 없습니다."),
-	INVALID_ORDER_STATUS("INVALID_ORDER_STATUS", "유효하지 않은 주문 상태입니다.");
+	INVALID_ORDER_STATUS("INVALID_ORDER_STATUS", "유효하지 않은 주문 상태입니다."),
+	PAYMENT_CANCEL_FAILED("PAYMENT_CANCEL_FAILED", "결제 취소에 실패했습니다.");
 
 	private final String code;
 	private final String message;
