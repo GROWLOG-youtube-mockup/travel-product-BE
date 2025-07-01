@@ -25,11 +25,13 @@ public class RegionController {
 	private final RegionService regionService;
 
 	@Operation(summary = "지역 조회/필터링",
-		description = "조건에 따라 지역 목록을 동적으로 조회함.\n"
-					  + "- **level**: 'level=1' 광역시/도, 'level=2' 자치시\n"
-					  + "- **parentId**: 특정 부모 지역에 속한 하위 지역 목록 조회\n"
-					  + "- **파라미터 없음**: 전체 지역 목록 조회\n"
-					  + "- level과 parentId 동시에 주어질 경우 parentId 우선 적용")
+		description = """
+			조건에 따라 지역 목록을 동적으로 조회함.
+			- **level**: 'level=1' 광역시/도, 'level=2' 자치시
+			- **parentId**: 특정 부모 지역에 속한 하위 지역 목록 조회
+			- **파라미터 없음**: 전체 지역 목록 조회
+			- level과 parentId 동시에 주어질 경우 parentId 우선 적용
+			""")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegions(
 		@RequestParam(value = "level", required = false) Integer level,
