@@ -11,6 +11,9 @@ public record TripDto(
 	@Schema(description = "주문 항목 ID", example = "101")
 	Long orderItemId,
 
+	@Schema(description = "주문 전체 ID", example = "11")
+	Long orderId,
+
 	@Schema(description = "상품 ID", example = "5")
 	Long productId,
 
@@ -45,6 +48,7 @@ public record TripDto(
 
 		return new TripDto(
 			orderItem.getOrderItemId(),
+			orderItem.getOrder().getOrderId(),
 			product.getProductId(),
 			product.getName(),
 			orderItem.getStartDate(),

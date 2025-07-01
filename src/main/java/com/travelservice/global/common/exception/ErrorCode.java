@@ -15,6 +15,7 @@ public enum ErrorCode {
 	REGION_NOT_FOUND("REGION_NOT_FOUND", "요청하신 지역 정보를 찾을 수 없습니다."),
 	// Product 관련
 	OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다."),
+	EXCEEDS_TOTAL_STOCK("EXCEEDS_TOTAL_STOCK", "총 재고 수량을 초과할 수 없습니다."),
 	PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND", "상품을 찾을 수 없습니다"),
 	// Sign in, Log in 관련
 	LOGIN_FAILED("LOGIN_FAILED", "아이디 혹은 비밀번호가 올바르지 않습니다."),
@@ -52,7 +53,13 @@ public enum ErrorCode {
 	ALREADY_CANCELLED("ALREADY_CANCELLED", "이미 취소된 결제입니다."),
 	INVALID_ORDER_ID("INVALID_ORDER_ID", "유효하지 않은 주문 ID입니다."),
 	PAYMENT_APPROVE_FAILED("PAYMENT_APPROVE_FAILED", "결제 승인에 실패했습니다."),
-	INVALID_PAYMENT_AMOUNT("INVALID_PAYMENT_AMOUNT", "결제 금액이 올바르지 않습니다.");
+	INVALID_PAYMENT_AMOUNT("INVALID_PAYMENT_AMOUNT", "결제 금액이 올바르지 않습니다."),
+
+	//order 관련
+	ORDER_ALREADY_COMPLETED("ORDER_ALREADY_COMPLETED", "이미 완료된 주문입니다."),
+	ORDER_CANCELLATION_NOT_ALLOWED("ORDER_CANCELLATION_NOT_ALLOWED", "이 주문은 취소할 수 없습니다."),
+	ORDER_ITEM_NOT_FOUND("ORDER_ITEM_NOT_FOUND", "주문 항목을 찾을 수 없습니다."),
+	INVALID_ORDER_STATUS("INVALID_ORDER_STATUS", "유효하지 않은 주문 상태입니다.");
 
 	private final String code;
 	private final String message;

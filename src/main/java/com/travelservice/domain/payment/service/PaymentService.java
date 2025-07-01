@@ -365,6 +365,14 @@ public class PaymentService {
 			payment.setStatus(PaymentStatus.CANCELLED);
 		}
 
+		// 재고 복원
+		if (order.getOrderItems().isEmpty()) {
+			throw new CustomException(ErrorCode.ORDER_ITEM_NOT_FOUND); // 주문 항목(orderitem)이 없을 때 예외 처리
+		}
+		OrderItem item = order.getOrderItems().get(0); // 단건이므로 인덱스 0
+		Product product = item.getProduct();
+		product.increaseStock(item.getPeopleCount());
+
 		// 주문 상태는 무조건 취소
 		order.setStatus(OrderStatus.CANCELLED);
 		order.setCancelDate(LocalDateTime.now());

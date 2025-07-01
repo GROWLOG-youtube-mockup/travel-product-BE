@@ -154,4 +154,11 @@ public class Product extends BaseEntity {
 		}
 		this.stockQuantity -= quantity;
 	}
+
+	public void increaseStock(int quantity) {
+		if (this.stockQuantity + quantity > this.totalQuantity) {
+			throw new CustomException(ErrorCode.EXCEEDS_TOTAL_STOCK);
+		}
+		this.stockQuantity += quantity;
+	}
 }
