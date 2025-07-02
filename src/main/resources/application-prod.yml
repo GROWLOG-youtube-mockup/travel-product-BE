@@ -26,7 +26,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 3.38.61.233
       port: 6379
 
 mail:
