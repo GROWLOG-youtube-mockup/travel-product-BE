@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
@@ -332,38 +331,55 @@ public class PaymentService {
 	// 	}
 	// }
 
-	/*
-	@Transactional
-	public Payment payNow(Order order) {
-		Payment payment = Payment.builder()
-			.order(order)
-			.paymentKey("test-key")
-			.method("카드")
-			.status(PaymentStatus.PAID)
-			.paidAt(LocalDateTime.now())
-			.build();
-
-		order.setStatus(OrderStatus.PAID);
-
-		orderRepository.save(order);
-		return paymentRepository.save(payment);
-	}*/
-
 	@Transactional
 	public void cancel(Long orderId) {
 		Order order = orderRepository.findById(orderId)
 			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
-		Optional<Payment> optionalPayment = paymentRepository.findByOrder(order);
+		Payment payment = paymentRepository.findByOrder(order)
+			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 
-		// 결제 되었으면 → Payment 상태도 같이 취소
-		if (optionalPayment.isPresent()) {
-			Payment payment = optionalPayment.get();
-			if (payment.getStatus() == PaymentStatus.CANCELLED) {
-				throw new CustomException(ErrorCode.ALREADY_CANCELLED);
-			}
-			payment.setStatus(PaymentStatus.CANCELLED);
+		if (payment.getStatus() == PaymentStatus.CANCELLED) {
+			throw new CustomException(ErrorCode.ALREADY_CANCELLED);
 		}
+
+		//toss 결제 취소 처리
+		String paymentKey = payment.getPaymentKey();
+		if (paymentKey.startsWith("toss-generated-key")) { //테스트 시
+			log.info("테스트 결제 - Toss 취소 API 호출 생략");
+		} else {
+			String cancelUrl = "https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setBasicAuth(tossSecretKey, ""); // Base64 인코딩 자동 처리
+			headers.setContentType(MediaType.APPLICATION_JSON);
+
+			Map<String, Object> body = new HashMap<>();
+			body.put("cancelReason", "사용자 요청에 의한 취소"); // 취소 사유 설정
+
+			HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+			try {
+				ResponseEntity<JsonNode> response = restTemplate.postForEntity(cancelUrl, entity, JsonNode.class);
+				if (!response.getStatusCode().is2xxSuccessful()) {
+					throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+				}
+			} catch (HttpClientErrorException e) {
+				log.error("❌ Toss 결제 취소 API 실패: {}", e.getResponseBodyAsString());
+				throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+			}
+		}
+
+		// 결제 상태 업데이트
+		payment.setStatus(PaymentStatus.CANCELLED);
+
+		// 재고 복원
+		if (order.getOrderItems().isEmpty()) {
+			throw new CustomException(ErrorCode.ORDER_ITEM_NOT_FOUND); // 주문 항목(orderitem)이 없을 때 예외 처리
+		}
+		OrderItem item = order.getOrderItems().get(0); // 단건이므로 인덱스 0
+		Product product = item.getProduct();
+		product.increaseStock(item.getPeopleCount());
 
 		// 주문 상태는 무조건 취소
 		order.setStatus(OrderStatus.CANCELLED);
