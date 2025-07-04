@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 	private final RegionRepository regionRepository;
 	private final S3Uploader s3Uploader;
-	private final AdminUserRepository adminUserRepository;
+	private final AdminUserRepository userRepository;
 	private final AdminActionLogRepository adminActionLogRepository;
 
 	@Override
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
 		// action-log INSERT
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Long adminUserId = Long.valueOf(authentication.getName());
-		User adminUser = adminUserRepository.findById(adminUserId)
+		User adminUser = userRepository.findById(adminUserId)
 			.orElseThrow(() -> new CustomException(AUTH_INFO_NOT_FOUND));
 
 		AdminActionLog log = AdminActionLog.builder()
