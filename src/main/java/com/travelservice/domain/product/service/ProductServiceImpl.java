@@ -107,8 +107,8 @@ public class ProductServiceImpl implements ProductService {
 			request.getTotalQuantity(),
 			request.getStockQuantity(),
 			request.getDescription(),
-			request.getSaleStatus(),
 			request.getType(),
+			request.getSaleStatus(),
 			request.getDuration(),
 			region
 		);
