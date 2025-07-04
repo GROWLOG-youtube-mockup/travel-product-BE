@@ -1,5 +1,7 @@
 package com.travelservice.domain.admin.service;
 
+import static com.travelservice.global.common.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +19,16 @@ import com.travelservice.domain.admin.dto.order.AdminOrderDetailDto;
 import com.travelservice.domain.admin.dto.order.AdminOrderResponseDto;
 import com.travelservice.domain.admin.dto.order.OrderStatusUpdateRequest;
 import com.travelservice.domain.admin.dto.order.PagedAdminOrderResponseDto;
+import com.travelservice.domain.admin.entity.AdminActionLog;
+import com.travelservice.domain.admin.repository.AdminActionLogRepository;
 import com.travelservice.domain.admin.repository.AdminOrderRepository;
+import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.order.entity.Order;
 import com.travelservice.domain.payment.entity.Payment;
 import com.travelservice.domain.payment.respository.PaymentRepository;
+import com.travelservice.domain.user.entity.User;
 import com.travelservice.enums.OrderStatus;
+import com.travelservice.global.common.exception.CustomException;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +39,8 @@ public class AdminOrderService {
 
 	private final AdminOrderRepository adminOrderRepository;
 	private final PaymentRepository paymentRepository;
+	private final AdminUserRepository userRepository;
+	private final AdminActionLogRepository adminActionLogRepository;
 
 	public PagedAdminOrderResponseDto findOrders(
 		Integer page, Integer size, String status, String startDate, String endDate
@@ -92,6 +103,20 @@ public class AdminOrderService {
 
 		order.setStatus(request.getStatus());
 		order.setUpdatedAt(LocalDateTime.now());
+
+		// action-log INSERT
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Long adminUserId = Long.valueOf(authentication.getName());
+		User adminUser = userRepository.findById(adminUserId)
+			.orElseThrow(() -> new CustomException(AUTH_INFO_NOT_FOUND));
+
+		AdminActionLog log = AdminActionLog.builder()
+			.user(adminUser)
+			.actionType(1) // 1: 주문 상태 변경
+			.targetId(orderId)
+			.timestamp(LocalDateTime.now())
+			.build();
+		adminActionLogRepository.save(log);
 
 		return adminOrderRepository.save(order);
 	}

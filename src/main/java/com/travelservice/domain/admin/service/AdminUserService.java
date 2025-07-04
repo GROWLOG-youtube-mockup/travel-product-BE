@@ -1,5 +1,8 @@
 package com.travelservice.domain.admin.service;
 
+import static com.travelservice.global.common.exception.ErrorCode.*;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.travelservice.domain.admin.dto.user.PagedUserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserResponseDto;
 import com.travelservice.domain.admin.dto.user.UserUpdateRequestDto;
+import com.travelservice.domain.admin.entity.AdminActionLog;
+import com.travelservice.domain.admin.repository.AdminActionLogRepository;
 import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.user.entity.User;
+import com.travelservice.global.common.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminUserService {
 
 	private final AdminUserRepository userRepository;
+	private final AdminActionLogRepository adminActionLogRepository;
 
 	public PagedUserResponseDto getUsers(Integer page, Integer size, Integer roleCode) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
@@ -56,10 +63,10 @@ public class AdminUserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Long currentUserId = Long.valueOf(authentication.getName());
 		User currentUser = userRepository.findById(currentUserId)
-			.orElseThrow(() -> new RuntimeException("권한 정보 조회 실패"));
+			.orElseThrow(() -> new CustomException(AUTH_INFO_NOT_FOUND));
 
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
 		boolean changed = false;
 
@@ -88,12 +95,40 @@ public class AdminUserService {
 		Map<String, Object> result = new HashMap<>();
 		result.put("user_id", user.getUserId());
 		result.put("updated_at", user.getUpdatedAt());
+
+		// action-log INSERT
+		if (changed) {
+			AdminActionLog log = AdminActionLog.builder()
+				.user(currentUser)
+				.actionType(2) // 2: 사용자 관리
+				.targetId(userId)
+				.timestamp(LocalDateTime.now())
+				.build();
+			adminActionLogRepository.save(log);
+		}
+
 		return result;
 	}
 
 	@Transactional
 	public boolean deleteUser(Long userId) {
 		int updated = userRepository.softDeleteById(userId);
+
+		if (updated > 0) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Long adminUserId = Long.valueOf(authentication.getName());
+			User adminUser = userRepository.findById(adminUserId)
+				.orElseThrow(() -> new CustomException(AUTH_INFO_NOT_FOUND));
+
+			AdminActionLog log = AdminActionLog.builder()
+				.user(adminUser)
+				.actionType(2) // 2: 사용자 관리
+				.targetId(userId)
+				.timestamp(LocalDateTime.now())
+				.build();
+			adminActionLogRepository.save(log);
+		}
+
 		return updated > 0;
 	}
 
