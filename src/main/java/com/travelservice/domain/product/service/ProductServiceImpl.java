@@ -1,12 +1,20 @@
 package com.travelservice.domain.product.service;
 
+import static com.travelservice.global.common.exception.ErrorCode.*;
+
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.travelservice.domain.admin.entity.AdminActionLog;
+import com.travelservice.domain.admin.repository.AdminActionLogRepository;
+import com.travelservice.domain.admin.repository.AdminUserRepository;
 import com.travelservice.domain.product.dto.AddProductRequest;
 import com.travelservice.domain.product.dto.ProductDetailResponse;
 import com.travelservice.domain.product.dto.ProductListResponse;
@@ -18,8 +26,8 @@ import com.travelservice.domain.product.entity.ProductImage;
 import com.travelservice.domain.product.entity.Region;
 import com.travelservice.domain.product.repository.ProductRepository;
 import com.travelservice.domain.product.repository.RegionRepository;
+import com.travelservice.domain.user.entity.User;
 import com.travelservice.global.common.exception.CustomException;
-import com.travelservice.global.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,15 +38,31 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 	private final RegionRepository regionRepository;
 	private final S3Uploader s3Uploader;
+	private final AdminUserRepository adminUserRepository;
+	private final AdminActionLogRepository adminActionLogRepository;
 
 	@Override
 	@Transactional
 	public ProductDetailResponse createProduct(AddProductRequest request) {
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(REGION_NOT_FOUND));
 
 		Product product = request.toEntity(region);
 		Product savedProduct = productRepository.save(product);
+
+		// action-log INSERT
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Long adminUserId = Long.valueOf(authentication.getName());
+		User adminUser = adminUserRepository.findById(adminUserId)
+			.orElseThrow(() -> new CustomException(AUTH_INFO_NOT_FOUND));
+
+		AdminActionLog log = AdminActionLog.builder()
+			.user(adminUser)
+			.actionType(0) // 0: 상품 등록
+			.targetId(savedProduct.getProductId())
+			.timestamp(LocalDateTime.now())
+			.build();
+		adminActionLogRepository.save(log);
 
 		return ProductDetailResponse.from(savedProduct);
 	}
@@ -86,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public ProductDetailResponse getProductDetail(Long productId) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
 
 		return ProductDetailResponse.from(product);
 	}
@@ -95,10 +119,10 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public Product updateProduct(Long productId, UpdateProductRequest request) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
 
 		Region region = regionRepository.findById(request.getRegionId())
-			.orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(REGION_NOT_FOUND));
 
 		// 필드 업데이트
 		product.update(
@@ -151,7 +175,7 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public void deleteProduct(Long productId) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
 
 		productRepository.delete(product);
 	}

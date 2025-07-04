@@ -32,6 +32,7 @@ public enum ErrorCode {
 	AUTH_CODE_NOT_FOUND("AUTH_404", "인증번호를 먼저 요청해주세요."),
 	INVALID_AUTH_CODE("AUTH_401", "인증번호가 일치하지 않습니다."),
 	DELETED_USER("DELETED_USER", "삭제된 회원입니다."),
+	AUTH_INFO_NOT_FOUND("AUTH_INFO_NOT_FOUND", "인증 정보 조회에 실패했습니다."),
 
 	// User 관련
 	USER_NOT_FOUND("USER_NOT_FOUND", "존재하지 않는 회원입니다."),
