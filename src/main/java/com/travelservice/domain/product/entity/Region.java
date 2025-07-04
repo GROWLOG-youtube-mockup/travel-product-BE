@@ -43,10 +43,10 @@ public class Region extends BaseEntity {
 	@JoinColumn(name = "parent_id")
 	private Region parent;
 
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
 	private List<Region> children = new ArrayList<>();
 
-	@OneToMany(mappedBy = "region", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
 	private List<Product> products = new ArrayList<>();
 
 	public Region(String name, Integer level, Region parent) {
