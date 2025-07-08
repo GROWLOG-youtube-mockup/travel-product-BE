@@ -4,6 +4,7 @@ import static org.springframework.security.config.Customizer.*;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -48,6 +49,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(SWAGGER_WHITELIST).permitAll()
 				.requestMatchers(DEV_WHITELIST).permitAll()
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+				.requestMatchers("/", "/error").permitAll()
 				.requestMatchers("/users/signup").permitAll()
 				.requestMatchers("/products", "/products/**", "/images/**").permitAll()
 				.requestMatchers("/regions").permitAll()
